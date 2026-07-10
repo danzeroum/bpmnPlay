@@ -176,6 +176,10 @@ export const DICT = {
     pt: 'Não foi possível abrir o link — o diagrama padrão foi carregado.',
     en: 'Could not open the link — the default diagram was loaded.',
   },
+  'load.error': {
+    pt: 'Versão não encontrada no registry — diagrama padrão carregado.',
+    en: 'Version not found in the registry — default diagram loaded.',
+  },
 
   // Ajuda "?"
   'help.title': { pt: 'Navegação do canvas', en: 'Canvas navigation' },
