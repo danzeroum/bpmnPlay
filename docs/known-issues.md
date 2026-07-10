@@ -39,3 +39,24 @@ não tipos de domínio — ou seja, não é um caso de "tipo desconhecido".
 
 **Ação:** abrir issue em `danzeroum/bpmn` com este repro. Correção é upstream;
 aqui apenas contornamos e avisamos.
+
+## 2. `?load=` depende do registry demo em memória (não é bug)
+
+**Severidade:** baixa (limitação de design — comportamento esperado).
+
+O deep-link `/editor?load=<versionId>` resolve contra um registry demo **em
+memória** (`src/demoRegistry.ts`), que inclui os exemplos sob ids estáveis
+(`sample`, `dmn`, `collab`, `healthcare`, `simulation`).
+
+O "Abrir no Designer" do Studio abre a **versão exata** que estava em revisão
+porque o Studio *publica* o seu registry (`publishRegistry`) e navega
+**client-side** (React Router) — a memória do módulo é preservada, então o
+`/editor?load=onb-v2` resolve.
+
+**Consequência esperada:** um `/editor?load=onb-v2` aberto **direto** (refresh da
+página, link colado numa aba nova) **não** terá o registry do Studio publicado —
+cai no toast "versão não encontrada" + diagrama padrão. Isso é correto para um
+app **sem backend** (o mundo do Studio é construído em runtime, não persiste). Os
+ids dos exemplos (`?load=sample` etc.) funcionam sempre, pois são reconstruídos.
+Não tratar como bug: persistir versões exigiria um backend, fora do escopo do
+bpmnPlay.
