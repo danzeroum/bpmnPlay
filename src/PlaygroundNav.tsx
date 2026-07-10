@@ -10,7 +10,8 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLang } from './i18n/index.js';
 import { LangToggle } from './LangToggle.js';
-import { BrandGlyph, Check, ChevronDown, Plus } from './icons.js';
+import { AlertCircle, BrandGlyph, Check, CheckCircleFilled, ChevronDown, Close, LinkChain, Plus } from './icons.js';
+import { PERMALINK_LIMIT, permalinkHash } from './permalink.js';
 
 declare const __BPMN_LIB_VERSION__: string;
 
@@ -35,6 +36,8 @@ export interface EditorActions {
   onExportJson: () => void;
   onNew: () => void;
   onRestore: () => void;
+  /** Serializa o diagrama atual num permalink (não muda a URL — quem chama decide). */
+  buildPermalink: () => { url: string; payload: string; length: number };
 }
 
 export interface PlaygroundNavProps {
@@ -133,6 +136,7 @@ export function PlaygroundNav({ editorActions, onStartTour }: PlaygroundNavProps
             <NavMenu label={t('nav.view')} minWidth={240}>
               {() => <ViewMenu actions={editorActions} />}
             </NavMenu>
+            <ShareControl actions={editorActions} />
             <button
               type="button"
               className="pg-btn pg-btn-accent"
@@ -217,6 +221,111 @@ function ViewMenu({ actions }: { actions: EditorActions }) {
         </button>
       )}
     </>
+  );
+}
+
+/** Botão "Compartilhar" → popover "Link copiado" (ou modal se exceder a URL). */
+function ShareControl({ actions }: { actions: EditorActions }) {
+  const { t } = useLang();
+  const [open, setOpen] = useState(false);
+  const [tooLong, setTooLong] = useState(false);
+  const [url, setUrl] = useState('');
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const copy = (value: string) => {
+    try {
+      void navigator.clipboard?.writeText(value).catch(() => {});
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const onShare = () => {
+    const res = actions.buildPermalink();
+    if (res.length > PERMALINK_LIMIT) {
+      setTooLong(true);
+      return;
+    }
+    // Grava o payload no hash (sem recarregar) e copia a URL.
+    window.history.replaceState(null, '', permalinkHash(res.payload));
+    setUrl(res.url);
+    copy(res.url);
+    setOpen(true);
+  };
+
+  return (
+    <div className="pg-menu" ref={ref}>
+      <button type="button" className="pg-btn pg-btn-share" aria-haspopup="dialog" aria-expanded={open} onClick={onShare}>
+        <LinkChain />
+        {t('share.button')}
+      </button>
+      {open && (
+        <div className="pg-menu-pop pg-share-pop" role="dialog" aria-label={t('share.copied')}>
+          <div className="pg-share-head">
+            <CheckCircleFilled size={15} />
+            <span className="pg-share-title">{t('share.copied')}</span>
+          </div>
+          <p className="pg-share-body">{t('share.body')}</p>
+          <div className="pg-share-row">
+            <span className="pg-share-url" title={url}>
+              {url}
+            </span>
+            <button type="button" className="pg-btn pg-btn-accent pg-share-copy" onClick={() => copy(url)}>
+              {t('share.copy')}
+            </button>
+          </div>
+          <p className="pg-share-warn">
+            <AlertCircle size={12} />
+            {t('share.warn')}
+          </p>
+        </div>
+      )}
+      {tooLong && (
+        <div className="pg-modal-veil" role="dialog" aria-modal="true" aria-label={t('share.tooLong.title')}>
+          <div className="pg-modal">
+            <div className="pg-modal-head">
+              <AlertCircle size={16} />
+              <h3 className="pg-modal-title">{t('share.tooLong.title')}</h3>
+              <button type="button" className="pg-icon-close" aria-label={t('share.close')} onClick={() => setTooLong(false)}>
+                <Close size={14} />
+              </button>
+            </div>
+            <p className="pg-modal-body">{t('share.tooLong.body')}</p>
+            <div className="pg-modal-foot">
+              <button type="button" className="pg-btn" onClick={() => setTooLong(false)}>
+                {t('share.close')}
+              </button>
+              <button
+                type="button"
+                className="pg-btn pg-btn-accent"
+                onClick={() => {
+                  actions.onExportXml();
+                  setTooLong(false);
+                }}
+              >
+                {t('share.exportBpmn')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

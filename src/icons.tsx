@@ -92,6 +92,36 @@ export function GitHub({ size = 15, ...props }: IconProps) {
   );
 }
 
+/** Corrente (Compartilhar). */
+export function LinkChain({ size = 13, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 14 14', strokeWidth: 1.4, ...props })} aria-hidden="true">
+      <path d="M5.8 8.2a3 3 0 0 0 4.2.2l1.6-1.6a3 3 0 0 0-4.2-4.2l-.9.9" />
+      <path d="M8.2 5.8a3 3 0 0 0-4.2-.2L2.4 7.2a3 3 0 0 0 4.2 4.2l.9-.9" />
+    </svg>
+  );
+}
+
+/** Check verde em círculo cheio (sucesso do popover Compartilhar). */
+export function CheckCircleFilled({ size = 15 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="7" fill="var(--pg-success-weak)" />
+      <path d="m5 8 2 2 4-4" stroke="var(--pg-success)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** Alerta em círculo (aviso de limite de URL). */
+export function AlertCircle({ size = 12 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="5" stroke="var(--pg-warn-text)" strokeWidth="1.2" />
+      <path d="M6 3.5v3M6 8.4v.2" stroke="var(--pg-warn-text)" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /* --- Ícones dos cards de módulo da home (accent, 22px) --- */
 
 export function IconEditor({ size = 22 }: { size?: number }) {

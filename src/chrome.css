@@ -533,6 +533,136 @@
 }
 
 /* ============================================================= */
+/* Compartilhar (permalink, tela 2a)                             */
+/* ============================================================= */
+.pg-btn-share {
+  border-color: var(--pg-accent);
+  color: var(--pg-accent);
+  font-weight: 500;
+}
+.pg-btn-share:hover {
+  background: var(--pg-accent-weak);
+}
+.pg-share-pop {
+  width: 380px;
+  padding: 18px;
+  border-radius: 10px;
+}
+.pg-share-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.pg-share-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.pg-share-body {
+  margin: 0 0 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--pg-muted);
+}
+.pg-share-row {
+  display: flex;
+  gap: 8px;
+}
+.pg-share-url {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  background: var(--pg-sub);
+  border: 1px solid var(--pg-border);
+  border-radius: 6px;
+  font-family: var(--pg-font-mono);
+  font-size: 11.5px;
+  color: var(--pg-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pg-share-copy {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  font-size: 12.5px;
+}
+.pg-share-warn {
+  margin: 12px 0 0;
+  font-size: 11.5px;
+  color: var(--pg-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pg-share-warn svg {
+  flex: 0 0 auto;
+}
+
+/* Modal genérico (diagrama grande demais para a URL) */
+.pg-modal-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(38, 34, 29, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.pg-modal {
+  width: min(460px, 100%);
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  border-radius: var(--pg-r-modal);
+  box-shadow: var(--pg-shadow-modal);
+  padding: 24px;
+  color: var(--pg-text);
+}
+.pg-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.pg-modal-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+.pg-modal-head .pg-icon-close {
+  margin-left: auto;
+}
+.pg-modal-body {
+  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--pg-muted);
+}
+.pg-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Toast (erro de permalink) */
+.pg-toast {
+  position: fixed;
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 210;
+  max-width: 460px;
+  padding: 10px 16px;
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  border-left: 3px solid var(--pg-warn);
+  border-radius: 8px;
+  box-shadow: var(--pg-shadow-pop);
+  color: var(--pg-text);
+  font-size: 13px;
+}
+
+/* ============================================================= */
 /* Tour de primeiro acesso (tela 1c)                             */
 /* ============================================================= */
 .pg-tour {
