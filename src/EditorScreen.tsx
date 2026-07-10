@@ -37,6 +37,7 @@ import {
 } from './sampleDiagram.js';
 import { ASTAR_PLUGINS, DEMO_DECISIONS, openDecisionSurface, PLUGINS } from './plugins.js';
 import { decodeDiagram, encodeDiagram, permalinkHash, PERMALINK_VERSION, readPermalink } from './permalink.js';
+import { resolveVersion } from './demoRegistry.js';
 import { hasFlag } from './flags.js';
 import { ledgerToCsv } from './audit-csv.js';
 import { Close } from './icons.js';
@@ -101,7 +102,11 @@ function pickInitialDiagram(mode: EditorMode, params: URLSearchParams): BpmnDiag
  * para o toast.
  */
 function loadInitialDiagram(mode: EditorMode, params: URLSearchParams): { diagram: BpmnDiagram; permalinkError: boolean } {
-  const plain = mode === 'editor' && params.get('example') === null && !(params.get('dev') !== null && hasQaFlag(params));
+  const plain =
+    mode === 'editor' &&
+    params.get('example') === null &&
+    params.get('load') === null &&
+    !(params.get('dev') !== null && hasQaFlag(params));
   const link = plain && typeof window !== 'undefined' ? readPermalink(window.location.hash) : null;
   if (link) {
     try {
@@ -151,6 +156,23 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
     if (bootRef.current.permalinkError) setToast(t('permalink.error'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Deep-link ?load=<versionId>: resolve do registry demo (async) e carrega a
+  // versão exata; não encontrada → toast + diagrama padrão.
+  const loadParam = params.get('load');
+  useEffect(() => {
+    if (!loadParam) return;
+    let cancelled = false;
+    void resolveVersion(loadParam).then((d) => {
+      if (cancelled) return;
+      if (d) replaceFromOutside(d);
+      else setToast(t('load.error'));
+    });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadParam]);
   useEffect(() => {
     if (!toast) return;
     const id = setTimeout(() => setToast(null), 6000);

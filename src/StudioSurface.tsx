@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { publishRegistry } from './demoRegistry.js';
 import {
   AuditLedger,
   LifecycleEngine,
@@ -279,6 +281,7 @@ function syncUrl(mutate: (params: URLSearchParams) => void): void {
 }
 
 export function StudioSurface() {
+  const navigate = useNavigate();
   const [world, setWorld] = useState<StudioWorld>();
   const [user, setUser] = useState<UserContext>(USERS[0]);
   const [lastAction, setLastAction] = useState('');
@@ -367,9 +370,20 @@ export function StudioSurface() {
   const onLibraryAction = (ref: ArtifactRef, action: ArtifactAction) => {
     setLastAction(`${action.id} → ${ref.adapterId}:${ref.artifactId}`);
     if (action.id === 'open-designer') {
-      // Studio nunca edita (§11): abre o Designer; voltar restaura filtros e
-      // seleção da Biblioteca a partir da URL (§10.7).
-      window.location.href = '/';
+      // Studio nunca edita (§11): abre o Designer na versão EXATA via ?load=.
+      // Publica o registry (navegação client-side preserva a memória do módulo)
+      // para o /editor resolver a versão pelo id.
+      if (world) {
+        publishRegistry(world.registry);
+        const matches = world.registry.list().filter((e) => e.snapshot.id === ref.artifactId);
+        const entry = matches.find((e) => e.version.status === 'candidate') ?? matches[0] ?? world.registry.list()[0];
+        const versionId = entry?.version.id;
+        if (versionId) {
+          navigate(`/editor?load=${encodeURIComponent(versionId)}`);
+          return;
+        }
+      }
+      navigate('/editor');
     }
   };
 

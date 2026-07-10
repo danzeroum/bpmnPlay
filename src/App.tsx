@@ -48,7 +48,7 @@ function EditorRoute({ mode }: { mode: EditorMode }) {
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const qa = ['stress', 'astar', 'manual', 'fallback', 'fanout', 'deadlock', 'closed', 'hc'].find((f) => params.get(f) !== null);
-  const sig = `${mode}:${params.get('example') ?? ''}:${params.get('dev') !== null ? qa ?? '' : ''}`;
+  const sig = `${mode}:${params.get('example') ?? ''}:${params.get('load') ?? ''}:${params.get('dev') !== null ? qa ?? '' : ''}`;
   return <EditorScreen key={sig} mode={mode} />;
 }
 
