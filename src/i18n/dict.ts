@@ -112,6 +112,28 @@ export const DICT = {
   'file.export': { pt: 'EXPORTAR', en: 'EXPORT' },
   'file.exportBpmn': { pt: 'BPMN 2.0 (.bpmn)', en: 'BPMN 2.0 (.bpmn)' },
   'file.exportJson': { pt: 'Modelo JSON (.json)', en: 'JSON model (.json)' },
+  'file.exportCamunda8': { pt: 'Camunda 8 (.bpmn)', en: 'Camunda 8 (.bpmn)' },
+  'file.experimental': { pt: 'experimental', en: 'experimental' },
+  'file.auditTrail': { pt: 'Trilha de auditoria (.csv)', en: 'Audit trail (.csv)' },
+
+  // Modal de exportação (perda / Camunda 8)
+  'export.loss.title': { pt: 'Exportação BPMN com perda', en: 'Lossy BPMN export' },
+  'export.camunda8.title': { pt: 'Exportar para Camunda 8 (experimental)', en: 'Export to Camunda 8 (experimental)' },
+  'export.loss.intro': {
+    pt: 'Este formato BPMN não preserva alguns elementos dentro de sub-process (limitação do conversor da biblioteca):',
+    en: 'This BPMN format does not preserve some elements inside sub-processes (a limitation of the library converter):',
+  },
+  'export.loss.note': {
+    pt: 'Eles não estarão no arquivo. Para um modelo completo, use "Modelo JSON (.json)" ou o link de compartilhamento.',
+    en: 'They will be missing from the file. For a complete model, use "JSON model (.json)" or the share link.',
+  },
+  'export.camunda8.note': {
+    pt: 'Exporta BPMN 2.0 padrão (abre no Camunda Modeler). As extensões Zeebe do Camunda 8 são de uma fase futura.',
+    en: 'Exports standard BPMN 2.0 (opens in Camunda Modeler). Camunda 8 Zeebe extensions are a future phase.',
+  },
+  'export.cancel': { pt: 'Cancelar', en: 'Cancel' },
+  'export.confirm': { pt: 'Exportar assim mesmo', en: 'Export anyway' },
+  'export.confirmClean': { pt: 'Exportar', en: 'Export' },
 
   // Menu Exibir
   'view.governance': { pt: 'Painéis de governança', en: 'Governance panels' },

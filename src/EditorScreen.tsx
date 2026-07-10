@@ -36,6 +36,9 @@ import {
 } from './sampleDiagram.js';
 import { ASTAR_PLUGINS, DEMO_DECISIONS, openDecisionSurface, PLUGINS } from './plugins.js';
 import { decodeDiagram, encodeDiagram, permalinkHash, PERMALINK_VERSION, readPermalink } from './permalink.js';
+import { hasFlag } from './flags.js';
+import { ledgerToCsv } from './audit-csv.js';
+import { Close } from './icons.js';
 import { useLang } from './i18n/index.js';
 import { PlaygroundNav, type EditorActions } from './PlaygroundNav.js';
 import { StatusBar, type DiagramStats } from './StatusBar.js';
@@ -46,6 +49,31 @@ import { ModelInspector } from './ModelInspector.js';
 import { AuditLedger } from '@bpmn-react/core';
 
 export type EditorMode = 'editor' | 'dmn';
+
+function makeConverter(): BpmnXmlConverter {
+  const config = resolveEditorConfig(PLUGINS);
+  return new BpmnXmlConverter({ registry: config.registry, preferredTypes: config.preferredTypes });
+}
+
+/**
+ * Perda no export BPMN: o toXml/fromXml da lib descarta filhos de sub-process
+ * (bug upstream — docs/known-issues.md). Compara antes/depois para avisar o
+ * usuário de que o arquivo .bpmn não conterá esses elementos.
+ */
+function detectBpmnLoss(diagram: BpmnDiagram): { nodes: number; edges: number } {
+  try {
+    const conv = makeConverter();
+    const back = conv.fromXml(conv.toXml(diagram)).diagram;
+    return {
+      nodes: Object.keys(diagram.nodes).length - Object.keys(back.nodes).length,
+      edges: Object.keys(diagram.edges).length - Object.keys(back.edges).length,
+    };
+  } catch {
+    return { nodes: 0, edges: 0 };
+  }
+}
+
+type ExportRequest = { variant: 'standard' | 'camunda8'; lostNodes: number; lostEdges: number };
 
 function pickInitialDiagram(mode: EditorMode, params: URLSearchParams): BpmnDiagram {
   if (mode === 'dmn') return buildDrdDiagram();
@@ -108,7 +136,13 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
   const [showGovernance, setShowGovernance] = useState(false);
   const [showInspector, setShowInspector] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [exportReq, setExportReq] = useState<ExportRequest | null>(null);
   const latestRef = useRef(diagram);
+
+  const camunda8Available = hasFlag(location.search, 'camunda8');
+  // Ledger de auditoria conectado ao command stack (via LedgerBridge, dentro do
+  // editor), renovado a cada diagrama novo. Alimenta a exportação CSV.
+  const auditLedger = useMemo(() => new AuditLedger(), [editorKey]);
 
   // Erro ao abrir o permalink → toast (some sozinho).
   useEffect(() => {
@@ -177,14 +211,34 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
     a.click();
     URL.revokeObjectURL(url);
   };
-  const onExportXml = useCallback(() => {
-    const config = resolveEditorConfig(PLUGINS);
-    const converter = new BpmnXmlConverter({ registry: config.registry, preferredTypes: config.preferredTypes });
-    download(converter.toXml(latestRef.current), `${latestRef.current.id}.bpmn`, 'application/xml');
+  // Baixa o BPMN de fato (após confirmação do modal, se houver perda/Camunda 8).
+  const doExportBpmn = useCallback((variant: 'standard' | 'camunda8') => {
+    const xml = makeConverter().toXml(latestRef.current);
+    const suffix = variant === 'camunda8' ? '.camunda8.bpmn' : '.bpmn';
+    download(xml, `${latestRef.current.id}${suffix}`, 'application/xml');
   }, []);
+  // Pede export: Camunda 8 sempre passa pelo modal (nota experimental); BPMN
+  // padrão só quando há perda de elementos.
+  const requestBpmnExport = useCallback(
+    (variant: 'standard' | 'camunda8') => {
+      const loss = detectBpmnLoss(latestRef.current);
+      if (variant === 'camunda8' || loss.nodes > 0 || loss.edges > 0) {
+        setExportReq({ variant, lostNodes: loss.nodes, lostEdges: loss.edges });
+      } else {
+        doExportBpmn(variant);
+      }
+    },
+    [doExportBpmn],
+  );
+  const onExportXml = useCallback(() => requestBpmnExport('standard'), [requestBpmnExport]);
+  const onExportCamunda8 = useCallback(() => requestBpmnExport('camunda8'), [requestBpmnExport]);
   const onExportJson = useCallback(() => {
     download(JSON.stringify(latestRef.current, null, 2), `${latestRef.current.id}.json`, 'application/json');
   }, []);
+  const onExportAuditCsv = useCallback(async () => {
+    await auditLedger.flush();
+    download(ledgerToCsv(auditLedger.getEntries()), `${latestRef.current.id}-auditoria.csv`, 'text/csv;charset=utf-8');
+  }, [auditLedger]);
 
   const buildPermalink = useCallback(() => {
     // Transporte JSON (lossless), não XML — ver permalink.ts.
@@ -202,6 +256,9 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
     onImport,
     onExportXml,
     onExportJson,
+    onExportCamunda8,
+    camunda8Available,
+    onExportAuditCsv,
     onNew,
     onRestore,
     buildPermalink,
@@ -227,6 +284,7 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
               }}
             >
               <DiagramStatsBridge onStats={onStats} />
+              <LedgerBridge ledger={auditLedger} />
               {showGovernance && <SidePanels />}
               {!drdMode && (
                 <DecisionPeek
@@ -248,8 +306,75 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
           {toast}
         </div>
       )}
+      {exportReq && (
+        <ExportModal
+          req={exportReq}
+          onCancel={() => setExportReq(null)}
+          onConfirm={() => {
+            doExportBpmn(exportReq.variant);
+            setExportReq(null);
+          }}
+        />
+      )}
     </div>
   );
+}
+
+/** Modal de confirmação da exportação BPMN (perda de elementos e/ou Camunda 8). */
+function ExportModal({ req, onCancel, onConfirm }: { req: ExportRequest; onCancel: () => void; onConfirm: () => void }) {
+  const { t } = useLang();
+  const hasLoss = req.lostNodes > 0 || req.lostEdges > 0;
+  const isCamunda8 = req.variant === 'camunda8';
+  return (
+    <div className="pg-modal-veil" role="dialog" aria-modal="true" aria-label={t(isCamunda8 ? 'export.camunda8.title' : 'export.loss.title')}>
+      <div className="pg-modal">
+        <div className="pg-modal-head">
+          <h3 className="pg-modal-title">{t(isCamunda8 ? 'export.camunda8.title' : 'export.loss.title')}</h3>
+          <button type="button" className="pg-icon-close" aria-label={t('export.cancel')} onClick={onCancel}>
+            <Close size={14} />
+          </button>
+        </div>
+        {isCamunda8 && <p className="pg-modal-body">{t('export.camunda8.note')}</p>}
+        {hasLoss && (
+          <p className="pg-modal-body">
+            {t('export.loss.intro')}{' '}
+            <strong>
+              {req.lostNodes} {t('status.nodes')} · {req.lostEdges} {t('status.flows')}
+            </strong>
+            . {t('export.loss.note')}
+          </p>
+        )}
+        <div className="pg-modal-foot">
+          <button type="button" className="pg-btn" onClick={onCancel}>
+            {t('export.cancel')}
+          </button>
+          <button type="button" className="pg-btn pg-btn-accent" onClick={onConfirm}>
+            {t(hasLoss ? 'export.confirm' : 'export.confirmClean')}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Conecta um AuditLedger ao command stack do editor (dentro do contexto do
+ * BpmnEditor) para alimentar a exportação da trilha de auditoria em CSV. Cada
+ * comando é anexado à cadeia encadeada por hash.
+ */
+function LedgerBridge({ ledger }: { ledger: AuditLedger }) {
+  const { stack } = useDiagram();
+  useEffect(() => {
+    const off = ledger.connectCommandStack(stack, { id: 'demo-user', role: 'editor' });
+    const unsub = stack.subscribe(() => {
+      void ledger.flush();
+    });
+    return () => {
+      off();
+      unsub();
+    };
+  }, [ledger, stack]);
+  return null;
 }
 
 function statsFrom(d: BpmnDiagram): DiagramStats {
