@@ -35,7 +35,7 @@ import {
   buildStressDiagram,
 } from './sampleDiagram.js';
 import { ASTAR_PLUGINS, DEMO_DECISIONS, openDecisionSurface, PLUGINS } from './plugins.js';
-import { decodePayloadToXml, encodeXmlToPayload, permalinkHash, readPermalinkPayload } from './permalink.js';
+import { decodeDiagram, encodeDiagram, permalinkHash, PERMALINK_VERSION, readPermalink } from './permalink.js';
 import { useLang } from './i18n/index.js';
 import { PlaygroundNav, type EditorActions } from './PlaygroundNav.js';
 import { StatusBar, type DiagramStats } from './StatusBar.js';
@@ -64,24 +64,19 @@ function pickInitialDiagram(mode: EditorMode, params: URLSearchParams): BpmnDiag
   return buildSampleDiagram();
 }
 
-const editorConfig = () => resolveEditorConfig(PLUGINS);
-const xmlConverter = () => {
-  const config = editorConfig();
-  return new BpmnXmlConverter({ registry: config.registry, preferredTypes: config.preferredTypes });
-};
-
 /**
  * Diagrama inicial: o permalink `#d=` tem prioridade no editor "puro" (sem
- * example/QA), ANTES de buildSampleDiagram(). Payload inválido → diagrama
- * padrão + flag para o toast.
+ * example/QA), ANTES de buildSampleDiagram(). Transporte é o modelo JSON
+ * (lossless). Versão desconhecida ou payload inválido → diagrama padrão + flag
+ * para o toast.
  */
 function loadInitialDiagram(mode: EditorMode, params: URLSearchParams): { diagram: BpmnDiagram; permalinkError: boolean } {
   const plain = mode === 'editor' && params.get('example') === null && !(params.get('dev') !== null && hasQaFlag(params));
-  const payload = plain && typeof window !== 'undefined' ? readPermalinkPayload(window.location.hash) : null;
-  if (payload) {
+  const link = plain && typeof window !== 'undefined' ? readPermalink(window.location.hash) : null;
+  if (link) {
     try {
-      const { diagram } = xmlConverter().fromXml(decodePayloadToXml(payload));
-      return { diagram, permalinkError: false };
+      if (link.version !== PERMALINK_VERSION) throw new Error(`unsupported permalink version ${link.version}`);
+      return { diagram: decodeDiagram<BpmnDiagram>(link.payload), permalinkError: false };
     } catch {
       return { diagram: pickInitialDiagram(mode, params), permalinkError: true };
     }
@@ -192,7 +187,8 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
   }, []);
 
   const buildPermalink = useCallback(() => {
-    const payload = encodeXmlToPayload(xmlConverter().toXml(latestRef.current));
+    // Transporte JSON (lossless), não XML — ver permalink.ts.
+    const payload = encodeDiagram(latestRef.current);
     const url = window.location.origin + window.location.pathname + permalinkHash(payload);
     return { url, payload, length: payload.length };
   }, []);

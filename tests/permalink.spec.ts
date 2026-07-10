@@ -30,7 +30,7 @@ test('roundtrip: compartilhar → abrir URL → mesmo modelo (não o padrão)', 
   await expect(page.locator('.pg-share-pop')).toContainText('Link copiado');
   await page.waitForURL(/#d=/);
   const shared = page.url();
-  expect(shared).toMatch(/#d=[A-Za-z0-9_-]+$/);
+  expect(shared).toMatch(/#d=1\.[A-Za-z0-9_-]+$/);
 
   // Abrir a URL numa página nova reconstrói o modelo vazio (não o padrão 14 nós).
   await page.goto(shared);
@@ -38,23 +38,21 @@ test('roundtrip: compartilhar → abrir URL → mesmo modelo (não o padrão)', 
   await expect(page.locator('.pg-toast')).toHaveCount(0);
 });
 
-test('roundtrip é estável (idempotente) ao recompartilhar', async ({ page }) => {
-  // O toXml/fromXml da lib é levemente lossy para os nós de demo, então não se
-  // fixa a contagem exata; o que importa é que reconstruir e recompartilhar dá
-  // o MESMO modelo (encode/decode determinístico e sem perda após o 1º passo).
+test('roundtrip é lossless para o modelo padrão (14 nós · 15 fluxos)', async ({ page }) => {
+  // Transporte JSON (não XML): o modelo inteiro sobrevive, incluindo os filhos
+  // de sub-process que o toXml/fromXml da lib perderia.
   await disableTour(page);
   await page.goto('/editor');
+  await expect(page.locator('.pg-status-metrics')).toContainText('14 nós · 15 fluxos');
   await page.getByRole('button', { name: 'Compartilhar' }).click();
   await page.waitForURL(/#d=/);
-  await page.goto(page.url()); // reabre o link → estado "roundtripado"
-  const t1 = await page.locator('.pg-status-metrics').textContent();
-  expect(t1).not.toContain('0 nós');
-
-  await page.getByRole('button', { name: 'Compartilhar' }).click();
-  await page.waitForURL(/#d=/);
-  await page.goto(page.url()); // reabre o novo link
-  const t2 = await page.locator('.pg-status-metrics').textContent();
-  expect(t2).toBe(t1);
+  const shared = page.url();
+  // Versão no hash (#d=1.<payload>), pré-requisito para evoluir o formato.
+  expect(shared).toMatch(/#d=1\.[A-Za-z0-9_-]+$/);
+  await page.goto('about:blank');
+  await page.goto(shared);
+  await expect(page.locator('.pg-status-metrics')).toContainText('14 nós · 15 fluxos');
+  await expect(page.locator('.pg-toast')).toHaveCount(0);
 });
 
 test('diagrama grande demais → modal (sem alterar a URL)', async ({ page }) => {
@@ -68,9 +66,17 @@ test('diagrama grande demais → modal (sem alterar a URL)', async ({ page }) =>
   await expect(page.locator('.pg-modal')).toHaveCount(0);
 });
 
-test('hash inválido → toast + diagrama padrão', async ({ page }) => {
+test('payload corrompido (versão válida) → toast + diagrama padrão', async ({ page }) => {
   await disableTour(page);
-  await page.goto('/editor#d=isto-nao-e-valido');
+  // Versão 1, mas payload não é um stream deflate válido → erro no decode.
+  await page.goto('/editor#d=1.zzzzINVALIDzzzz');
+  await expect(page.locator('.pg-toast')).toBeVisible();
+  await expect(page.locator('.pg-status-metrics')).toContainText('14 nós');
+});
+
+test('versão de permalink desconhecida → toast + diagrama padrão', async ({ page }) => {
+  await disableTour(page);
+  await page.goto('/editor#d=9.qwerty');
   await expect(page.locator('.pg-toast')).toBeVisible();
   await expect(page.locator('.pg-status-metrics')).toContainText('14 nós');
 });
