@@ -1,46 +1,76 @@
 # bpmnplay
 
-Playground **offline** e autossuficiente para explorar a biblioteca
-[`danzeroum/bpmn`](https://github.com/danzeroum/bpmn) (`@bpmn-react/*`) — editor
-BPMN, simulação de tokens, replay de log e um demo de identidade/assinatura.
+Ambiente de **teste** da biblioteca [`danzeroum/bpmn`](https://github.com/danzeroum/bpmn)
+(`@bpmn-react/*`). É um app **Vite + React** que espelha o `packages/example` do `bpmn`
+e exercita **todos os módulos**: editor, simulação, replay, DMN, healthcare, domínio,
+biblioteca, studio, soundness, auditoria e identidade.
 
-Tudo (inclusive o React) está empacotado em `playground.js` + `playground.css`.
-Não precisa de `npm install`, nem de CDN, nem de import map. Só um servidor HTTP
-estático.
+A biblioteca entra como **submódulo git** em `bpmn/`. O Vite resolve cada
+`@bpmn-react/*` direto do `dist/esm` do submódulo (ver `vite.config.ts`), então
+atualizar a biblioteca é um comando só.
 
-## Como rodar
+## Primeira vez
 
-Módulos ES não funcionam via `file://`, então sirva a pasta por HTTP:
+Precisa de Node ≥ 20 e `pnpm`.
 
 ```bash
-npx serve .
-# ou:  python -m http.server 8080
+# 1. clonar JÁ com o submódulo
+git clone --recurse-submodules https://github.com/danzeroum/bpmnplay.git
+cd bpmnplay
+
+# (se você clonou sem --recurse-submodules:)
+git submodule update --init --recursive
+
+# 2. buildar a biblioteca do submódulo (gera bpmn/packages/*/dist)
+pnpm --dir bpmn install
+pnpm --dir bpmn -r run build
+
+# 3. instalar o app e rodar
+pnpm install
+pnpm dev
 ```
 
-Abra a URL indicada (ex.: `http://localhost:3000`).
+Abre em **http://localhost:5173**.
 
-## O que tem
+## Módulos / telas (parâmetros na URL)
 
-Barra superior com três modos + um botão de demo:
+O modo padrão é o editor. Troque pela query string:
 
-| Modo | Componente real | O que faz |
-|------|-----------------|-----------|
-| 📐 **Editor** | `BpmnEditor` | Editor completo: paleta (arrastar nós), toolbar (undo/redo/validar), painel de propriedades e minimapa. |
-| ▶️ **Simular** | `BpmnSimulator` | Simulação de tokens sobre um onboarding com timeout de 48h e XOR (3 caminhos). |
-| 🔄 **Replay** | `BpmnReplay` | Conformance-checking de um log sintético (traces achatados) contra o mesmo modelo. |
-| 🔒 **Assinatura/Âncora (demo)** | `@bpmn-react/identity` | Monta o payload canônico de aprovação do diagrama atual (SHA-256 real), codifica em bytes/base64 e deriva o estado da âncora. Escreve o resultado no painel de log inferior. |
+| URL | Módulo |
+|-----|--------|
+| `/` | Editor BPMN (paleta, toolbar, propriedades, minimapa) |
+| `/?drd=1` | **DMN** — DRD + editor de tabela de decisão |
+| `/?hc=1` | **Healthcare** — vocabulário clínico |
+| `/?library=1` | **Biblioteca** (catálogo) |
+| `/?studio=1` | **Studio** (Biblioteca + Revisão do Aprovador) |
+| `/?simulate=1` | **Simulação** de tokens |
+| `/?replay=1` | **Replay** / conformance-checking |
+| `/?deadlock=1` | **Soundness** (trava de deadlock) |
+| `/?closed=1` | Elementos fechados (pedigree) |
+| `/?astar=1` `/?manual=1` `/?fallback=1` `/?fanout=1` | Roteamento A\* |
+| `/?stress=350` | Grid de performance |
 
-Os diagramas de exemplo são construídos com a API real do core
-(`createDefaultRegistry` + `createDiagram` + `createNode`/`createEdge`), o mesmo
-padrão de `packages/example/src/sampleDiagram.ts`.
+## Atualizar a biblioteca para a versão mais nova do `bpmn`
 
-## Como o bundle é gerado
+```bash
+pnpm run update-lib
+```
 
-O `playground.js`/`playground.css` são produzidos a partir do repositório `bpmn`
-(a pasta `src/` aqui é o código-fonte de referência). Para regenerar:
+Isso faz `git submodule update --remote bpmn`, reinstala e rebuilda a biblioteca.
+Depois é só `pnpm dev` de novo. (Se preferir fixar numa versão específica do `bpmn`,
+entre em `bpmn/`, dê `git checkout <ref>`, rebuild, e commite o novo ponteiro do
+submódulo aqui.)
 
-1. No `bpmn`: `pnpm install && pnpm -r run build` (gera `packages/*/dist/esm`).
-2. Empacote `src/entry.tsx` com esbuild, apontando os aliases `@bpmn-react/*`
-   para os respectivos `dist/esm/index.js`, com React embutido (não-externo).
+## Estrutura
 
-O `src/` versionado aqui documenta exatamente o que o bundle faz.
+```
+bpmnplay/
+├── bpmn/               ← submódulo git (a biblioteca @bpmn-react/*)
+├── src/                ← app de teste (espelho do packages/example)
+│   ├── App.tsx, main.tsx, sampleDiagram.ts, *Panel.tsx, *Surface.tsx
+│   └── demo.css
+├── index.html
+├── vite.config.ts      ← resolve @bpmn-react/* → bpmn/packages/*/dist/esm
+├── tsconfig.json
+└── package.json
+```
