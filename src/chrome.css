@@ -1,0 +1,238 @@
+/*
+ * Chrome do playground (só do bpmnPlay — não faz parte da biblioteca).
+ * Barra de navegação superior: marca + módulos agrupados + ações de contexto.
+ * Neutros de base slate com acento índigo (distinto do azul do canvas, para a
+ * "casca" ler como uma camada própria). Tema claro e escuro via tokens.
+ */
+:root {
+  --pg-bg: #ffffff;
+  --pg-sub: #f1f5f9;
+  --pg-border: #e2e8f0;
+  --pg-text: #0f172a;
+  --pg-muted: #64748b;
+  --pg-accent: #4f46e5;
+  --pg-accent-weak: #eef2ff;
+  --pg-ring: rgba(79, 70, 229, 0.4);
+  --pg-shadow: 0 1px 0 rgba(15, 23, 42, 0.06), 0 6px 16px -12px rgba(15, 23, 42, 0.4);
+  --pg-nav-h: 52px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --pg-bg: #0b1220;
+    --pg-sub: #0f1a2e;
+    --pg-border: #24324a;
+    --pg-text: #e6edf7;
+    --pg-muted: #93a3bd;
+    --pg-accent: #a5b4fc;
+    --pg-accent-weak: #1b2743;
+    --pg-ring: rgba(129, 140, 248, 0.45);
+    --pg-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 8px 20px -12px rgba(0, 0, 0, 0.8);
+  }
+}
+:root[data-theme='light'] {
+  --pg-bg: #ffffff;
+  --pg-sub: #f1f5f9;
+  --pg-border: #e2e8f0;
+  --pg-text: #0f172a;
+  --pg-muted: #64748b;
+  --pg-accent: #4f46e5;
+  --pg-accent-weak: #eef2ff;
+  --pg-ring: rgba(79, 70, 229, 0.4);
+}
+:root[data-theme='dark'] {
+  --pg-bg: #0b1220;
+  --pg-sub: #0f1a2e;
+  --pg-border: #24324a;
+  --pg-text: #e6edf7;
+  --pg-muted: #93a3bd;
+  --pg-accent: #a5b4fc;
+  --pg-accent-weak: #1b2743;
+  --pg-ring: rgba(129, 140, 248, 0.45);
+}
+
+/* ---- Shell: nav fixa em cima, conteúdo preenche o resto ---- */
+.pg-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+.pg-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.pg-content > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* ---- Barra ---- */
+.pg-nav {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--pg-bg);
+  border-bottom: 1px solid var(--pg-border);
+  box-shadow: var(--pg-shadow);
+  color: var(--pg-text);
+}
+/* Linha 1: identidade + ações. Linha 2: navegação de módulos (largura toda). */
+.pg-nav-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+}
+
+/* Marca */
+.pg-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+.pg-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--pg-accent);
+  color: #fff;
+  font-size: 12px;
+}
+.pg-brand-name {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.pg-brand-name b {
+  color: var(--pg-accent);
+  font-weight: 650;
+}
+.pg-ver {
+  font-family: ui-monospace, 'SF Mono', 'Menlo', monospace;
+  font-size: 10.5px;
+  color: var(--pg-muted);
+  padding: 2px 6px;
+  border: 1px solid var(--pg-border);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Navegação de módulos: segunda linha, largura toda (rola só em telas bem estreitas) */
+.pg-modes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px 7px;
+  border-top: 1px solid var(--pg-border);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.pg-modes::-webkit-scrollbar {
+  height: 6px;
+}
+.pg-modes::-webkit-scrollbar-thumb {
+  background: var(--pg-border);
+  border-radius: 3px;
+}
+.pg-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 6px;
+  flex: 0 0 auto;
+}
+.pg-group + .pg-group {
+  border-left: 1px solid var(--pg-border);
+}
+.pg-group-label {
+  font-family: ui-monospace, 'SF Mono', 'Menlo', monospace;
+  font-size: 9px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--pg-muted);
+  margin-right: 4px;
+  user-select: none;
+}
+.pg-pill {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--pg-muted);
+  font: inherit;
+  font-size: 12.5px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s;
+}
+.pg-pill:hover {
+  background: var(--pg-sub);
+  color: var(--pg-text);
+}
+.pg-pill[aria-current='true'] {
+  background: var(--pg-accent-weak);
+  color: var(--pg-accent);
+  border-color: color-mix(in srgb, var(--pg-accent) 30%, transparent);
+  font-weight: 600;
+}
+
+/* Ações de contexto (só no editor) */
+.pg-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+.pg-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--pg-border);
+  background: var(--pg-bg);
+  color: var(--pg-text);
+  font: inherit;
+  font-size: 12.5px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, border-color 0.12s;
+}
+.pg-btn:hover {
+  background: var(--pg-sub);
+  border-color: var(--pg-muted);
+}
+.pg-btn-accent {
+  border-color: transparent;
+  background: var(--pg-accent);
+  color: #fff;
+}
+.pg-btn-accent:hover {
+  filter: brightness(1.06);
+  background: var(--pg-accent);
+}
+.pg-btn input[type='file'] {
+  display: none;
+}
+
+/* Foco visível e acessível em todos os controles interativos */
+.pg-pill:focus-visible,
+.pg-btn:focus-visible {
+  outline: 2px solid var(--pg-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-pill,
+  .pg-btn {
+    transition: none;
+  }
+}

@@ -1,11 +1,20 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { readdirSync, existsSync } from 'node:fs';
+import { readdirSync, existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const pkgsDir = resolve(here, 'bpmn/packages');
+
+// Versão da biblioteca (submódulo) — exibida no badge da barra de navegação.
+function bpmnLibVersion(): string {
+  try {
+    return JSON.parse(readFileSync(resolve(here, 'bpmn/package.json'), 'utf8')).version ?? '';
+  } catch {
+    return '';
+  }
+}
 
 /**
  * Resolve todos os `@bpmn-react/*` para o `dist/esm` do submódulo `bpmn/`.
@@ -44,6 +53,9 @@ function bpmnAliases() {
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    __BPMN_LIB_VERSION__: JSON.stringify(`v${bpmnLibVersion()}`),
+  },
   resolve: {
     alias: bpmnAliases(),
     // Uma única instância de React entre o app e a biblioteca.

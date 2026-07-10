@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { AuditLedger, BpmnXmlConverter, createDiagram, getEdgeChain, type BpmnDiagram } from '@bpmn-react/core';
 import {
   astarConnection,
@@ -46,7 +46,9 @@ import { LifecyclePanel } from './LifecyclePanel.js';
 import { AuditPanel } from './AuditPanel.js';
 import { LibrarySurface } from './LibrarySurface.js';
 import { StudioSurface } from './StudioSurface.js';
+import { PlaygroundNav } from './PlaygroundNav.js';
 import './demo.css';
+import './chrome.css';
 
 // Observability sink (§2): the host decides what to do with editor events —
 // here they go to the console (lead time, import warnings, slow frames are
@@ -175,46 +177,8 @@ export function App() {
   const astarMode = params.get('astar') !== null;
   // `?replay=1` enters replay mode (Handoff 7B) over the same model + a synthetic log.
   const replayMode = params.get('replay') !== null;
-  if (studioMode) return <StudioSurface />;
-  if (libraryMode) return <LibrarySurface />;
-  if (replayMode) {
-    return (
-      <BpmnReplay
-        diagram={buildSimulationDiagram()}
-        versions={REPLAY_VERSIONS}
-        candidate={{ semanticVersion: '2.1.0', change: 'boundary timer de 48h + escalation' }}
-        author="demo"
-        fileName="onboarding_prod_jun.xes"
-        plugins={PLUGINS}
-        // Handoff 7B-3: attach the comparative analysis to the candidate's
-        // promotion — a ledger entry (host injection) the Approver Review reads.
-        onAttachAnalysis={(analysis) => {
-          void replayDemoLedger.append(replayAnalysisEntry(analysis, { id: 'demo' }, 'v21'));
-        }}
-        onExit={() => {
-          window.location.search = '?simulate=1';
-        }}
-      />
-    );
-  }
-  if (simulateMode) {
-    return (
-      <BpmnSimulator
-        diagram={buildSimulationDiagram()}
-        plugins={PLUGINS}
-        author="demo"
-        // Handoff 7A-3: register the session as an auditable ledger entry (host
-        // injection). The mapper lives in adapters-bpmn; the demo appends to an
-        // in-memory ledger, which certify would turn into SACM evidence.
-        onRecord={(session) => {
-          void simulationDemoLedger.append(simulationSessionEntry(session, { id: 'demo' }));
-        }}
-        onExit={() => {
-          window.location.search = '';
-        }}
-      />
-    );
-  }
+  // Cada modo é montado como `content` no fim da função e embrulhado pela barra
+  // de navegação do playground (PlaygroundNav), que aparece em todos os modos.
 
   const replaceFromOutside = (next: BpmnDiagram) => {
     latestRef.current = next;
@@ -255,32 +219,66 @@ export function App() {
     }
   };
 
-  return (
-    <div className="demo-app">
-      <header className="demo-header">
-        <h1>bpmn-react demo</h1>
-        <span className="demo-muted">zero-dependency BPMN designer with governance</span>
-        <span className="demo-spacer" />
-        <label className="demo-import">
-          Import BPMN XML
-          <input
-            type="file"
-            accept=".xml,.bpmn"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) void importXml(file);
-              e.target.value = '';
-            }}
-          />
-        </label>
-        <button type="button" onClick={() => replaceFromOutside(buildSampleDiagram())}>
-          Reset sample
-        </button>
-        <button type="button" onClick={newBlankDiagram} title="Diagrama vazio e limpa o autosave">
-          🗑️ Novo (limpo)
-        </button>
-      </header>
+  const download = (text: string, filename: string, mime: string) => {
+    const url = URL.createObjectURL(new Blob([text], { type: mime }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  // Exporta o diagrama atual (latestRef guarda a última versão do onChange).
+  const exportXml = () => {
+    const config = resolveEditorConfig(PLUGINS);
+    const converter = new BpmnXmlConverter({ registry: config.registry, preferredTypes: config.preferredTypes });
+    download(converter.toXml(latestRef.current), `${latestRef.current.id}.bpmn`, 'application/xml');
+  };
+  const exportJson = () => {
+    download(JSON.stringify(latestRef.current, null, 2), `${latestRef.current.id}.json`, 'application/json');
+  };
 
+  // Modos "surface" (Studio/Biblioteca/Replay/Simular) trocam a tela inteira;
+  // os demais renderizam o editor. As ações do editor só aparecem nele.
+  const editorLike = !(studioMode || libraryMode || replayMode || simulateMode);
+
+  let content: ReactNode;
+  if (studioMode) {
+    content = <StudioSurface />;
+  } else if (libraryMode) {
+    content = <LibrarySurface />;
+  } else if (replayMode) {
+    content = (
+      <BpmnReplay
+        diagram={buildSimulationDiagram()}
+        versions={REPLAY_VERSIONS}
+        candidate={{ semanticVersion: '2.1.0', change: 'boundary timer de 48h + escalation' }}
+        author="demo"
+        fileName="onboarding_prod_jun.xes"
+        plugins={PLUGINS}
+        onAttachAnalysis={(analysis) => {
+          void replayDemoLedger.append(replayAnalysisEntry(analysis, { id: 'demo' }, 'v21'));
+        }}
+        onExit={() => {
+          window.location.search = '?simulate=1';
+        }}
+      />
+    );
+  } else if (simulateMode) {
+    content = (
+      <BpmnSimulator
+        diagram={buildSimulationDiagram()}
+        plugins={PLUGINS}
+        author="demo"
+        onRecord={(session) => {
+          void simulationDemoLedger.append(simulationSessionEntry(session, { id: 'demo' }));
+        }}
+        onExit={() => {
+          window.location.search = '';
+        }}
+      />
+    );
+  } else {
+    content = (
       <main className="demo-main">
         <BpmnEditor
           key={editorKey}
@@ -301,6 +299,20 @@ export function App() {
           <PedigreeSurface />
         </BpmnEditor>
       </main>
+    );
+  }
+
+  return (
+    <div className="pg-shell">
+      <PlaygroundNav
+        editorLike={editorLike}
+        onImport={(file) => void importXml(file)}
+        onExportXml={exportXml}
+        onExportJson={exportJson}
+        onNew={newBlankDiagram}
+        onReset={() => replaceFromOutside(buildSampleDiagram())}
+      />
+      <div className="pg-content">{content}</div>
     </div>
   );
 }
