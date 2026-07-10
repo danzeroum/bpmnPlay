@@ -1,0 +1,34 @@
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; color: #0f172a; }
+
+.pg-root { display: flex; flex-direction: column; height: 100%; }
+
+.pg-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 14px; background: #fff; border-bottom: 1px solid #e2e8f0; flex: 0 0 auto;
+}
+.pg-modes { display: flex; gap: 6px; }
+.pg-bar strong { font-size: 0.95rem; }
+.pg-bar > button { margin-left: auto; }
+
+.pg-btn {
+  padding: 5px 12px; border: 1px solid #e2e8f0; background: #f8fafc; color: #1e293b;
+  border-radius: 6px; font-size: 0.8rem; cursor: pointer;
+}
+.pg-btn:hover { background: #e2e8f0; }
+.pg-btn-on { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+
+/* O BpmnEditor/Simulator/Replay preenchem o palco. */
+.pg-stage { flex: 1 1 auto; position: relative; min-height: 0; background: #fafbfc; }
+.pg-stage > * { position: absolute; inset: 0; }
+
+.pg-logs {
+  flex: 0 0 132px; overflow-y: auto; background: #0f172a; color: #e2e8f0;
+  font-family: 'Courier New', monospace; font-size: 0.75rem; padding: 8px 12px;
+}
+.pg-log { padding: 1px 0; border-bottom: 1px solid #1e293b; white-space: pre-wrap; word-break: break-word; }
+.pg-log-t { color: #94a3b8; margin-right: 6px; }
+.pg-log-info { color: #cbd5e1; }
+.pg-log-success { color: #4ade80; }
+.pg-log-error { color: #f87171; }
