@@ -240,8 +240,59 @@
   place-items: center;
   border-bottom: 1px solid var(--pg-border-soft);
 }
+.pg-thumb {
+  position: relative;
+}
 .pg-thumb svg {
   max-width: 90%;
+}
+.pg-badge-new {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--pg-accent);
+  color: #fbfaf7;
+}
+
+/* Card "Contribua com um exemplo" (tracejado) */
+.pg-contrib-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 20px;
+  border-style: dashed;
+  border-width: 1.5px;
+}
+.pg-contrib-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--pg-sub);
+  color: var(--pg-accent);
+}
+.pg-contrib-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.pg-contrib-text {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--pg-muted);
+}
+.pg-contrib-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pg-accent);
 }
 .pg-gallery-card-body {
   padding: 14px 16px 16px;

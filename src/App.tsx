@@ -14,6 +14,7 @@ import { simulationSessionEntry } from '@bpmn-react/adapters-bpmn';
 import { buildSimulationDiagram } from './sampleDiagram.js';
 import { PLUGINS, simulationDemoLedger } from './plugins.js';
 import { EditorScreen, type EditorMode } from './EditorScreen.js';
+import { CommandPalette } from './CommandPalette.js';
 import { Home } from './Home.js';
 import { ReplaySurface } from './replay/ReplaySurface.js';
 import { LibrarySurface } from './LibrarySurface.js';
@@ -24,18 +25,21 @@ import './chrome.css';
 
 export function App() {
   return (
-    <LegacyGate>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/editor" element={<EditorRoute mode="editor" />} />
-        <Route path="/dmn" element={<EditorRoute mode="dmn" />} />
-        <Route path="/simulate" element={<SimulateScreen />} />
-        <Route path="/replay" element={<ReplaySurface />} />
-        <Route path="/library" element={<SurfaceScreen>{<LibrarySurface />}</SurfaceScreen>} />
-        <Route path="/studio" element={<SurfaceScreen>{<StudioSurface />}</SurfaceScreen>} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </LegacyGate>
+    <>
+      <LegacyGate>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/editor" element={<EditorRoute mode="editor" />} />
+          <Route path="/dmn" element={<EditorRoute mode="dmn" />} />
+          <Route path="/simulate" element={<SimulateScreen />} />
+          <Route path="/replay" element={<ReplaySurface />} />
+          <Route path="/library" element={<SurfaceScreen>{<LibrarySurface />}</SurfaceScreen>} />
+          <Route path="/studio" element={<SurfaceScreen>{<StudioSurface />}</SurfaceScreen>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </LegacyGate>
+      <CommandPalette />
+    </>
   );
 }
 

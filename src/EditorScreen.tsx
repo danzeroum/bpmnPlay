@@ -25,6 +25,7 @@ import { DecisionPeek, DecisionTableEditor } from '@bpmn-react/dmn';
 import {
   buildAstarDiagram,
   buildClosedDiagram,
+  buildCollaborationDiagram,
   buildDeadlockDiagram,
   buildDrdDiagram,
   buildFallbackDiagram,
@@ -78,6 +79,7 @@ type ExportRequest = { variant: 'standard' | 'camunda8'; lostNodes: number; lost
 function pickInitialDiagram(mode: EditorMode, params: URLSearchParams): BpmnDiagram {
   if (mode === 'dmn') return buildDrdDiagram();
   if (params.get('example') === 'hc') return buildHealthcareDiagram();
+  if (params.get('example') === 'collab') return buildCollaborationDiagram();
   if (params.get('dev') !== null) {
     const stress = params.get('stress');
     if (stress) return buildStressDiagram(Number(stress) || 350, Number(params.get('closed')) || 0);

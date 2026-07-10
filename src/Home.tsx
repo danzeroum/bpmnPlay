@@ -10,6 +10,7 @@ import { LangToggle } from './LangToggle.js';
 import {
   ArrowRight,
   BrandGlyph,
+  Fork,
   GitHub,
   IconAudit,
   IconDmn,
@@ -19,6 +20,7 @@ import {
   IconSimulate,
   Play,
 } from './icons.js';
+import { EXAMPLES, type Example } from './examples.js';
 import './home.css';
 
 declare const __BPMN_LIB_VERSION__: string;
@@ -122,13 +124,20 @@ export function Home() {
       <section className="pg-gallery">
         <div className="pg-gallery-head">
           <h2 className="pg-gallery-title">{t('home.gallery.title')}</h2>
-          <span className="pg-gallery-subtitle">{t('home.gallery.subtitle')}</span>
+          <span className="pg-gallery-subtitle">{t('home.gallery.subtitle2')}</span>
         </div>
         <div className="pg-gallery-grid">
-          <GalleryCard to="/editor" title={t('home.gallery.onboarding')} thumb={<ThumbOnboarding />} chips={[{ label: t('home.chip.bpmn'), kind: 'accent' }, { label: t('home.chip.governance'), kind: 'sub' }]} />
-          <GalleryCard to="/dmn" title={t('home.gallery.credit')} thumb={<ThumbCredit />} chips={[{ label: t('home.chip.dmn'), kind: 'accent' }, { label: t('home.chip.decisionTable'), kind: 'sub' }]} />
-          <GalleryCard to="/editor?example=hc" title={t('home.gallery.patient')} thumb={<ThumbPatient />} chips={[{ label: t('home.chip.healthcare'), kind: 'accent' }, { label: t('home.chip.clinical'), kind: 'sub' }]} />
-          <GalleryCard to="/editor?dev=1&deadlock=1" title={t('home.gallery.deadlock')} thumb={<ThumbDeadlock />} chips={[{ label: t('home.chip.verification'), kind: 'danger' }, { label: t('home.chip.soundness'), kind: 'sub' }]} />
+          {EXAMPLES.map((ex) => (
+            <GalleryCard key={ex.id} example={ex} />
+          ))}
+          <a className="pg-card pg-contrib-card" href={`${REPO_URL}/blob/main/CONTRIBUTING.md`} target="_blank" rel="noreferrer">
+            <span className="pg-contrib-icon">
+              <Fork size={18} />
+            </span>
+            <span className="pg-contrib-title">{t('home.gallery.contribute.title')}</span>
+            <span className="pg-contrib-text">{t('home.gallery.contribute.text')}</span>
+            <span className="pg-contrib-link">{t('home.gallery.contribute.link')}</span>
+          </a>
         </div>
       </section>
 
@@ -147,74 +156,25 @@ export function Home() {
   );
 }
 
-type Chip = { label: string; kind: 'accent' | 'sub' | 'danger' };
-function GalleryCard({ to, title, thumb, chips }: { to: string; title: string; thumb: JSX.Element; chips: Chip[] }) {
+function GalleryCard({ example }: { example: Example }) {
+  const { t } = useLang();
+  const Thumb = example.thumb;
   return (
-    <Link to={to} className="pg-card pg-gallery-card">
-      <div className="pg-thumb">{thumb}</div>
+    <Link to={example.to} className="pg-card pg-gallery-card">
+      <div className="pg-thumb">
+        <Thumb />
+        {example.isNew && <span className="pg-badge-new">{t('home.gallery.new')}</span>}
+      </div>
       <div className="pg-gallery-card-body">
-        <span className="pg-gallery-card-title">{title}</span>
+        <span className="pg-gallery-card-title">{t(example.title)}</span>
         <div className="pg-chips">
-          {chips.map((c) => (
+          {example.chips.map((c) => (
             <span key={c.label} className={`pg-chip pg-chip-${c.kind}`}>
-              {c.label}
+              {t(c.label)}
             </span>
           ))}
         </div>
       </div>
     </Link>
-  );
-}
-
-/* Thumbnails curadas (SVG estático — sem html2canvas em runtime). */
-function ThumbOnboarding() {
-  return (
-    <svg width="230" height="80" viewBox="0 0 230 80" fill="none" aria-hidden="true">
-      <circle cx="18" cy="40" r="10" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <path d="M28 40h18" stroke="#26221D" strokeWidth="1.5" />
-      <rect x="46" y="26" width="56" height="28" rx="6" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <path d="M102 40h18" stroke="#26221D" strokeWidth="1.5" />
-      <rect x="120" y="26" width="56" height="28" rx="6" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <path d="M176 40h18" stroke="#26221D" strokeWidth="1.5" />
-      <circle cx="204" cy="40" r="10" stroke="#26221D" strokeWidth="2.6" fill="#FFFFFF" />
-    </svg>
-  );
-}
-function ThumbCredit() {
-  return (
-    <svg width="230" height="80" viewBox="0 0 230 80" fill="none" aria-hidden="true">
-      <rect x="14" y="26" width="56" height="28" rx="6" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <path d="M70 40h20" stroke="#26221D" strokeWidth="1.5" />
-      <path d="M104 26 118 40 104 54 90 40l14-14Z" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <path d="M118 40h20M104 54v10h34" stroke="#26221D" strokeWidth="1.5" />
-      <rect x="138" y="26" width="56" height="28" rx="6" stroke="#0E4F5E" strokeWidth="1.5" fill="#E3EEF0" />
-      <path d="M148 34h36M148 40h36M148 46h24" stroke="#0E4F5E" strokeWidth="1.2" />
-    </svg>
-  );
-}
-function ThumbPatient() {
-  return (
-    <svg width="230" height="80" viewBox="0 0 230 80" fill="none" aria-hidden="true">
-      <circle cx="18" cy="26" r="10" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <path d="M28 26h18" stroke="#26221D" strokeWidth="1.5" />
-      <rect x="46" y="12" width="56" height="28" rx="6" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <rect x="46" y="48" width="56" height="28" rx="6" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <path d="M102 26h30v36h-30M74 40v8" stroke="#26221D" strokeWidth="1.5" />
-      <rect x="132" y="48" width="56" height="28" rx="6" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <path d="M188 62h16" stroke="#26221D" strokeWidth="1.5" />
-      <circle cx="212" cy="62" r="8" stroke="#26221D" strokeWidth="2.4" fill="#FFFFFF" />
-    </svg>
-  );
-}
-function ThumbDeadlock() {
-  return (
-    <svg width="230" height="80" viewBox="0 0 230 80" fill="none" aria-hidden="true">
-      <path d="M40 26 54 40 40 54 26 40l14-14Z" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <path d="M54 40h26M40 54v12h40" stroke="#26221D" strokeWidth="1.5" />
-      <rect x="80" y="26" width="56" height="28" rx="6" stroke="#26221D" strokeWidth="1.5" fill="#FFFFFF" />
-      <path d="M136 40h24M120 66h40v-8" stroke="#26221D" strokeWidth="1.5" />
-      <path d="M174 26 188 40 174 54 160 40l14-14Z" stroke="#B3372F" strokeWidth="1.5" fill="#FBEAE8" />
-      <path d="M170 36l8 8M178 36l-8 8" stroke="#B3372F" strokeWidth="1.5" />
-    </svg>
   );
 }

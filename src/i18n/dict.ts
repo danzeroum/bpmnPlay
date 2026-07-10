@@ -72,10 +72,24 @@ export const DICT = {
     pt: 'processos prontos para abrir, simular e adaptar',
     en: 'processes ready to open, simulate and adapt',
   },
+  'home.gallery.subtitle2': {
+    pt: 'mantidos no repositório — a comunidade contribui por pull request',
+    en: 'maintained in the repository — the community contributes via pull request',
+  },
   'home.gallery.onboarding': { pt: 'Onboarding de clientes', en: 'Customer onboarding' },
   'home.gallery.credit': { pt: 'Análise de crédito', en: 'Credit analysis' },
   'home.gallery.patient': { pt: 'Jornada do paciente', en: 'Patient journey' },
   'home.gallery.deadlock': { pt: 'Compras — trava de deadlock', en: 'Procurement — deadlock trap' },
+  'home.gallery.collaboration': { pt: 'Colaboração — pedido & fornecedor', en: 'Collaboration — order & supplier' },
+  'home.gallery.new': { pt: 'NOVO', en: 'NEW' },
+  'home.gallery.contribute.title': { pt: 'Contribua com um exemplo', en: 'Contribute an example' },
+  'home.gallery.contribute.text': {
+    pt: 'Os exemplos vivem na pasta examples/ do repositório. Abra um pull request.',
+    en: 'Examples live in the repository’s examples/ folder. Open a pull request.',
+  },
+  'home.gallery.contribute.link': { pt: 'Guia de contribuição →', en: 'Contribution guide →' },
+  'home.chip.pools': { pt: 'Pools', en: 'Pools' },
+  'home.chip.messageFlows': { pt: 'Fluxos de mensagem', en: 'Message flows' },
   'home.chip.bpmn': { pt: 'BPMN', en: 'BPMN' },
   'home.chip.governance': { pt: 'Governança', en: 'Governance' },
   'home.chip.dmn': { pt: 'DMN', en: 'DMN' },
@@ -269,6 +283,21 @@ export const DICT = {
   },
   'csv.cancel': { pt: 'Cancelar', en: 'Cancel' },
   'csv.process': { pt: 'Processar log →', en: 'Process log →' },
+
+  // Cmd+K (2c)
+  'cmdk.placeholder': { pt: 'Buscar exemplos, ações, telas…', en: 'Search examples, actions, screens…' },
+  'cmdk.group.recent': { pt: 'RECENTES', en: 'RECENT' },
+  'cmdk.group.examples': { pt: 'EXEMPLOS', en: 'EXAMPLES' },
+  'cmdk.group.actions': { pt: 'AÇÕES', en: 'ACTIONS' },
+  'cmdk.group.goto': { pt: 'IR PARA', en: 'GO TO' },
+  'cmdk.empty': { pt: 'Nada encontrado', en: 'Nothing found' },
+  'cmdk.open': { pt: 'abrir', en: 'open' },
+  'cmdk.footer.nav': { pt: 'navegar', en: 'navigate' },
+  'cmdk.footer.open': { pt: 'abrir', en: 'open' },
+  'cmdk.footer.hint': { pt: 'busca aproximada · atalho', en: 'fuzzy search · shortcut' },
+  'cmd.goto.home': { pt: 'Início', en: 'Home' },
+  'cmd.action.lang': { pt: 'Alternar idioma (PT/EN)', en: 'Toggle language (PT/EN)' },
+  'cmd.action.tour': { pt: 'Refazer o tour guiado', en: 'Replay the guided tour' },
 } as const;
 
 export type DictKey = keyof typeof DICT;
