@@ -238,6 +238,17 @@ export const DICT = {
   },
   'replay.exit': { pt: '← Simulador', en: '← Simulator' },
 
+  // Visões do replay (3b)
+  'view.gargalos': { pt: 'Gargalos', en: 'Bottlenecks' },
+  'view.frequencia': { pt: 'Frequência', en: 'Frequency' },
+  'view.desvios': { pt: 'Desvios', en: 'Deviations' },
+  'replay.legend.thick': { pt: 'frequência (espessura)', en: 'frequency (thickness)' },
+  'replay.legend.dash': { pt: 'desvio do modelo', en: 'model deviation' },
+  'replay.legend.chip': { pt: 'tempo médio', en: 'average time' },
+  'replay.freq.title': { pt: 'Casos por caminho', en: 'Cases per path' },
+  'replay.freq.common': { pt: 'caminho mais comum', en: 'most common path' },
+  'replay.freq.variants': { pt: 'variantes', en: 'variants' },
+
   // Modal de mapeamento CSV (3a)
   'csv.title': { pt: 'Mapear colunas do CSV', en: 'Map CSV columns' },
   'csv.rows': { pt: 'linhas', en: 'rows' },

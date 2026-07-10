@@ -12,7 +12,7 @@
 import { useMemo, useRef, useState, type DragEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ungzip } from 'pako';
-import { BpmnReplay, type ReplayVersion } from '@bpmn-react/react';
+import type { ReplayVersion } from '@bpmn-react/react';
 import { replayAnalysisEntry } from '@bpmn-react/adapters-bpmn';
 import type { Trace } from '@bpmn-react/replay';
 import { PLUGINS, replayDemoLedger } from '../plugins.js';
@@ -20,6 +20,7 @@ import { buildReplayTraces, buildSimulationDiagram } from '../sampleDiagram.js';
 import { PlaygroundNav } from '../PlaygroundNav.js';
 import { useLang } from '../i18n/index.js';
 import { Doc } from '../icons.js';
+import { ReplayCanvas } from './ReplayCanvas.js';
 import { useLogParser } from './useLogParser.js';
 import { CsvMappingModal } from './CsvMappingModal.js';
 import { fmtInt, logPeriod } from './parsePreview.js';
@@ -111,7 +112,7 @@ export function ReplaySurface() {
       <PlaygroundNav />
       <div className="pg-content">
         <div className="pg-replay">
-          <BpmnReplay
+          <ReplayCanvas
             key={eventLog ? `up-${logKey}` : 'sample'}
             diagram={diagram}
             versions={versions}
