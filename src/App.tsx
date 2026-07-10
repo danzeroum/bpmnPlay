@@ -47,6 +47,7 @@ import { AuditPanel } from './AuditPanel.js';
 import { LibrarySurface } from './LibrarySurface.js';
 import { StudioSurface } from './StudioSurface.js';
 import { PlaygroundNav } from './PlaygroundNav.js';
+import { PanHint } from './PanHint.js';
 import './demo.css';
 import './chrome.css';
 
@@ -160,6 +161,9 @@ export function App() {
     return buildSampleDiagram();
   });
   const [editorKey, setEditorKey] = useState(0);
+  // Painéis de demo (Governança + Ledger) começam OCULTOS — poluíam o canvas e
+  // são difíceis de entender à primeira vista. Ligam pelo toggle na barra.
+  const [showGovernance, setShowGovernance] = useState(false);
   const latestRef = useRef(diagram);
   // `?drd=1` shows the decision's own surface; `?decision=<ref>` opens its
   // table straight away (deep link used by "abrir →"/"editar tabela →").
@@ -288,7 +292,7 @@ export function App() {
             latestRef.current = next;
           }}
         >
-          <SidePanels />
+          {showGovernance && <SidePanels />}
           {!drdMode && (
             <DecisionPeek
               resolveDecision={(ref) => DEMO_DECISIONS.find((d) => d.ref === ref)}
@@ -298,6 +302,7 @@ export function App() {
           {drdMode && <DrdTableSurface initialDecisionId={decisionParam} />}
           <PedigreeSurface />
         </BpmnEditor>
+        <PanHint />
       </main>
     );
   }
@@ -306,6 +311,8 @@ export function App() {
     <div className="pg-shell">
       <PlaygroundNav
         editorLike={editorLike}
+        showGovernance={showGovernance}
+        onToggleGovernance={() => setShowGovernance((v) => !v)}
         onImport={(file) => void importXml(file)}
         onExportXml={exportXml}
         onExportJson={exportJson}

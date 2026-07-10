@@ -40,6 +40,8 @@ declare const __BPMN_LIB_VERSION__: string;
 export interface PlaygroundNavProps {
   /** Só mostra ações do editor nos modos que têm canvas editável. */
   editorLike: boolean;
+  showGovernance: boolean;
+  onToggleGovernance: () => void;
   onImport: (file: File) => void;
   onExportXml: () => void;
   onExportJson: () => void;
@@ -47,7 +49,16 @@ export interface PlaygroundNavProps {
   onReset: () => void;
 }
 
-export function PlaygroundNav({ editorLike, onImport, onExportXml, onExportJson, onNew, onReset }: PlaygroundNavProps) {
+export function PlaygroundNav({
+  editorLike,
+  showGovernance,
+  onToggleGovernance,
+  onImport,
+  onExportXml,
+  onExportJson,
+  onNew,
+  onReset,
+}: PlaygroundNavProps) {
   const current = window.location.search;
   const go = (search: string) => {
     if (search !== current) window.location.search = search;
@@ -67,6 +78,21 @@ export function PlaygroundNav({ editorLike, onImport, onExportXml, onExportJson,
             bpmn-react {typeof __BPMN_LIB_VERSION__ === 'string' ? __BPMN_LIB_VERSION__ : ''}
           </span>
         </div>
+
+        {editorLike && (
+          <div className="pg-view">
+            <span className="pg-view-label">Painéis</span>
+            <button
+              type="button"
+              className="pg-toggle"
+              aria-pressed={showGovernance}
+              onClick={onToggleGovernance}
+              title="Mostrar/ocultar os painéis de Governança e Ledger de auditoria (demo)"
+            >
+              Governança
+            </button>
+          </div>
+        )}
 
         {editorLike && (
           <div className="pg-actions">

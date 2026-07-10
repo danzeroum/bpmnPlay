@@ -182,6 +182,95 @@
   font-weight: 600;
 }
 
+/* Toggles de visualização (ligar/desligar painéis) na linha 1 */
+.pg-view {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 14px;
+  margin-left: 6px;
+  border-left: 1px solid var(--pg-border);
+}
+.pg-view-label {
+  font-family: ui-monospace, 'SF Mono', 'Menlo', monospace;
+  font-size: 9px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--pg-muted);
+}
+.pg-toggle {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--pg-border);
+  background: var(--pg-bg);
+  color: var(--pg-muted);
+  font: inherit;
+  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.pg-toggle::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pg-border);
+}
+.pg-toggle[aria-pressed='true'] {
+  color: var(--pg-accent);
+  border-color: color-mix(in srgb, var(--pg-accent) 35%, transparent);
+  background: var(--pg-accent-weak);
+}
+.pg-toggle[aria-pressed='true']::before {
+  background: var(--pg-accent);
+}
+
+/* Dica de navegação (dispensável) */
+.pg-hint {
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px 7px 14px;
+  background: var(--pg-bg);
+  border: 1px solid var(--pg-border);
+  border-radius: 999px;
+  box-shadow: var(--pg-shadow);
+  color: var(--pg-text);
+  font-family: system-ui, sans-serif;
+  font-size: 12.5px;
+}
+.pg-hint kbd {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  background: var(--pg-sub);
+  border: 1px solid var(--pg-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+.pg-hint-close {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--pg-muted);
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.pg-hint-close:hover {
+  background: var(--pg-sub);
+  color: var(--pg-text);
+}
+
 /* Ações de contexto (só no editor) */
 .pg-actions {
   display: flex;
@@ -225,7 +314,9 @@
 
 /* Foco visível e acessível em todos os controles interativos */
 .pg-pill:focus-visible,
-.pg-btn:focus-visible {
+.pg-btn:focus-visible,
+.pg-toggle:focus-visible,
+.pg-hint-close:focus-visible {
   outline: 2px solid var(--pg-ring);
   outline-offset: 2px;
 }
