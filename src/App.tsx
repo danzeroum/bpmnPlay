@@ -48,6 +48,7 @@ import { LibrarySurface } from './LibrarySurface.js';
 import { StudioSurface } from './StudioSurface.js';
 import { PlaygroundNav } from './PlaygroundNav.js';
 import { PanHint } from './PanHint.js';
+import { ModelInspector } from './ModelInspector.js';
 import './demo.css';
 import './chrome.css';
 
@@ -164,6 +165,7 @@ export function App() {
   // Painéis de demo (Governança + Ledger) começam OCULTOS — poluíam o canvas e
   // são difíceis de entender à primeira vista. Ligam pelo toggle na barra.
   const [showGovernance, setShowGovernance] = useState(false);
+  const [showInspector, setShowInspector] = useState(false);
   const latestRef = useRef(diagram);
   // `?drd=1` shows the decision's own surface; `?decision=<ref>` opens its
   // table straight away (deep link used by "abrir →"/"editar tabela →").
@@ -301,6 +303,7 @@ export function App() {
           )}
           {drdMode && <DrdTableSurface initialDecisionId={decisionParam} />}
           <PedigreeSurface />
+          {showInspector && <ModelInspector onClose={() => setShowInspector(false)} />}
         </BpmnEditor>
         <PanHint />
       </main>
@@ -313,6 +316,8 @@ export function App() {
         editorLike={editorLike}
         showGovernance={showGovernance}
         onToggleGovernance={() => setShowGovernance((v) => !v)}
+        showInspector={showInspector}
+        onToggleInspector={() => setShowInspector((v) => !v)}
         onImport={(file) => void importXml(file)}
         onExportXml={exportXml}
         onExportJson={exportJson}

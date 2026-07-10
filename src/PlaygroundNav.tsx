@@ -42,6 +42,8 @@ export interface PlaygroundNavProps {
   editorLike: boolean;
   showGovernance: boolean;
   onToggleGovernance: () => void;
+  showInspector: boolean;
+  onToggleInspector: () => void;
   onImport: (file: File) => void;
   onExportXml: () => void;
   onExportJson: () => void;
@@ -53,6 +55,8 @@ export function PlaygroundNav({
   editorLike,
   showGovernance,
   onToggleGovernance,
+  showInspector,
+  onToggleInspector,
   onImport,
   onExportXml,
   onExportJson,
@@ -90,6 +94,15 @@ export function PlaygroundNav({
               title="Mostrar/ocultar os painéis de Governança e Ledger de auditoria (demo)"
             >
               Governança
+            </button>
+            <button
+              type="button"
+              className="pg-toggle"
+              aria-pressed={showInspector}
+              onClick={onToggleInspector}
+              title="Mostrar/ocultar o inspetor do modelo (JSON ao vivo do diagrama)"
+            >
+              Inspetor
             </button>
           </div>
         )}
