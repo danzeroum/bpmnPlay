@@ -1,167 +1,241 @@
 /**
- * Barra de navegação do playground (só do bpmnPlay).
+ * Nav de uma linha do playground (tela 1b da casca nova).
+ * Marca · tabs de módulos (roteadas) · menus Arquivo/Exibir · "Novo processo" ·
+ * botão "?" (atalhos do canvas + refazer tour + idioma).
  *
- * A navegação entre módulos é por URL — é como o App.tsx decide o que mostrar
- * (?drd=1, ?studio=1, ...). As ações do editor (importar/exportar/novo/reset)
- * chegam por props porque dependem do estado interno do App.
+ * A navegação entre módulos é por rota (React Router). As ações do editor
+ * chegam por props porque dependem do estado interno da tela do editor.
  */
-
-/** Grupos = a taxonomia real dos módulos da biblioteca. */
-const GROUPS: { label: string; items: { label: string; search: string }[] }[] = [
-  { label: 'Modelar', items: [{ label: 'Editor', search: '' }] },
-  {
-    label: 'Domínios',
-    items: [
-      { label: 'DMN', search: '?drd=1' },
-      { label: 'Healthcare', search: '?hc=1' },
-    ],
-  },
-  {
-    label: 'Análise',
-    items: [
-      { label: 'Simular', search: '?simulate=1' },
-      { label: 'Replay', search: '?replay=1' },
-    ],
-  },
-  {
-    label: 'Governança',
-    items: [
-      { label: 'Studio', search: '?studio=1' },
-      { label: 'Biblioteca', search: '?library=1' },
-      { label: 'Soundness', search: '?deadlock=1' },
-      { label: 'Fechados', search: '?closed=1' },
-    ],
-  },
-  { label: 'Rotas', items: [{ label: 'A*', search: '?astar=1' }] },
-];
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useLang } from './i18n/index.js';
+import { LangToggle } from './LangToggle.js';
+import { BrandGlyph, Check, ChevronDown, Plus } from './icons.js';
 
 declare const __BPMN_LIB_VERSION__: string;
 
-export interface PlaygroundNavProps {
-  /** Só mostra ações do editor nos modos que têm canvas editável. */
-  editorLike: boolean;
+const TABS: { key: 'nav.tab.editor' | 'nav.tab.dmn' | 'nav.tab.simulate' | 'nav.tab.replay' | 'nav.tab.library' | 'nav.tab.studio'; path: string }[] = [
+  { key: 'nav.tab.editor', path: '/editor' },
+  { key: 'nav.tab.dmn', path: '/dmn' },
+  { key: 'nav.tab.simulate', path: '/simulate' },
+  { key: 'nav.tab.replay', path: '/replay' },
+  { key: 'nav.tab.library', path: '/library' },
+  { key: 'nav.tab.studio', path: '/studio' },
+];
+
+export interface EditorActions {
   showGovernance: boolean;
   onToggleGovernance: () => void;
   showInspector: boolean;
   onToggleInspector: () => void;
+  /** Inspetor do modelo só aparece em ?dev=1. */
+  inspectorAvailable: boolean;
   onImport: (file: File) => void;
   onExportXml: () => void;
   onExportJson: () => void;
   onNew: () => void;
-  onReset: () => void;
+  onRestore: () => void;
 }
 
-export function PlaygroundNav({
-  editorLike,
-  showGovernance,
-  onToggleGovernance,
-  showInspector,
-  onToggleInspector,
-  onImport,
-  onExportXml,
-  onExportJson,
-  onNew,
-  onReset,
-}: PlaygroundNavProps) {
-  const current = window.location.search;
-  const go = (search: string) => {
-    if (search !== current) window.location.search = search;
-  };
+export interface PlaygroundNavProps {
+  editorActions?: EditorActions;
+  /** Reabre o tour guiado (só no editor). */
+  onStartTour?: () => void;
+}
+
+/** Popover simples com fecho por clique fora / Esc. */
+function NavMenu({ label, children, minWidth }: { label: ReactNode; children: (close: () => void) => ReactNode; minWidth?: number }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+  return (
+    <div className="pg-menu" ref={ref}>
+      {typeof label === 'string' ? (
+        <button type="button" className="pg-btn" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+          {label}
+          <ChevronDown />
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="pg-btn pg-btn-icon"
+          aria-haspopup="menu"
+          aria-expanded={open}
+          aria-label="Ajuda"
+          onClick={() => setOpen((v) => !v)}
+        >
+          {label}
+        </button>
+      )}
+      {open && (
+        <div className="pg-menu-pop" role="menu" style={minWidth ? { minWidth } : undefined}>
+          {children(() => setOpen(false))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function PlaygroundNav({ editorActions, onStartTour }: PlaygroundNavProps) {
+  const { t } = useLang();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const ver = typeof __BPMN_LIB_VERSION__ === 'string' ? __BPMN_LIB_VERSION__ : '';
 
   return (
     <nav className="pg-nav" aria-label="Navegação do playground">
-      <div className="pg-nav-top">
-        <div className="pg-brand">
-          <span className="pg-brand-mark" aria-hidden="true">
-            ▸
-          </span>
-          <span className="pg-brand-name">
-            bpmn<b>Play</b>
-          </span>
-          <span className="pg-ver" title="Versão da biblioteca bpmn-react (submódulo)">
-            bpmn-react {typeof __BPMN_LIB_VERSION__ === 'string' ? __BPMN_LIB_VERSION__ : ''}
-          </span>
-        </div>
+      <div className="pg-brand">
+        <span className="pg-brand-mark" aria-hidden="true">
+          <BrandGlyph size={13} />
+        </span>
+        <span className="pg-brand-name">{t('brand.name')}</span>
+      </div>
 
-        {editorLike && (
-          <div className="pg-view">
-            <span className="pg-view-label">Painéis</span>
+      <div className="pg-tabs" role="tablist" aria-label="Módulos">
+        {TABS.map((tab) => {
+          const active = pathname === tab.path;
+          return (
             <button
+              key={tab.path}
               type="button"
-              className="pg-toggle"
-              aria-pressed={showGovernance}
-              onClick={onToggleGovernance}
-              title="Mostrar/ocultar os painéis de Governança e Ledger de auditoria (demo)"
+              role="tab"
+              aria-current={active}
+              aria-selected={active}
+              className="pg-tab"
+              onClick={() => navigate(tab.path)}
             >
-              Governança
+              {t(tab.key)}
             </button>
-            <button
-              type="button"
-              className="pg-toggle"
-              aria-pressed={showInspector}
-              onClick={onToggleInspector}
-              title="Mostrar/ocultar o inspetor do modelo (JSON ao vivo do diagrama)"
-            >
-              Inspetor
-            </button>
-          </div>
-        )}
+          );
+        })}
+      </div>
 
-        {editorLike && (
-          <div className="pg-actions">
-            <label className="pg-btn" title="Importar BPMN XML">
-              ⬆ Importar
-              <input
-                type="file"
-                accept=".xml,.bpmn"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) onImport(file);
-                  e.target.value = '';
-                }}
-              />
-            </label>
-            <button type="button" className="pg-btn" onClick={onExportXml} title="Baixar como BPMN XML">
-              ⬇ XML
-            </button>
-            <button type="button" className="pg-btn" onClick={onExportJson} title="Baixar o modelo como JSON">
-              ⬇ JSON
-            </button>
-            <button type="button" className="pg-btn" onClick={onReset} title="Recarregar o diagrama de exemplo">
-              ↺ Exemplo
-            </button>
+      <div className="pg-nav-actions">
+        {editorActions && (
+          <>
+            <NavMenu label={t('nav.file')}>
+              {(close) => <FileMenu actions={editorActions} close={close} />}
+            </NavMenu>
+            <NavMenu label={t('nav.view')} minWidth={240}>
+              {() => <ViewMenu actions={editorActions} />}
+            </NavMenu>
             <button
               type="button"
               className="pg-btn pg-btn-accent"
-              onClick={onNew}
-              title="Diagrama vazio e limpa o autosave"
+              onClick={editorActions.onNew}
+              title={t('nav.new')}
             >
-              ✚ Novo
+              <Plus />
+              {t('nav.new')}
             </button>
-          </div>
+          </>
         )}
-      </div>
-
-      <div className="pg-modes" role="tablist" aria-label="Módulos">
-        {GROUPS.map((group) => (
-          <div className="pg-group" key={group.label}>
-            <span className="pg-group-label">{group.label}</span>
-            {group.items.map((item) => (
-              <button
-                key={item.label}
-                type="button"
-                role="tab"
-                aria-current={item.search === current}
-                aria-selected={item.search === current}
-                className="pg-pill"
-                onClick={() => go(item.search)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        ))}
+        <NavMenu label={<span aria-hidden="true">?</span>} minWidth={260}>
+          {() => <HelpMenu onStartTour={onStartTour} />}
+        </NavMenu>
       </div>
     </nav>
+  );
+}
+
+function FileMenu({ actions, close }: { actions: EditorActions; close: () => void }) {
+  const { t } = useLang();
+  return (
+    <>
+      <button type="button" className="pg-menu-item" role="menuitem" onClick={() => { actions.onNew(); close(); }}>
+        {t('file.new')}
+        <span className="pg-menu-shortcut">⌘N</span>
+      </button>
+      <button type="button" className="pg-menu-item" role="menuitem" onClick={() => { actions.onRestore(); close(); }}>
+        {t('file.restore')}
+      </button>
+      <label className="pg-menu-item" role="menuitem">
+        {t('file.import')}
+        <span className="pg-menu-shortcut">⌘O</span>
+        <input
+          type="file"
+          accept=".xml,.bpmn"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) actions.onImport(file);
+            e.target.value = '';
+            close();
+          }}
+        />
+      </label>
+      <div className="pg-menu-sep" />
+      <div className="pg-menu-label">{t('file.export')}</div>
+      <button type="button" className="pg-menu-item" role="menuitem" onClick={() => { actions.onExportXml(); close(); }}>
+        {t('file.exportBpmn')}
+        <span className="pg-menu-shortcut">⌘E</span>
+      </button>
+      <button type="button" className="pg-menu-item" role="menuitem" onClick={() => { actions.onExportJson(); close(); }}>
+        {t('file.exportJson')}
+      </button>
+    </>
+  );
+}
+
+function ViewMenu({ actions }: { actions: EditorActions }) {
+  const { t } = useLang();
+  return (
+    <>
+      <button
+        type="button"
+        className="pg-menu-item"
+        role="menuitemcheckbox"
+        aria-checked={actions.showGovernance}
+        onClick={actions.onToggleGovernance}
+      >
+        {t('view.governance')}
+        {actions.showGovernance && <Check size={14} className="pg-menu-check" />}
+      </button>
+      {actions.inspectorAvailable && (
+        <button
+          type="button"
+          className="pg-menu-item"
+          role="menuitemcheckbox"
+          aria-checked={actions.showInspector}
+          onClick={actions.onToggleInspector}
+        >
+          {t('view.inspector')}
+          {actions.showInspector && <Check size={14} className="pg-menu-check" />}
+        </button>
+      )}
+    </>
+  );
+}
+
+function HelpMenu({ onStartTour }: { onStartTour?: () => void }) {
+  const { t } = useLang();
+  return (
+    <div className="pg-menu-pop-help">
+      <div className="pg-menu-label">{t('help.title')}</div>
+      <p className="pg-help-shortcuts">{t('help.pan')}</p>
+      {onStartTour && (
+        <button type="button" className="pg-menu-item" role="menuitem" onClick={onStartTour}>
+          {t('help.redoTour')}
+        </button>
+      )}
+      <div className="pg-menu-sep" />
+      <div className="pg-menu-label">{t('lang.label')}</div>
+      <div style={{ padding: '4px 10px 8px' }}>
+        <LangToggle />
+      </div>
+    </div>
   );
 }

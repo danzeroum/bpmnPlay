@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <!--
+      SPA fallback para hosts estáticos sem rewrite (ex.: GitHub Pages).
+      Rotas como /editor dariam 404; guardamos o path e redirecionamos para a
+      raiz, onde o index.html o restaura via history.replaceState.
+    -->
+    <script>
+      sessionStorage.redirect = location.href;
+    </script>
+    <meta http-equiv="refresh" content="0;URL='/'" />
+  </head>
+  <body></body>
+</html>

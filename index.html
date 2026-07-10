@@ -3,7 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bpmnPlay — teste da biblioteca bpmn-react</title>
+    <title>Estúdio BPMN — playground bpmn-react</title>
+    <!-- SPA fallback (hosts estáticos sem rewrite, ex.: GitHub Pages): restaura
+         o path preservado pelo public/404.html. Ver README (Deploy). -->
+    <script>
+      (function () {
+        try {
+          var r = sessionStorage.redirect;
+          delete sessionStorage.redirect;
+          if (r && r !== location.href) history.replaceState(null, null, r);
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
+    <!-- Marca: quadrado accent + glifo de nós conectados -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230E4F5E'/%3E%3Cg stroke='%23FBFAF7' stroke-width='1.6' fill='none'%3E%3Ccircle cx='9' cy='16' r='2.4'/%3E%3Crect x='18' y='6' width='9' height='7' rx='1.5'/%3E%3Crect x='18' y='19' width='9' height='7' rx='1.5'/%3E%3Cpath d='M11.4 16H15M15 16V9.5H18M15 16V22.5H18'/%3E%3C/g%3E%3C/svg%3E"
+    />
+    <!-- IBM Plex Sans / Mono (Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       html,
       body,

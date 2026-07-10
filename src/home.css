@@ -1,0 +1,313 @@
+/*
+ * Home (tela 1a) — só do playground. Papel + petróleo, IBM Plex, hero
+ * pontilhado, grid de módulos, galeria. Rola verticalmente.
+ */
+.pg-home {
+  height: 100%;
+  overflow-y: auto;
+  background: var(--pg-bg);
+  color: var(--pg-text);
+  font-family: var(--pg-font-sans);
+}
+
+/* topbar */
+.pg-home-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 58px;
+  padding: 0 28px;
+  background: var(--pg-surface);
+  border-bottom: 1px solid var(--pg-border);
+}
+.pg-home-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pg-home-brand .pg-brand-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+}
+.pg-home-brand-name {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.pg-home-ver {
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  color: var(--pg-muted);
+}
+.pg-home-top-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.pg-home-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pg-text);
+  text-decoration: none;
+}
+.pg-home-github:hover {
+  color: var(--pg-accent);
+}
+
+/* hero */
+.pg-hero {
+  padding: 76px 28px 56px;
+  text-align: center;
+  background-image: radial-gradient(circle, var(--pg-dots) 1px, transparent 1px);
+  background-size: 26px 26px;
+  background-position: 13px 13px;
+}
+.pg-hero-inner {
+  max-width: 780px;
+  margin: 0 auto;
+}
+.pg-hero-overline {
+  margin: 0 0 18px;
+  font-family: var(--pg-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: var(--pg-accent);
+  font-weight: 500;
+}
+.pg-hero-title {
+  margin: 0 0 20px;
+  font-size: 46px;
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+.pg-hero-lead {
+  margin: 0 auto 32px;
+  max-width: 620px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--pg-muted);
+  text-wrap: pretty;
+}
+.pg-hero-cta {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pg-hero-primary {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  background: var(--pg-accent);
+  color: #fbfaf7;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  box-shadow: var(--pg-shadow-primary);
+  transition: background 0.12s;
+}
+.pg-hero-primary:hover {
+  background: var(--pg-accent-hover);
+}
+.pg-hero-outline {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  color: var(--pg-text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+.pg-hero-outline:hover {
+  border-color: var(--pg-accent);
+  color: var(--pg-accent);
+}
+
+/* módulos */
+.pg-modules {
+  padding: 40px 48px 8px;
+}
+.pg-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+.pg-module-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pg-module-group-label {
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--pg-muted);
+}
+
+/* cards (módulos e galeria compartilham hover) */
+.pg-card {
+  display: block;
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  border-radius: var(--pg-r-card);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.pg-card:hover {
+  border-color: var(--pg-accent);
+  box-shadow: var(--pg-shadow-hover);
+}
+.pg-module-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pg-module-icon {
+  color: var(--pg-accent);
+  height: 22px;
+}
+.pg-module-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+.pg-module-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--pg-muted);
+}
+.pg-module-open {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pg-accent);
+}
+
+/* galeria */
+.pg-gallery {
+  padding: 44px 48px 48px;
+}
+.pg-gallery-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.pg-gallery-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+.pg-gallery-subtitle {
+  font-size: 13px;
+  color: var(--pg-muted);
+}
+.pg-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.pg-gallery-card {
+  overflow: hidden;
+}
+.pg-thumb {
+  height: 130px;
+  background: var(--pg-bg);
+  background-image: radial-gradient(circle, var(--pg-border) 1px, transparent 1px);
+  background-size: 18px 18px;
+  display: grid;
+  place-items: center;
+  border-bottom: 1px solid var(--pg-border-soft);
+}
+.pg-thumb svg {
+  max-width: 90%;
+}
+.pg-gallery-card-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pg-gallery-card-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.pg-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pg-chip {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.pg-chip-accent {
+  background: var(--pg-accent-weak);
+  color: var(--pg-accent);
+}
+.pg-chip-sub {
+  background: var(--pg-sub);
+  color: var(--pg-muted);
+}
+.pg-chip-danger {
+  background: var(--pg-danger-weak);
+  color: var(--pg-danger);
+}
+
+/* footer */
+.pg-home-footer {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 48px;
+  border-top: 1px solid var(--pg-border);
+  background: var(--pg-surface);
+  font-size: 13px;
+  color: var(--pg-muted);
+  flex-wrap: wrap;
+}
+.pg-home-footer a {
+  font-weight: 500;
+  color: var(--pg-text);
+  text-decoration: none;
+}
+.pg-home-footer a:hover {
+  color: var(--pg-accent);
+}
+.pg-home-footer-dev {
+  margin-left: auto;
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+}
+
+@media (max-width: 900px) {
+  .pg-modules-grid {
+    grid-template-columns: 1fr;
+  }
+  .pg-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
