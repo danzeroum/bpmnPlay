@@ -1,0 +1,15 @@
+order_ref,step_name,completed_at,agent
+PED-04121,Novo cliente,2026-06-02 08:00,ana.s
+PED-04121,Coletar briefing,2026-06-02 09:14,ana.s
+PED-04121,Aprovar briefing,2026-06-02 15:00,sistema
+PED-04121,Gerar plano,2026-06-03 22:00,sistema
+PED-04121,Plano publicado,2026-06-03 22:01,sistema
+PED-04122,Novo cliente,2026-06-03 08:00,bruno.l
+PED-04122,Coletar briefing,2026-06-03 10:30,bruno.l
+PED-04122,Aprovar briefing,2026-06-03 16:00,sistema
+PED-04122,Revisar briefing,2026-06-03 18:00,carla.m
+PED-04122,Rejeitado,2026-06-03 18:05,carla.m
+PED-04123,Novo cliente,2026-06-04 09:00,ana.s
+PED-04123,Coletar briefing,2026-06-04 11:00,ana.s
+PED-04123,Gerar plano,2026-06-05 20:00,sistema
+PED-04123,Plano publicado,2026-06-05 20:02,sistema

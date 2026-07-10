@@ -38,6 +38,11 @@ export interface EditorActions {
   onRestore: () => void;
   /** Serializa o diagrama atual num permalink (não muda a URL — quem chama decide). */
   buildPermalink: () => { url: string; payload: string; length: number };
+  /** Export Camunda 8 (BPMN 2.0 padrão) — só quando a feature-flag está ligada. */
+  onExportCamunda8: () => void;
+  camunda8Available: boolean;
+  /** Exporta a trilha de auditoria (ledger encadeado) como CSV. */
+  onExportAuditCsv: () => void;
 }
 
 export interface PlaygroundNavProps {
@@ -189,6 +194,16 @@ function FileMenu({ actions, close }: { actions: EditorActions; close: () => voi
       </button>
       <button type="button" className="pg-menu-item" role="menuitem" onClick={() => { actions.onExportJson(); close(); }}>
         {t('file.exportJson')}
+      </button>
+      {actions.camunda8Available && (
+        <button type="button" className="pg-menu-item" role="menuitem" onClick={() => { actions.onExportCamunda8(); close(); }}>
+          {t('file.exportCamunda8')}
+          <span className="pg-badge-exp">{t('file.experimental')}</span>
+        </button>
+      )}
+      <div className="pg-menu-sep" />
+      <button type="button" className="pg-menu-item" role="menuitem" onClick={() => { actions.onExportAuditCsv(); close(); }}>
+        {t('file.auditTrail')}
       </button>
     </>
   );

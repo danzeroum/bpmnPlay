@@ -9,12 +9,13 @@
  */
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { type ReactNode } from 'react';
-import { BpmnReplay, BpmnSimulator } from '@bpmn-react/react';
-import { replayAnalysisEntry, simulationSessionEntry } from '@bpmn-react/adapters-bpmn';
+import { BpmnSimulator } from '@bpmn-react/react';
+import { simulationSessionEntry } from '@bpmn-react/adapters-bpmn';
 import { buildSimulationDiagram } from './sampleDiagram.js';
-import { PLUGINS, REPLAY_VERSIONS, replayDemoLedger, simulationDemoLedger } from './plugins.js';
+import { PLUGINS, simulationDemoLedger } from './plugins.js';
 import { EditorScreen, type EditorMode } from './EditorScreen.js';
 import { Home } from './Home.js';
+import { ReplaySurface } from './replay/ReplaySurface.js';
 import { LibrarySurface } from './LibrarySurface.js';
 import { StudioSurface } from './StudioSurface.js';
 import { PlaygroundNav } from './PlaygroundNav.js';
@@ -29,7 +30,7 @@ export function App() {
         <Route path="/editor" element={<EditorRoute mode="editor" />} />
         <Route path="/dmn" element={<EditorRoute mode="dmn" />} />
         <Route path="/simulate" element={<SimulateScreen />} />
-        <Route path="/replay" element={<ReplayScreen />} />
+        <Route path="/replay" element={<ReplaySurface />} />
         <Route path="/library" element={<SurfaceScreen>{<LibrarySurface />}</SurfaceScreen>} />
         <Route path="/studio" element={<SurfaceScreen>{<StudioSurface />}</SurfaceScreen>} />
         <Route path="*" element={<Navigate to="/" replace />} />
@@ -71,29 +72,6 @@ function SimulateScreen() {
             void simulationDemoLedger.append(simulationSessionEntry(session, { id: 'demo' }));
           }}
           onExit={() => navigate('/editor')}
-        />
-      </div>
-    </div>
-  );
-}
-
-function ReplayScreen() {
-  const navigate = useNavigate();
-  return (
-    <div className="pg-shell">
-      <PlaygroundNav />
-      <div className="pg-content">
-        <BpmnReplay
-          diagram={buildSimulationDiagram()}
-          versions={REPLAY_VERSIONS}
-          candidate={{ semanticVersion: '2.1.0', change: 'boundary timer de 48h + escalation' }}
-          author="demo"
-          fileName="onboarding_prod_jun.xes"
-          plugins={PLUGINS}
-          onAttachAnalysis={(analysis) => {
-            void replayDemoLedger.append(replayAnalysisEntry(analysis, { id: 'demo' }, 'v21'));
-          }}
-          onExit={() => navigate('/simulate')}
         />
       </div>
     </div>

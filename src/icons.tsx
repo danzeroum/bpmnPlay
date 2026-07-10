@@ -122,6 +122,16 @@ export function AlertCircle({ size = 12 }: { size?: number }) {
   );
 }
 
+/** Documento (chip do arquivo de log). */
+export function Doc({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 18 18', strokeWidth: 1.5, ...props })} aria-hidden="true">
+      <path d="M4 2h7l3 3v11H4V2Z" strokeLinejoin="round" />
+      <path d="M6.5 9h5M6.5 12h5" strokeWidth={1.3} />
+    </svg>
+  );
+}
+
 /* --- Ícones dos cards de módulo da home (accent, 22px) --- */
 
 export function IconEditor({ size = 22 }: { size?: number }) {
