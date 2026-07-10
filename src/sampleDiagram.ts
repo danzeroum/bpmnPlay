@@ -508,6 +508,56 @@ export function buildSimulationDiagram(): BpmnDiagram {
 }
 
 /**
+ * Colaboração inter-organizacional (galeria 2d, `?example=collab`): dois pools
+ * (Cliente × Fornecedor) com fluxos de mensagem tracejados cruzando a fronteira.
+ * Cada tarefa é filha do seu pool (parentId, coords absolutas dentro do pool),
+ * mesmo padrão dos filhos de sub-process.
+ */
+export function buildCollaborationDiagram(): BpmnDiagram {
+  const registry = createDefaultRegistry();
+  const diagram = createDiagram({ id: 'demo-collab', name: 'Colaboração — pedido & fornecedor', createdBy: 'demo' });
+  diagram.description = 'Dois pools com fluxos de mensagem: cliente faz o pedido, fornecedor confirma.';
+  const v = diagram.version.id;
+
+  const make = (type: string, id: string, label: string, x: number, y: number, properties: Record<string, unknown> = {}) =>
+    createNode({ type, id, label, x, y, properties, versionId: v }, registry);
+
+  const client = make('pool', 'poolClient', 'Cliente', 60, 40);
+  client.width = 620;
+  client.height = 170;
+  const supplier = make('pool', 'poolSupplier', 'Fornecedor', 60, 250);
+  supplier.width = 620;
+  supplier.height = 170;
+
+  diagram.nodes = {
+    poolClient: client,
+    cStart: make('startEvent', 'cStart', 'Necessidade', 110, 105, { parentId: 'poolClient' }),
+    cOrder: make('task', 'cOrder', 'Enviar pedido', 210, 82, { parentId: 'poolClient' }),
+    cReceive: make('task', 'cReceive', 'Receber confirmação', 430, 82, { parentId: 'poolClient' }),
+    cEnd: make('endEvent', 'cEnd', 'Pedido confirmado', 610, 105, { parentId: 'poolClient' }),
+    poolSupplier: supplier,
+    sReceive: make('task', 'sReceive', 'Analisar pedido', 210, 300, { parentId: 'poolSupplier' }),
+    sConfirm: make('task', 'sConfirm', 'Confirmar disponibilidade', 430, 300, { parentId: 'poolSupplier' }),
+  };
+
+  const seq = (id: string, sourceId: string, targetId: string, label?: string) =>
+    createEdge({ id, sourceId, targetId, type: 'sequenceFlow', versionId: v, ...(label ? { label } : {}) });
+  const msg = (id: string, sourceId: string, targetId: string, label?: string) =>
+    createEdge({ id, sourceId, targetId, type: 'messageFlow', versionId: v, ...(label ? { label } : {}) });
+
+  diagram.edges = {
+    c1: seq('c1', 'cStart', 'cOrder'),
+    c2: seq('c2', 'cOrder', 'cReceive'),
+    c3: seq('c3', 'cReceive', 'cEnd'),
+    s1: seq('s1', 'sReceive', 'sConfirm'),
+    m1: msg('m1', 'cOrder', 'sReceive', 'pedido'),
+    m2: msg('m2', 'sConfirm', 'cReceive', 'confirmação'),
+  };
+
+  return diagram;
+}
+
+/**
  * A synthetic event log for the replay demo (`?replay=1`, Handoff 7B-2),
  * replayed against {@link buildSimulationDiagram}. Activity names match the
  * node labels; timestamps make "Gerar plano" the bottleneck. Two known

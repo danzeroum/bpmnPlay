@@ -122,6 +122,18 @@ export function AlertCircle({ size = 12 }: { size?: number }) {
   );
 }
 
+/** Fork (card "Contribua com um exemplo"). */
+export function Fork({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 18 18', strokeWidth: 1.5, ...props })} aria-hidden="true">
+      <circle cx="5" cy="4" r="2" />
+      <circle cx="13" cy="4" r="2" />
+      <circle cx="9" cy="14" r="2" />
+      <path d="M5 6v2a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6M9 10v2" />
+    </svg>
+  );
+}
+
 /** Documento (chip do arquivo de log). */
 export function Doc({ size = 18, ...props }: IconProps) {
   return (
