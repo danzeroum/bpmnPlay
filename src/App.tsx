@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
-import { AuditLedger, BpmnXmlConverter, getEdgeChain, type BpmnDiagram } from '@bpmn-react/core';
+import { AuditLedger, BpmnXmlConverter, createDiagram, getEdgeChain, type BpmnDiagram } from '@bpmn-react/core';
 import {
   astarConnection,
   BpmnEditor,
   BpmnReplay,
   BpmnSimulator,
+  clearAutosave,
   EdgePedigreeStrip,
   resolveEditorConfig,
   useCanvasState,
@@ -221,6 +222,17 @@ export function App() {
     setEditorKey((k) => k + 1); // remount: new diagram, fresh history
   };
 
+  // "Novo (limpo)": começa um diagrama VAZIO e apaga o autosave (localStorage)
+  // do diagrama atual E do novo id, para o rascunho não voltar ao recarregar.
+  // - createDiagram (core) devolve { nodes: {}, edges: {} } — tela em branco.
+  // - clearAutosave (react) remove a chave `bpmnr:autosave:<id>` do localStorage.
+  const newBlankDiagram = () => {
+    clearAutosave(latestRef.current.id);
+    const blank = createDiagram({ id: 'play-blank', name: 'Novo processo', createdBy: 'playground' });
+    clearAutosave(blank.id);
+    replaceFromOutside(blank);
+  };
+
   const importXml = async (file: File) => {
     const text = await file.text();
     const config = resolveEditorConfig(PLUGINS);
@@ -263,6 +275,9 @@ export function App() {
         </label>
         <button type="button" onClick={() => replaceFromOutside(buildSampleDiagram())}>
           Reset sample
+        </button>
+        <button type="button" onClick={newBlankDiagram} title="Diagrama vazio e limpa o autosave">
+          🗑️ Novo (limpo)
         </button>
       </header>
 
