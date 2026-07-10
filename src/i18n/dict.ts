@@ -208,6 +208,56 @@ export const DICT = {
     pt: 'Troque para a aba Simulação para executar tokens passo a passo e enxergar gargalos antes de publicar.',
     en: 'Switch to the Simulation tab to run tokens step by step and spot bottlenecks before publishing.',
   },
+
+  // Replay com log real (2b) + mapeamento CSV (3a)
+  'replay.compare': { pt: 'comparando', en: 'comparing' },
+  'replay.active': { pt: 'ativa', en: 'active' },
+  'replay.candidate': { pt: 'candidata', en: 'candidate' },
+  'replay.log.title': { pt: 'Log de execução', en: 'Execution log' },
+  'replay.drop': { pt: 'Arraste um arquivo .xes ou .csv', en: 'Drop a .xes or .csv file' },
+  'replay.dropHint': { pt: 'processado localmente, no seu navegador', en: 'processed locally, in your browser' },
+  'replay.useSample': { pt: 'usar log de exemplo', en: 'use a sample log' },
+  'replay.parsing': { pt: 'processando…', en: 'processing…' },
+  'replay.cases': { pt: 'casos', en: 'cases' },
+  'replay.events': { pt: 'eventos', en: 'events' },
+  'replay.change': { pt: 'Trocar', en: 'Change' },
+  'replay.exportJson': { pt: 'Exportar log (.json)', en: 'Export log (.json)' },
+  'replay.fitness': { pt: 'Aderência', en: 'Fitness' },
+  'replay.deviatedCases': { pt: 'Casos com desvio', en: 'Deviating cases' },
+  'replay.bottleneck': { pt: 'Gargalo principal', en: 'Main bottleneck' },
+  'replay.bottleneck.perCase': { pt: 'por caso', en: 'per case' },
+  'replay.attach': { pt: 'Anexar análise à revisão da', en: 'Attach analysis to the review of' },
+  'replay.attached': { pt: 'Análise anexada', en: 'Analysis attached' },
+  'replay.unmapped': {
+    pt: 'atividades sem nó correspondente (contam como desvio)',
+    en: 'activities with no matching node (counted as deviations)',
+  },
+  'replay.parseError': {
+    pt: 'Não foi possível ler o arquivo. Confira se é um .xes ou .csv válido.',
+    en: 'Could not read the file. Check that it is a valid .xes or .csv.',
+  },
+  'replay.exit': { pt: '← Simulador', en: '← Simulator' },
+
+  // Modal de mapeamento CSV (3a)
+  'csv.title': { pt: 'Mapear colunas do CSV', en: 'Map CSV columns' },
+  'csv.rows': { pt: 'linhas', en: 'rows' },
+  'csv.intro': {
+    pt: 'Diga qual coluna corresponde a cada campo do log. Tudo é processado no seu navegador.',
+    en: 'Tell us which column maps to each log field. Everything is processed in your browser.',
+  },
+  'csv.caseId': { pt: 'Identificador do caso', en: 'Case identifier' },
+  'csv.activity': { pt: 'Atividade', en: 'Activity' },
+  'csv.timestamp': { pt: 'Timestamp', en: 'Timestamp' },
+  'csv.confirm.iso': {
+    pt: 'casos detectados · formato de data reconhecido (ISO 8601 sem fuso — assumindo horário local)',
+    en: 'cases detected · date format recognized (ISO 8601, no timezone — assuming local time)',
+  },
+  'csv.confirm.generic': {
+    pt: 'casos detectados · datas interpretadas como horário local',
+    en: 'cases detected · dates interpreted as local time',
+  },
+  'csv.cancel': { pt: 'Cancelar', en: 'Cancel' },
+  'csv.process': { pt: 'Processar log →', en: 'Process log →' },
 } as const;
 
 export type DictKey = keyof typeof DICT;

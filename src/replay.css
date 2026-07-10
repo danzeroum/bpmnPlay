@@ -1,0 +1,235 @@
+/*
+ * Replay com log real (2b) + modal de mapeamento CSV (3a) — só do playground.
+ * O canvas/painel de métricas é do BpmnReplay; aqui só o card de entrada do log
+ * e o modal. O painel da lib é alinhado à paleta via os tokens --bpmnr-* que ela
+ * já expõe (sem sobrescrever seletores internos).
+ */
+.pg-replay {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  --bpmnr-canvas-bg: var(--pg-bg);
+  --bpmnr-panel-bg: var(--pg-surface);
+  --bpmnr-panel-border: var(--pg-border);
+  --bpmnr-text: var(--pg-text);
+  --bpmnr-text-muted: var(--pg-muted);
+  --bpmnr-danger: var(--pg-danger);
+}
+.pg-replay > * {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Card "Log de execução" dockado sobre o canvas (abaixo da toolbar da lib). */
+.pg-replay-log {
+  position: absolute;
+  left: 16px;
+  top: 96px;
+  z-index: 20;
+  width: 300px;
+  max-width: calc(100% - 32px);
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  border-radius: var(--pg-r-card);
+  box-shadow: var(--pg-shadow-card);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pg-replay-log-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pg-dropzone {
+  border: 1.5px dashed #c9c2b2;
+  border-radius: 8px;
+  padding: 16px 14px;
+  text-align: center;
+  background: var(--pg-bg);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.pg-dropzone[data-dragover] {
+  border-color: var(--pg-accent);
+  background: var(--pg-accent-weak);
+}
+.pg-dropzone-title {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.pg-dropzone-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--pg-muted);
+  line-height: 1.5;
+}
+.pg-link {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--pg-accent);
+  font: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.pg-link:hover {
+  text-decoration: underline;
+}
+
+.pg-log-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--pg-sub);
+  border: 1px solid var(--pg-border);
+  border-radius: 7px;
+}
+.pg-log-chip-icon {
+  color: var(--pg-accent);
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  margin-top: 1px;
+}
+.pg-log-chip-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+.pg-log-chip-name {
+  font-family: var(--pg-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pg-log-chip-meta {
+  font-size: 11.5px;
+  color: var(--pg-muted);
+}
+.pg-log-chip-export {
+  font-size: 11px;
+  text-align: left;
+  margin-top: 2px;
+}
+.pg-log-chip-change {
+  margin-left: auto;
+  flex: 0 0 auto;
+  font-size: 12px;
+}
+.pg-replay-error {
+  margin: 0;
+  font-size: 12px;
+  color: var(--pg-danger);
+}
+
+/* ---- Modal de mapeamento CSV (3a) ---- */
+.pg-csv-modal {
+  width: min(640px, 100%);
+}
+.pg-csv-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.pg-csv-file {
+  margin-left: auto;
+  font-family: var(--pg-font-mono);
+  font-size: 11.5px;
+  color: var(--pg-muted);
+}
+.pg-csv-head .pg-icon-close {
+  margin-left: 0;
+}
+.pg-csv-intro {
+  margin: 0 0 16px;
+  font-size: 12.5px;
+  color: var(--pg-muted);
+}
+.pg-csv-preview {
+  display: grid;
+  border: 1px solid var(--pg-border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.pg-csv-cell {
+  padding: 6px 10px;
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  color: var(--pg-muted);
+  border-right: 1px solid var(--pg-border-soft);
+  border-bottom: 1px solid var(--pg-border-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pg-csv-cell-head {
+  background: var(--pg-sub);
+  color: var(--pg-text);
+}
+.pg-csv-map {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.pg-csv-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pg-csv-field-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--pg-muted);
+}
+.pg-csv-select {
+  appearance: none;
+  padding: 8px 10px;
+  border: 1px solid var(--pg-border);
+  border-radius: 6px;
+  font-family: var(--pg-font-mono);
+  font-size: 12px;
+  background: var(--pg-surface);
+  color: var(--pg-text);
+  cursor: pointer;
+}
+.pg-csv-select[data-mapped] {
+  border-color: var(--pg-accent);
+  color: var(--pg-accent);
+  background: var(--pg-accent-weak);
+}
+.pg-csv-confirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--pg-success-weak);
+  border: 1px solid var(--pg-success-border);
+  border-radius: 7px;
+  margin-bottom: 18px;
+  color: var(--pg-success);
+  font-size: 12.5px;
+}
+.pg-csv-confirm[data-busy] {
+  background: var(--pg-sub);
+  border-color: var(--pg-border);
+  color: var(--pg-muted);
+}
+.pg-csv-confirm svg {
+  flex: 0 0 auto;
+}
+.pg-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
