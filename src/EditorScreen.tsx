@@ -35,6 +35,8 @@ import {
   buildStressDiagram,
 } from './sampleDiagram.js';
 import { ASTAR_PLUGINS, DEMO_DECISIONS, openDecisionSurface, PLUGINS } from './plugins.js';
+import { decodePayloadToXml, encodeXmlToPayload, permalinkHash, readPermalinkPayload } from './permalink.js';
+import { useLang } from './i18n/index.js';
 import { PlaygroundNav, type EditorActions } from './PlaygroundNav.js';
 import { StatusBar, type DiagramStats } from './StatusBar.js';
 import { Tour, isTourDone } from './Tour.js';
@@ -62,20 +64,67 @@ function pickInitialDiagram(mode: EditorMode, params: URLSearchParams): BpmnDiag
   return buildSampleDiagram();
 }
 
+const editorConfig = () => resolveEditorConfig(PLUGINS);
+const xmlConverter = () => {
+  const config = editorConfig();
+  return new BpmnXmlConverter({ registry: config.registry, preferredTypes: config.preferredTypes });
+};
+
+/**
+ * Diagrama inicial: o permalink `#d=` tem prioridade no editor "puro" (sem
+ * example/QA), ANTES de buildSampleDiagram(). Payload inválido → diagrama
+ * padrão + flag para o toast.
+ */
+function loadInitialDiagram(mode: EditorMode, params: URLSearchParams): { diagram: BpmnDiagram; permalinkError: boolean } {
+  const plain = mode === 'editor' && params.get('example') === null && !(params.get('dev') !== null && hasQaFlag(params));
+  const payload = plain && typeof window !== 'undefined' ? readPermalinkPayload(window.location.hash) : null;
+  if (payload) {
+    try {
+      const { diagram } = xmlConverter().fromXml(decodePayloadToXml(payload));
+      return { diagram, permalinkError: false };
+    } catch {
+      return { diagram: pickInitialDiagram(mode, params), permalinkError: true };
+    }
+  }
+  return { diagram: pickInitialDiagram(mode, params), permalinkError: false };
+}
+
+function hasQaFlag(params: URLSearchParams): boolean {
+  return ['stress', 'astar', 'manual', 'fallback', 'fanout', 'deadlock', 'closed', 'hc'].some((f) => params.get(f) !== null);
+}
+
 export function EditorScreen({ mode }: { mode: EditorMode }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLang();
   const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
   const devMode = params.get('dev') !== null;
   const astarMode = devMode && params.get('astar') !== null;
   const drdMode = mode === 'dmn';
   const decisionParam = params.get('decision');
 
-  const [diagram, setDiagram] = useState<BpmnDiagram>(() => pickInitialDiagram(mode, params));
+  const bootRef = useRef<{ permalinkError: boolean }>({ permalinkError: false });
+  const [diagram, setDiagram] = useState<BpmnDiagram>(() => {
+    const res = loadInitialDiagram(mode, params);
+    bootRef.current = { permalinkError: res.permalinkError };
+    return res.diagram;
+  });
   const [editorKey, setEditorKey] = useState(0);
   const [showGovernance, setShowGovernance] = useState(false);
   const [showInspector, setShowInspector] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
   const latestRef = useRef(diagram);
+
+  // Erro ao abrir o permalink → toast (some sozinho).
+  useEffect(() => {
+    if (bootRef.current.permalinkError) setToast(t('permalink.error'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (!toast) return;
+    const id = setTimeout(() => setToast(null), 6000);
+    return () => clearTimeout(id);
+  }, [toast]);
 
   const [stats, setStats] = useState<DiagramStats>(() => statsFrom(diagram));
   const savedAt = useSavedAtLabel(diagram, editorKey);
@@ -142,6 +191,12 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
     download(JSON.stringify(latestRef.current, null, 2), `${latestRef.current.id}.json`, 'application/json');
   }, []);
 
+  const buildPermalink = useCallback(() => {
+    const payload = encodeXmlToPayload(xmlConverter().toXml(latestRef.current));
+    const url = window.location.origin + window.location.pathname + permalinkHash(payload);
+    return { url, payload, length: payload.length };
+  }, []);
+
   const editorActions: EditorActions = {
     showGovernance,
     onToggleGovernance: () => setShowGovernance((v) => !v),
@@ -153,6 +208,7 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
     onExportJson,
     onNew,
     onRestore,
+    buildPermalink,
   };
 
   const onStats = useCallback((s: DiagramStats) => setStats(s), []);
@@ -191,6 +247,11 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
         </div>
       </div>
       {tourOpen && <Tour onClose={() => setTourOpen(false)} />}
+      {toast && (
+        <div className="pg-toast" role="status">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }

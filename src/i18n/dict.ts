@@ -117,6 +117,30 @@ export const DICT = {
   'view.governance': { pt: 'Painéis de governança', en: 'Governance panels' },
   'view.inspector': { pt: 'Inspetor do modelo', en: 'Model inspector' },
 
+  // Compartilhar (permalink, 2a)
+  'share.button': { pt: 'Compartilhar', en: 'Share' },
+  'share.copied': { pt: 'Link copiado', en: 'Link copied' },
+  'share.body': {
+    pt: 'O diagrama inteiro viaja comprimido no link — nada é enviado a servidor algum.',
+    en: 'The whole diagram travels compressed in the link — nothing is sent to any server.',
+  },
+  'share.copy': { pt: 'Copiar', en: 'Copy' },
+  'share.warn': {
+    pt: 'Diagramas muito grandes excedem o limite da URL — nesse caso, exporte o arquivo .bpmn.',
+    en: 'Very large diagrams exceed the URL limit — in that case, export the .bpmn file.',
+  },
+  'share.tooLong.title': { pt: 'Diagrama grande demais para a URL', en: 'Diagram too large for the URL' },
+  'share.tooLong.body': {
+    pt: 'Este diagrama excede o limite de tamanho da URL. Exporte o arquivo .bpmn para compartilhá-lo.',
+    en: 'This diagram exceeds the URL size limit. Export the .bpmn file to share it.',
+  },
+  'share.exportBpmn': { pt: 'Exportar .bpmn', en: 'Export .bpmn' },
+  'share.close': { pt: 'Fechar', en: 'Close' },
+  'permalink.error': {
+    pt: 'Não foi possível abrir o link — o diagrama padrão foi carregado.',
+    en: 'Could not open the link — the default diagram was loaded.',
+  },
+
   // Ajuda "?"
   'help.title': { pt: 'Navegação do canvas', en: 'Canvas navigation' },
   'help.pan': {
