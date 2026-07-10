@@ -54,10 +54,23 @@ O modo padrão é o editor. Troque pela query string:
 
 ```bash
 pnpm run update-lib
+pnpm test          # opcional: pega regressões da versão nova
 ```
 
-Isso faz `git submodule update --remote bpmn`, reinstala e rebuilda a biblioteca.
-Depois é só `pnpm dev` de novo. (Se preferir fixar numa versão específica do `bpmn`,
+`update-lib` faz `git submodule update --remote bpmn`, reinstala e rebuilda a
+biblioteca. Depois é só `pnpm dev` de novo.
+
+## Testes de fumaça
+
+Testes Playwright que sobem o app e checam navegação, editor e painéis — úteis
+para validar uma versão nova da biblioteca.
+
+```bash
+pnpm exec playwright install chromium   # só na primeira vez (baixa o navegador)
+pnpm test
+```
+
+(A biblioteca do submódulo precisa estar buildada — ver "Primeira vez".) (Se preferir fixar numa versão específica do `bpmn`,
 entre em `bpmn/`, dê `git checkout <ref>`, rebuild, e commite o novo ponteiro do
 submódulo aqui.)
 
