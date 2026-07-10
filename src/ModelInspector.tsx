@@ -1,4 +1,5 @@
 import { useDiagram } from '@bpmn-react/react';
+import { Close } from './icons.js';
 
 /**
  * Inspetor de modelo ao vivo (só do playground).
@@ -29,8 +30,8 @@ export function ModelInspector({ onClose }: { onClose: () => void }) {
         <span className="pg-inspector-stat">
           {nodes.length} nós · {edges.length} arestas · atualiza ao vivo
         </span>
-        <button type="button" className="pg-hint-close" aria-label="Fechar inspetor" onClick={onClose}>
-          ✕
+        <button type="button" className="pg-icon-close" aria-label="Fechar inspetor" onClick={onClose}>
+          <Close size={14} />
         </button>
       </header>
       <pre className="pg-inspector-body">{JSON.stringify(model, null, 2)}</pre>
