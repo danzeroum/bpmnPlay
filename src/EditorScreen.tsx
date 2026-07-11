@@ -38,6 +38,7 @@ import {
 import { ASTAR_PLUGINS, DEMO_DECISIONS, openDecisionSurface, PLUGINS } from './plugins.js';
 import { decodeDiagram, encodeDiagram, permalinkHash, PERMALINK_VERSION, readPermalink } from './permalink.js';
 import { resolveVersion } from './demoRegistry.js';
+import { readDraft } from './heroDraft.js';
 import { hasFlag } from './flags.js';
 import { ledgerToCsv } from './audit-csv.js';
 import { Close } from './icons.js';
@@ -111,14 +112,26 @@ function pickInitialDiagram(mode: EditorMode, params: URLSearchParams): BpmnDiag
 }
 
 /**
- * Diagrama inicial: o permalink `#d=` tem prioridade no editor "puro" (sem
- * example/QA), ANTES de buildSampleDiagram(). Transporte é o modelo JSON
- * (lossless). Versão desconhecida ou payload inválido → diagrama padrão + flag
- * para o toast.
+ * Diagrama inicial. Prioridade no editor "puro": (1) `?draft=1` — transferência
+ * do hero vivo via `pg:draft` (leva o estado atual junto, sem banner); (2)
+ * permalink `#d=`; (3) buildSampleDiagram(). Transporte sempre JSON (lossless).
+ * Versão desconhecida ou payload inválido → diagrama padrão + flag para o toast.
  */
 function loadInitialDiagram(mode: EditorMode, params: URLSearchParams): { diagram: BpmnDiagram; permalinkError: boolean } {
+  // (1) Transferência do hero: consome uma CÓPIA do pg:draft. Limpa o autosave
+  // da lib para aquele id (bpmnr:autosave) para o ResilienceLayer NÃO abrir o
+  // banner de recuperação logo após a transferência. Não apaga o pg:draft — ele
+  // é o rascunho persistente da home (ver heroDraft.ts).
+  if (mode === 'editor' && params.get('draft') !== null) {
+    const draft = readDraft();
+    if (draft) {
+      clearAutosave(draft.id);
+      return { diagram: draft, permalinkError: false };
+    }
+  }
   const plain =
     mode === 'editor' &&
+    params.get('draft') === null &&
     params.get('example') === null &&
     params.get('load') === null &&
     !(params.get('dev') !== null && hasQaFlag(params));

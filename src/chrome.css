@@ -197,6 +197,45 @@
   font-weight: 600;
 }
 
+/* Nav em dois grupos (4a): FERRAMENTAS · APRENDA */
+.pg-nav-groups {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.pg-nav-groups::-webkit-scrollbar {
+  display: none;
+}
+.pg-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+.pg-nav-group-label {
+  font-family: var(--pg-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--pg-heat-low);
+  padding: 0 8px 0 4px;
+  white-space: nowrap;
+}
+.pg-nav-group-learn {
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid var(--pg-border);
+}
+/* APRENDA colapsado (dropdown) e hamburger só aparecem em telas estreitas */
+.pg-nav-learn-menu,
+.pg-nav-hamburger {
+  display: none;
+  flex: 0 0 auto;
+}
+
 /* Ações à direita */
 .pg-nav-actions {
   margin-left: auto;
@@ -900,5 +939,160 @@
   .pg-btn,
   .pg-card {
     transition: none;
+  }
+}
+
+/* ============================================================= */
+/* Placeholder "em breve" das rotas novas (4b/4c/4d)             */
+/* ============================================================= */
+.pg-soon {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 48px 24px;
+  background: var(--pg-bg);
+  background-image: radial-gradient(circle, var(--pg-dots) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.pg-soon-card {
+  max-width: 520px;
+  text-align: center;
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  border-radius: var(--pg-r-card);
+  box-shadow: var(--pg-shadow-card);
+  padding: 40px 40px 34px;
+}
+.pg-soon-badge {
+  display: inline-block;
+  font-family: var(--pg-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pg-accent);
+  background: var(--pg-accent-weak);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+.pg-soon-title {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.pg-soon-desc {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--pg-muted);
+}
+.pg-soon-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pg-accent);
+  text-decoration: none;
+}
+.pg-soon-back:hover {
+  color: var(--pg-accent-hover);
+}
+
+/* ============================================================= */
+/* Responsivo — nav colapsa; touch amplia alvos (4a/4e)          */
+/* ============================================================= */
+
+/* Telas estreitas: o grupo APRENDA vira dropdown */
+@media (max-width: 1080px) {
+  .pg-nav-group-learn {
+    display: none;
+  }
+  .pg-nav-learn-menu {
+    display: block;
+    margin-left: 8px;
+    padding-left: 12px;
+    border-left: 1px solid var(--pg-border);
+  }
+}
+
+/* Mobile: toda a nav vira hamburger; o hero empilha */
+@media (max-width: 720px) {
+  .pg-nav-groups {
+    display: none;
+  }
+  .pg-nav-hamburger {
+    display: block;
+    margin-left: 6px;
+  }
+  .pg-hero {
+    grid-template-columns: 1fr;
+  }
+  .pg-hero-text {
+    padding: 32px 20px 8px;
+  }
+  .pg-hero-title {
+    font-size: 30px;
+  }
+  .pg-hero-canvas {
+    margin: 12px 16px 20px;
+    min-height: 360px;
+  }
+  .pg-home-github span,
+  .pg-home-github {
+    font-size: 0; /* só o ícone no mobile */
+  }
+  .pg-home-github svg {
+    font-size: initial;
+  }
+}
+
+/* Touch (pointer grosso): alvos ≥44px em toda a casca */
+@media (pointer: coarse) {
+  .pg-tab,
+  .pg-btn,
+  .pg-menu-item,
+  .pg-soon-back {
+    min-height: 44px;
+  }
+  .pg-menu-item {
+    align-items: center;
+  }
+}
+
+/* Simulação mobile (4e): a escolha de gateway da lib vira BOTTOM SHEET.
+   Reusa o GatewayChoiceCard (já touch-first ≥44px) — só reposiciona/estiliza. */
+@media (max-width: 720px) {
+  .bpmnr-sim-choice-slot {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: none;
+    max-width: none;
+  }
+  .bpmnr-sim-choice {
+    position: relative;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -12px 28px -18px rgba(38, 34, 29, 0.5);
+    padding-top: 24px;
+  }
+  .bpmnr-sim-choice::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--pg-border);
+  }
+  .bpmnr-sim-choice-btn {
+    min-height: 52px;
   }
 }

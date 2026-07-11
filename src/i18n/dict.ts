@@ -13,21 +13,45 @@ export const DICT = {
   // Home — topbar
   'home.github': { pt: 'GitHub', en: 'GitHub' },
 
-  // Home — hero
-  'home.hero.overline': {
-    pt: 'CÓDIGO ABERTO · BPMN 2.0 · DMN · GOVERNANÇA',
-    en: 'OPEN SOURCE · BPMN 2.0 · DMN · GOVERNANCE',
+  // Home — hero vivo v2 (4a/4e · PR8)
+  'home.hero2.overline': {
+    pt: 'SEM LOGIN · SEM SETUP · 100% NO NAVEGADOR',
+    en: 'NO LOGIN · NO SETUP · 100% IN THE BROWSER',
   },
-  'home.hero.title': {
-    pt: 'Modele, simule e governe processos — direto no navegador.',
-    en: 'Model, simulate and govern processes — right in the browser.',
+  'home.hero2.title': { pt: 'Este canvas já é seu. Pode editar.', en: 'This canvas is already yours. Go ahead and edit.' },
+  'home.hero2.lead': {
+    pt: 'Arraste um nó, renomeie uma tarefa, desfaça. O diagrama ao lado é o editor de verdade — e o seu trabalho fica salvo neste navegador quando você voltar.',
+    en: 'Drag a node, rename a task, undo. The diagram beside it is the real editor — and your work stays saved in this browser when you come back.',
   },
-  'home.hero.lead': {
-    pt: 'Ambiente aberto da biblioteca bpmn-react: editor BPMN completo, tabelas de decisão DMN, simulação de tokens, replay de logs reais e trilha de auditoria com versionamento.',
-    en: 'Open environment for the bpmn-react library: full BPMN editor, DMN decision tables, token simulation, real log replay and a versioned audit trail.',
+  'home.hero2.cta': { pt: 'Abrir no editor completo', en: 'Open in the full editor' },
+  'home.hero2.saved': {
+    pt: 'Salvo automaticamente em localStorage — nada sai do seu navegador',
+    en: 'Auto-saved to localStorage — nothing leaves your browser',
   },
-  'home.hero.openEditor': { pt: 'Abrir o editor', en: 'Open the editor' },
-  'home.hero.tour': { pt: 'Tour guiado · 2 min', en: 'Guided tour · 2 min' },
+  'home.hero2.touch': { pt: 'funciona no toque — arraste com o dedo', en: 'works on touch — drag with your finger' },
+  'home.hero2.add.event': { pt: 'Adicionar evento', en: 'Add event' },
+  'home.hero2.add.task': { pt: 'Adicionar tarefa', en: 'Add task' },
+  'home.hero2.add.gateway': { pt: 'Adicionar gateway', en: 'Add gateway' },
+  'home.hero2.undo': { pt: 'Desfazer', en: 'Undo' },
+
+  // Placeholders "em breve" das rotas novas (4b/4c/4d · PR9–11)
+  'soon.badge': { pt: 'Em breve', en: 'Coming soon' },
+  'soon.governanca.title': { pt: 'Governança em 3 atos', en: 'Governance in 3 acts' },
+  'soon.governanca.desc': {
+    pt: 'Edite → promova assinando (ed25519 no navegador) → veja o hash chain crescer e verifique a cadeia inteira. Chega no PR9.',
+    en: 'Edit → promote by signing (ed25519 in the browser) → watch the hash chain grow and verify the whole chain. Arriving in PR9.',
+  },
+  'soon.agentes.title': { pt: 'Agentes com notação neutra', en: 'Agents in neutral notation' },
+  'soon.agentes.desc': {
+    pt: 'Um agentTask no macro abre o AgentStudio: sub-workflow determinístico, decisões bloqueadas declaradas e proposta de boundary desfazível. Chega no PR10.',
+    en: 'An agentTask in the macro opens the AgentStudio: deterministic sub-workflow, declared blocked decisions and an undoable boundary proposal. Arriving in PR10.',
+  },
+  'soon.aprenda.title': { pt: 'Cenários guiados por papel', en: 'Role-guided scenarios' },
+  'soon.aprenda.desc': {
+    pt: 'Modelador, Aprovador e Auditor: uma barra + balão conduzem você pelas superfícies reais do playground. Chega no PR11.',
+    en: 'Modeler, Approver and Auditor: a bar + balloon guide you through the real playground surfaces. Arriving in PR11.',
+  },
+  'soon.back': { pt: 'Voltar para a home', en: 'Back to home' },
 
   // Home — grupos de módulos
   'home.group.modeling': { pt: 'MODELAGEM', en: 'MODELING' },
@@ -107,13 +131,20 @@ export const DICT = {
     en: 'Developer mode: QA routes (A*, stress, closed) at ?dev=1',
   },
 
-  // Nav (editor)
+  // Nav (editor) — dois grupos: FERRAMENTAS · APRENDA (4a · PR8)
+  'nav.group.tools': { pt: 'FERRAMENTAS', en: 'TOOLS' },
+  'nav.group.learn': { pt: 'APRENDA', en: 'LEARN' },
   'nav.tab.editor': { pt: 'Editor', en: 'Editor' },
   'nav.tab.dmn': { pt: 'DMN', en: 'DMN' },
   'nav.tab.simulate': { pt: 'Simulação', en: 'Simulation' },
   'nav.tab.replay': { pt: 'Replay', en: 'Replay' },
   'nav.tab.library': { pt: 'Biblioteca', en: 'Library' },
   'nav.tab.studio': { pt: 'Studio', en: 'Studio' },
+  'nav.tab.governance': { pt: 'Governança', en: 'Governance' },
+  'nav.tab.agents': { pt: 'Agentes', en: 'Agents' },
+  'nav.tab.scenarios': { pt: 'Cenários', en: 'Scenarios' },
+  'nav.learnMenu': { pt: 'Aprenda', en: 'Learn' },
+  'nav.menu': { pt: 'Menu', en: 'Menu' },
   'nav.file': { pt: 'Arquivo', en: 'File' },
   'nav.view': { pt: 'Exibir', en: 'View' },
   'nav.new': { pt: 'Novo processo', en: 'New process' },

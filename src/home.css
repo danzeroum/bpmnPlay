@@ -34,11 +34,7 @@
   font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
-}
-.pg-home-ver {
-  font-family: var(--pg-font-mono);
-  font-size: 11px;
-  color: var(--pg-muted);
+  white-space: nowrap;
 }
 .pg-home-top-right {
   margin-left: auto;
@@ -59,20 +55,22 @@
   color: var(--pg-accent);
 }
 
-/* hero */
+/* hero vivo (4a): texto 420px + canvas editável de verdade */
 .pg-hero {
-  padding: 76px 28px 56px;
-  text-align: center;
-  background-image: radial-gradient(circle, var(--pg-dots) 1px, transparent 1px);
-  background-size: 26px 26px;
-  background-position: 13px 13px;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  align-items: stretch;
+  border-bottom: 1px solid var(--pg-border-soft);
 }
-.pg-hero-inner {
-  max-width: 780px;
-  margin: 0 auto;
+.pg-hero-text {
+  padding: 56px 24px 56px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
 }
 .pg-hero-overline {
-  margin: 0 0 18px;
+  margin: 0;
   font-family: var(--pg-font-mono);
   font-size: 12px;
   letter-spacing: 0.16em;
@@ -80,24 +78,22 @@
   font-weight: 500;
 }
 .pg-hero-title {
-  margin: 0 0 20px;
-  font-size: 46px;
+  margin: 0;
+  font-size: 40px;
   line-height: 1.12;
   font-weight: 700;
   letter-spacing: -0.02em;
   text-wrap: pretty;
 }
 .pg-hero-lead {
-  margin: 0 auto 32px;
-  max-width: 620px;
-  font-size: 17px;
+  margin: 0;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--pg-muted);
   text-wrap: pretty;
 }
 .pg-hero-cta {
   display: flex;
-  justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -106,7 +102,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 11px 22px;
+  min-height: 44px;
+  padding: 0 22px;
   background: var(--pg-accent);
   color: #fbfaf7;
   font: inherit;
@@ -121,24 +118,90 @@
 .pg-hero-primary:hover {
   background: var(--pg-accent-hover);
 }
-.pg-hero-outline {
-  appearance: none;
+.pg-hero-saved {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 11px 22px;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--pg-muted);
+}
+.pg-hero-saved svg {
+  color: var(--pg-success);
+  flex: 0 0 auto;
+}
+
+/* canvas vivo — o BpmnDesigner de verdade preenche a moldura pontilhada */
+.pg-hero-canvas {
+  position: relative;
+  margin: 28px 28px 28px 20px;
+  border: 1px solid var(--pg-border);
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 440px;
+  background: var(--pg-bg);
+  background-image: radial-gradient(circle, var(--pg-dots) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.pg-hero-designer {
+  position: absolute;
+  inset: 0;
+}
+/* Toolbar flutuante compacta (4 botões). Visual 34px, alvo de toque REAL ≥44px. */
+.pg-hero-toolbar {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 6;
+  display: flex;
+  gap: 6px;
+  padding: 5px;
   background: var(--pg-surface);
   border: 1px solid var(--pg-border);
-  color: var(--pg-text);
-  font: inherit;
-  font-size: 15px;
-  font-weight: 500;
-  border-radius: 7px;
-  cursor: pointer;
-  transition: border-color 0.12s, color 0.12s;
+  border-radius: 8px;
+  box-shadow: var(--pg-shadow-pop);
 }
-.pg-hero-outline:hover {
-  border-color: var(--pg-accent);
+.pg-hero-tool {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  /* alvo real ≥44px: caixa de toque transparente ao redor do visual de 34px */
+  padding: 5px;
+  margin: -5px;
+  box-sizing: content-box;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--pg-text);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.pg-hero-tool:hover:not(:disabled) {
+  background: var(--pg-sub);
+}
+.pg-hero-tool:disabled {
+  color: var(--pg-muted);
+  opacity: 0.5;
+  cursor: default;
+}
+.pg-hero-touch {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--pg-muted);
+  box-shadow: var(--pg-shadow-pop);
+}
+.pg-hero-touch svg {
   color: var(--pg-accent);
 }
 
