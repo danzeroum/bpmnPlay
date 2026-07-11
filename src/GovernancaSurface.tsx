@@ -169,11 +169,11 @@ export function GovernancaSurface() {
                   type="button"
                   className="pg-gov-approval pg-gov-approval-pending"
                   data-role={a.role}
-                  data-testid="approve-compliance"
+                  data-testid={`approve-${a.role}`}
                   onClick={onApproveCompliance}
                   disabled={busy}
                 >
-                  <span>{t('gov.approve.compliance')}</span>
+                  <span>{t(a.role === 'operacao' ? 'gov.approve.ops' : 'gov.approve.compliance')}</span>
                   <span className="pg-gov-approval-count">{approvedCount}/2</span>
                 </button>
               ),
