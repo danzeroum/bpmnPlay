@@ -2,8 +2,8 @@
  * App — mapa de rotas da casca nova (React Router).
  *
  * Rotas: `/` (home) · `/editor` · `/dmn` · `/simulate` · `/replay` ·
- * `/library` · `/studio` · `/governanca` · `/agentes` · `/aprenda` (estas três
- * como placeholder "em breve" até PR9–11). As query-strings antigas (?drd=1, …)
+ * `/library` · `/studio` · `/governanca` (4b) · `/agentes` (4c) · `/aprenda`
+ * (4d/5a). As query-strings antigas (?drd=1, …)
  * são redirecionadas por compatibilidade (LegacyGate). QA fica atrás de ?dev=1.
  *
  * O `#` fica reservado ao permalink (`#d=…`) — por isso BrowserRouter, não Hash.
@@ -20,18 +20,23 @@ import { Home } from './Home.js';
 import { ReplaySurface } from './replay/ReplaySurface.js';
 import { LibrarySurface } from './LibrarySurface.js';
 import { StudioSurface } from './StudioSurface.js';
-import { SoonSurface } from './SoonSurface.js';
 import { GovernancaSurface } from './GovernancaSurface.js';
 import { AgentesSurface } from './AgentesSurface.js';
+import { AprendaSurface } from './AprendaSurface.js';
+import { ScenarioController } from './ScenarioController.js';
 import { PlaygroundNav } from './PlaygroundNav.js';
 import './demo.css';
 import './chrome.css';
 
 export function App() {
   return (
-    <>
-      <LegacyGate>
-        <Routes>
+    <div className="pg-app">
+      {/* Barra + balão do cenário (5a) ficam ACIMA da nav; a superfície real
+          renderiza por baixo. Nula quando não há cenário ativo. */}
+      <ScenarioController />
+      <div className="pg-app-body">
+        <LegacyGate>
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/editor" element={<EditorRoute mode="editor" />} />
           <Route path="/dmn" element={<EditorRoute mode="dmn" />} />
@@ -43,15 +48,13 @@ export function App() {
               (4b/4c/4d); superfície real chega nos PRs 9/10/11. */}
           <Route path="/governanca" element={<SurfaceScreen>{<GovernancaSurface />}</SurfaceScreen>} />
           <Route path="/agentes" element={<SurfaceScreen>{<AgentesSurface />}</SurfaceScreen>} />
-          <Route
-            path="/aprenda"
-            element={<SurfaceScreen>{<SoonSurface titleKey="soon.aprenda.title" descKey="soon.aprenda.desc" />}</SurfaceScreen>}
-          />
+          <Route path="/aprenda" element={<SurfaceScreen>{<AprendaSurface />}</SurfaceScreen>} />
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </LegacyGate>
+          </Routes>
+        </LegacyGate>
+      </div>
       <CommandPalette />
-    </>
+    </div>
   );
 }
 
