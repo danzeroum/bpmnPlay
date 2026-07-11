@@ -436,6 +436,40 @@ export const DICT = {
   'cmd.goto.home': { pt: 'Início', en: 'Home' },
   'cmd.action.lang': { pt: 'Alternar idioma (PT/EN)', en: 'Toggle language (PT/EN)' },
   'cmd.action.tour': { pt: 'Refazer o tour guiado', en: 'Replay the guided tour' },
+
+  // Copiloto opt-in (5b · PR12)
+  'copilot.name': { pt: 'Copiloto', en: 'Copilot' },
+  'copilot.toggle': { pt: 'Copiloto', en: 'Copilot' },
+  'copilot.mode.demo': { pt: 'modo demo', en: 'demo mode' },
+  'copilot.mode.live': { pt: 'sua chave', en: 'your key' },
+  'copilot.demo.body': {
+    pt: 'Modo demo: respostas pré-definidas e determinísticas — nada sai do seu navegador. Para usar um modelo real, traga sua chave:',
+    en: 'Demo mode: pre-defined, deterministic answers — nothing leaves your browser. To use a real model, bring your key:',
+  },
+  'copilot.key.placeholder': { pt: 'sk-…  (chave da API)', en: 'sk-…  (API key)' },
+  'copilot.key.use': { pt: 'Usar', en: 'Use' },
+  'copilot.key.egress': {
+    pt: 'Com chave, os prompts saem do navegador para o provedor do modelo. A chave fica só em memória — some ao fechar a aba, nunca é gravada.',
+    en: 'With a key, prompts leave the browser to the model provider. The key stays in memory only — gone when the tab closes, never stored.',
+  },
+  'copilot.key.invalid': { pt: 'Informe uma chave no formato sk-…', en: 'Enter a key in the sk-… format' },
+  'copilot.live.body': {
+    pt: 'Usando sua chave — só em memória. Os prompts saem do navegador para o provedor do modelo.',
+    en: 'Using your key — in memory only. Prompts leave the browser to the model provider.',
+  },
+  'copilot.live.back': { pt: 'Voltar ao modo demo', en: 'Back to demo mode' },
+  'copilot.input.placeholder': { pt: 'Descreva a mudança…', en: 'Describe the change…' },
+  'copilot.send': { pt: 'Enviar', en: 'Send' },
+  'copilot.empty': {
+    pt: 'Descreva uma mudança e o copiloto propõe uma prévia tracejada — você aceita ou recusa.',
+    en: 'Describe a change and the copilot proposes a dashed preview — you accept or reject.',
+  },
+  'copilot.bar.pre': { pt: 'Proposta do copiloto em', en: 'Copilot proposal in' },
+  'copilot.bar.dashed': { pt: 'tracejado', en: 'dashed' },
+  'copilot.bar.post': { pt: '— nada entra no diagrama sem você aceitar.', en: '— nothing enters the diagram without your acceptance.' },
+  'copilot.bar.aria': { pt: 'Proposta do copiloto', en: 'Copilot proposal' },
+  'copilot.accept': { pt: 'Aceitar', en: 'Accept' },
+  'copilot.reject': { pt: 'Recusar', en: 'Reject' },
 } as const;
 
 export type DictKey = keyof typeof DICT;

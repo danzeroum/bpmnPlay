@@ -42,6 +42,15 @@ export function ShieldCheck({ size = 13, ...props }: IconProps) {
   );
 }
 
+/** Estrela do copiloto (5b) — contorno, herda a cor do contexto. */
+export function Star({ size = 14, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 14 14', strokeWidth: 1.3, ...props })} aria-hidden="true">
+      <path d="M7 1.5 8.4 5 12 5.6 9.4 8l.7 3.6L7 9.9l-3.1 1.7.7-3.6L2 5.6 5.6 5 7 1.5Z" />
+    </svg>
+  );
+}
+
 /** Hamburger (nav mobile). */
 export function Hamburger({ size = 18, ...props }: IconProps) {
   return (

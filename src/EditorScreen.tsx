@@ -50,6 +50,12 @@ import { LifecyclePanel } from './LifecyclePanel.js';
 import { AuditPanel } from './AuditPanel.js';
 import { ModelInspector } from './ModelInspector.js';
 import { AuditLedger } from '@bpmn-react/core';
+import { useCopilot } from './copilot/useCopilot.js';
+import { CopilotPanel } from './copilot/CopilotPanel.js';
+import { CopilotBridge } from './copilot/CopilotBridge.js';
+import { CopilotGhost } from './copilot/CopilotGhost.js';
+import { CopilotAcceptBar } from './copilot/CopilotAcceptBar.js';
+import './copilot/copilot.css';
 
 export type EditorMode = 'editor' | 'dmn';
 
@@ -170,6 +176,9 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
   const [editorKey, setEditorKey] = useState(0);
   const [showGovernance, setShowGovernance] = useState(false);
   const [showInspector, setShowInspector] = useState(false);
+  // Copiloto opt-in (5b) — só no editor de processo (não no DRD).
+  const [showCopilot, setShowCopilot] = useState(false);
+  const copilot = useCopilot();
   const [toast, setToast] = useState<string | null>(null);
   const [exportReq, setExportReq] = useState<ExportRequest | null>(null);
   const latestRef = useRef(diagram);
@@ -299,6 +308,9 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
     showInspector,
     onToggleInspector: () => setShowInspector((v) => !v),
     inspectorAvailable: devMode,
+    showCopilot,
+    onToggleCopilot: () => setShowCopilot((v) => !v),
+    copilotAvailable: !drdMode,
     onImport,
     onExportXml,
     onExportJson,
@@ -320,28 +332,36 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
       />
       <div className="pg-content">
         <div className="pg-editor-main">
-          <div className="pg-editor-canvas">
-            <BpmnEditor
-              key={editorKey}
-              diagram={diagram}
-              plugins={astarMode ? ASTAR_PLUGINS : PLUGINS}
-              onChange={(next) => {
-                latestRef.current = next;
-              }}
-            >
-              <DiagramStatsBridge onStats={onStats} />
-              <LedgerBridge ledger={auditLedger} />
-              {showGovernance && <SidePanels />}
-              {!drdMode && (
-                <DecisionPeek
-                  resolveDecision={(ref) => DEMO_DECISIONS.find((d) => d.ref === ref)}
-                  onOpen={openDecisionSurface}
-                />
+          <div className="pg-editor-stage">
+            <div className="pg-editor-canvas">
+              <BpmnEditor
+                key={editorKey}
+                diagram={diagram}
+                plugins={astarMode ? ASTAR_PLUGINS : PLUGINS}
+                overlay={showCopilot && copilot.pending ? <CopilotGhost ghost={copilot.pending.ghost} /> : undefined}
+                onChange={(next) => {
+                  latestRef.current = next;
+                }}
+              >
+                <DiagramStatsBridge onStats={onStats} />
+                <LedgerBridge ledger={auditLedger} />
+                {!drdMode && <CopilotBridge apiRef={copilot.diagramApiRef} />}
+                {showGovernance && <SidePanels />}
+                {!drdMode && (
+                  <DecisionPeek
+                    resolveDecision={(ref) => DEMO_DECISIONS.find((d) => d.ref === ref)}
+                    onOpen={openDecisionSurface}
+                  />
+                )}
+                {drdMode && <DrdTableSurface initialDecisionId={decisionParam} />}
+                <PedigreeSurface />
+                {showInspector && <ModelInspector onClose={() => setShowInspector(false)} />}
+              </BpmnEditor>
+              {showCopilot && copilot.pending && (
+                <CopilotAcceptBar onAccept={copilot.accept} onReject={copilot.reject} />
               )}
-              {drdMode && <DrdTableSurface initialDecisionId={decisionParam} />}
-              <PedigreeSurface />
-              {showInspector && <ModelInspector onClose={() => setShowInspector(false)} />}
-            </BpmnEditor>
+            </div>
+            {showCopilot && !drdMode && <CopilotPanel copilot={copilot} />}
           </div>
           <StatusBar stats={stats} savedAt={savedAt} />
         </div>

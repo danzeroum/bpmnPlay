@@ -38,6 +38,25 @@ a execução autônoma, pendências que dependem de você e riscos conhecidos.
 
 ## Log por PR (preenchido conforme avanço)
 
+- **PR12 /copiloto (5b)**: compõe o contrato `AIProvider` + o pipeline
+  `parseProposal → validateProposal → buildPlan` da biblioteca
+  (`@bpmn-react/copilot`) — NÃO recria. O painel (360px), a prévia fantasma e a
+  barra de aceite são casca do playground porque o `CopilotPanel` da lib aplica
+  a proposta na hora (sem gate de aceite) e não tem card demo/chave nem aviso de
+  rede. Dois providers do host: **demo** (zero rede, fixtures determinísticas em
+  `src/copilot/fixtures.ts`, ids sufixados por chamada) e **traga sua chave**
+  (`createKeyProvider`, chave só na closure/memória — nunca em storage; egress
+  real à API do modelo, honesto). O ghost sai de `buildPlan(...).projected`
+  diffado contra o diagrama vivo, renderizado na prop `overlay` do BpmnEditor
+  (coordenadas de mundo). Aceitar = `useDiagram().execute(plan.command)` (UM
+  composto desfazível, auditado pelo LedgerBridge). **Decisão**: a fixture demo
+  é tematizada para o diagrama padrão do editor (produção de conteúdo → "Revisão
+  de SEO" + gateway "indexado?") em vez do tema fiscal do mockup, para ancorar
+  em nós REAIS (`publish`) e passar na validação íntegra da lib. Fora de escopo
+  (não implementado): execução real do modelo, persistência de chave, import
+  LangGraph.
+
+
 - **PR11 /aprenda (4d/5a)**: framework de cenários (barra + balão sobre as
   superfícies REAIS, zero UI de produto nova) — o padrão normativo do 5a. Cada
   passo declara `{ rota, alvo, título, corpo, autoAvança? }`; progresso em
