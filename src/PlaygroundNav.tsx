@@ -10,7 +10,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLang } from './i18n/index.js';
 import { LangToggle } from './LangToggle.js';
-import { AlertCircle, BrandGlyph, Check, CheckCircleFilled, ChevronDown, Close, Hamburger, LinkChain, Plus } from './icons.js';
+import { AlertCircle, BrandGlyph, Check, CheckCircleFilled, ChevronDown, Close, Hamburger, LinkChain, Plus, Star } from './icons.js';
 import type { DictKey } from './i18n/dict.js';
 import { PERMALINK_LIMIT, permalinkHash } from './permalink.js';
 
@@ -51,6 +51,10 @@ export interface EditorActions {
   onToggleInspector: () => void;
   /** Inspetor do modelo só aparece em ?dev=1. */
   inspectorAvailable: boolean;
+  /** Copiloto opt-in (5b) — botão accent no editor de processo. */
+  showCopilot: boolean;
+  onToggleCopilot: () => void;
+  copilotAvailable: boolean;
   onImport: (file: File) => void;
   onExportXml: () => void;
   onExportJson: () => void;
@@ -246,6 +250,19 @@ export function PlaygroundNav({ editorActions, onStartTour }: PlaygroundNavProps
               {() => <ViewMenu actions={editorActions} />}
             </NavMenu>
             <ShareControl actions={editorActions} />
+            {editorActions.copilotAvailable && (
+              <button
+                type="button"
+                className={`pg-btn pg-btn-copilot${editorActions.showCopilot ? ' is-active' : ''}`}
+                onClick={editorActions.onToggleCopilot}
+                aria-pressed={editorActions.showCopilot}
+                data-testid="copilot-toggle"
+                title={t('copilot.toggle')}
+              >
+                <Star size={13} />
+                {t('copilot.toggle')}
+              </button>
+            )}
             <button
               type="button"
               className="pg-btn pg-btn-accent"

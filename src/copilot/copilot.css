@@ -1,0 +1,291 @@
+/**
+ * Copiloto opt-in (5b · PR12) — casca do painel + barra de aceite. Herda os
+ * tokens --pg-* (tema claro/escuro). O tracejado da prévia fantasma é SVG
+ * (CopilotGhost), não CSS.
+ */
+
+/* Palco: canvas + painel lado a lado, dentro do editor-main. */
+.pg-editor-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.pg-editor-stage > .pg-editor-canvas {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Botão da nav (outline accent; ativo = accent-weak). */
+.pg-btn-copilot {
+  color: var(--pg-accent);
+  border-color: var(--pg-accent);
+}
+.pg-btn-copilot.is-active {
+  background: var(--pg-accent-weak);
+}
+
+/* ── Painel 360px ─────────────────────────────────────────────────────── */
+.pg-copilot {
+  flex: 0 0 360px;
+  min-height: 0;
+  background: var(--pg-surface);
+  border-left: 1px solid var(--pg-border);
+  display: flex;
+  flex-direction: column;
+}
+.pg-copilot-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--pg-border-soft);
+  flex: 0 0 auto;
+}
+.pg-copilot-star {
+  color: var(--pg-accent);
+}
+.pg-copilot-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pg-text);
+}
+.pg-copilot-pill {
+  margin-left: auto;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--pg-bg);
+  border: 1px solid var(--pg-border);
+  font-family: var(--pg-font-mono);
+  font-size: 10px;
+  color: var(--pg-muted);
+}
+
+/* Card de modo (demo / traga sua chave). */
+.pg-copilot-mode {
+  margin: 14px 18px 0;
+  padding: 12px 14px;
+  background: var(--pg-bg);
+  border: 1px solid var(--pg-border-soft);
+  border-radius: var(--pg-r-card);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+.pg-copilot-mode-body {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--pg-muted);
+}
+.pg-copilot-mode-body b {
+  color: var(--pg-text);
+}
+.pg-copilot-key {
+  display: flex;
+  gap: 8px;
+}
+.pg-copilot-key-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--pg-border);
+  border-radius: var(--pg-r-btn);
+  font-family: var(--pg-font-mono);
+  font-size: 11.5px;
+  color: var(--pg-text);
+  background: var(--pg-surface);
+}
+.pg-copilot-key-input::placeholder {
+  color: var(--pg-border);
+}
+.pg-copilot-key-use {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border: 1px solid var(--pg-accent);
+  color: var(--pg-accent);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--pg-r-btn);
+  cursor: pointer;
+}
+.pg-copilot-key-use:hover {
+  background: var(--pg-accent-weak);
+}
+.pg-copilot-key-error {
+  font-size: 11px;
+  color: var(--pg-warn-text);
+}
+.pg-copilot-egress {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--pg-warn-text);
+}
+.pg-copilot-egress svg {
+  margin-top: 1px;
+  flex: 0 0 auto;
+}
+.pg-copilot-egress b {
+  font-weight: 600;
+}
+.pg-copilot-back {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  color: var(--pg-accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Conversa. */
+.pg-copilot-chat {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pg-copilot-empty {
+  margin: auto 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--pg-muted);
+  text-align: center;
+}
+.pg-copilot-msg {
+  max-width: 92%;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.pg-copilot-msg-user {
+  align-self: flex-end;
+  max-width: 85%;
+  background: var(--pg-accent);
+  color: #fbfaf7;
+  border-radius: 10px 10px 3px 10px;
+}
+.pg-copilot-msg-assistant {
+  align-self: flex-start;
+  background: var(--pg-bg);
+  border: 1px solid var(--pg-border);
+  color: var(--pg-text);
+  border-radius: 10px 10px 10px 3px;
+  line-height: 1.55;
+}
+.pg-copilot-msg-assistant.is-error {
+  border-color: var(--pg-warn-text);
+  color: var(--pg-warn-text);
+}
+.pg-copilot-msg-footer {
+  margin-top: 8px;
+  font-family: var(--pg-font-mono);
+  font-size: 10px;
+  color: var(--pg-muted);
+}
+
+/* Input. */
+.pg-copilot-input {
+  padding: 14px 18px;
+  border-top: 1px solid var(--pg-border-soft);
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+.pg-copilot-input-field {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--pg-border);
+  border-radius: var(--pg-r-card);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--pg-text);
+  background: var(--pg-bg);
+  resize: none;
+  line-height: 1.4;
+}
+.pg-copilot-input-field::placeholder {
+  color: var(--pg-muted);
+}
+.pg-copilot-send {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  background: var(--pg-accent);
+  color: #fbfaf7;
+  border: 0;
+  border-radius: var(--pg-r-card);
+  cursor: pointer;
+}
+.pg-copilot-send:hover:not(:disabled) {
+  background: var(--pg-accent-hover);
+}
+.pg-copilot-send:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ── Barra flutuante de aceite ────────────────────────────────────────── */
+.pg-copilot-bar {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 48px);
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  border-radius: var(--pg-r-card);
+  padding: 9px 14px;
+  font-size: 12.5px;
+  color: var(--pg-muted);
+  box-shadow: var(--pg-shadow-card);
+}
+.pg-copilot-bar-text b {
+  color: var(--pg-accent);
+}
+.pg-copilot-accept {
+  padding: 6px 14px;
+  background: var(--pg-accent);
+  color: #fbfaf7;
+  border: 0;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--pg-r-btn);
+  cursor: pointer;
+}
+.pg-copilot-accept:hover {
+  background: var(--pg-accent-hover);
+}
+.pg-copilot-reject {
+  padding: 6px 12px;
+  border: 1px solid var(--pg-border);
+  background: transparent;
+  color: var(--pg-muted);
+  font-size: 12px;
+  border-radius: var(--pg-r-btn);
+  cursor: pointer;
+}
+.pg-copilot-reject:hover {
+  background: var(--pg-bg);
+}
+
+/* Mobile: painel vira folha inferior. */
+@media (max-width: 720px) {
+  .pg-copilot {
+    flex-basis: 300px;
+  }
+}
