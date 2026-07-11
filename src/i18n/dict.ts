@@ -130,24 +130,23 @@ export const DICT = {
   'file.experimental': { pt: 'experimental', en: 'experimental' },
   'file.auditTrail': { pt: 'Trilha de auditoria (.csv)', en: 'Audit trail (.csv)' },
 
-  // Modal de exportação (perda / Camunda 8)
-  'export.loss.title': { pt: 'Exportação BPMN com perda', en: 'Lossy BPMN export' },
+  // Modal de exportação (Camunda 8). O export BPMN 2.0 padrão é lossless e baixa
+  // direto — a perda de filhos de sub-process é um bug de IMPORT (ver import.loss).
   'export.camunda8.title': { pt: 'Exportar para Camunda 8 (experimental)', en: 'Export to Camunda 8 (experimental)' },
-  'export.loss.intro': {
-    pt: 'Este formato BPMN não preserva alguns elementos dentro de sub-process (limitação do conversor da biblioteca):',
-    en: 'This BPMN format does not preserve some elements inside sub-processes (a limitation of the library converter):',
-  },
-  'export.loss.note': {
-    pt: 'Eles não estarão no arquivo. Para um modelo completo, use "Modelo JSON (.json)" ou o link de compartilhamento.',
-    en: 'They will be missing from the file. For a complete model, use "JSON model (.json)" or the share link.',
-  },
   'export.camunda8.note': {
     pt: 'Exporta BPMN 2.0 padrão (abre no Camunda Modeler). As extensões Zeebe do Camunda 8 são de uma fase futura.',
     en: 'Exports standard BPMN 2.0 (opens in Camunda Modeler). Camunda 8 Zeebe extensions are a future phase.',
   },
   'export.cancel': { pt: 'Cancelar', en: 'Cancel' },
-  'export.confirm': { pt: 'Exportar assim mesmo', en: 'Export anyway' },
   'export.confirmClean': { pt: 'Exportar', en: 'Export' },
+
+  // Avisos de importação BPMN
+  'import.warned': { pt: 'Importado com avisos:', en: 'Imported with warnings:' },
+  'import.failed': { pt: 'Falha na importação:', en: 'Import failed:' },
+  'import.loss.note': {
+    pt: 'Alguns filhos de sub-processo podem ter sido perdidos ao importar este arquivo (limitação do conversor da biblioteca no import). O arquivo está completo; a perda é na leitura.',
+    en: 'Some sub-process children may have been lost while importing this file (a limitation of the library converter on import). The file itself is complete; the loss happens on read.',
+  },
 
   // Menu Exibir
   'view.governance': { pt: 'Painéis de governança', en: 'Governance panels' },

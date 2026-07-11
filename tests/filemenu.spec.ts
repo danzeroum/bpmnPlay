@@ -47,16 +47,39 @@ test('Camunda 8 aparece com ?flags=camunda8 e exporta .camunda8.bpmn', async ({ 
   expect((await dl).suggestedFilename()).toMatch(/\.camunda8\.bpmn$/);
 });
 
-test('export BPMN do exemplo padrão avisa da perda (filhos de sub-process)', async ({ page }) => {
+test('export BPMN do exemplo padrão é lossless: filhos de sub-process no arquivo, sem modal', async ({ page }) => {
   await disableTour(page);
   await page.goto('/editor');
+  const dl = page.waitForEvent('download');
   await openFileMenu(page);
   await page.getByRole('menuitem', { name: 'BPMN 2.0 (.bpmn)' }).click();
-  // O exemplo tem 2 nós dentro de um sub-process que o toXml descarta.
-  await expect(page.locator('.pg-modal')).toContainText('perda');
-  const dl = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Exportar assim mesmo' }).click();
-  expect((await dl).suggestedFilename()).toMatch(/\.bpmn$/);
+  // Export (toXml) é lossless em bpmn@bdf2ac18: baixa direto, sem modal de perda.
+  const download = await dl;
+  expect(download.suggestedFilename()).toMatch(/\.bpmn$/);
+  await expect(page.locator('.pg-modal')).toHaveCount(0);
+  // O arquivo .bpmn contém os filhos aninhados do sub-process `returns`.
+  const xml = readFileSync(await download.path(), 'utf8');
+  expect(xml).toContain('id="returnsInspect"');
+  expect(xml).toContain('id="returnsRefund"');
+});
+
+test('importar .bpmn com filhos de sub-process avisa da perda no IMPORT', async ({ page }) => {
+  await disableTour(page);
+  await page.goto('/editor');
+  // O aviso de perda no import aparece via alert() — capturamos e aceitamos.
+  const dialogs: string[] = [];
+  page.on('dialog', (d) => {
+    dialogs.push(d.message());
+    void d.accept();
+  });
+  await openFileMenu(page);
+  await page
+    .locator('input[type="file"][accept=".xml,.bpmn"]')
+    .setInputFiles('tests/fixtures/subprocess-children.bpmn');
+  // O arquivo declara 5 nós (start, sub-process, 2 filhos, fim); o import (fromXml
+  // com preferredTypes) descarta os 2 filhos aninhados → 3 nós, e avisa.
+  await expect(page.locator('.pg-status-metrics')).toContainText('3 nós');
+  await expect.poll(() => dialogs.join('\n')).toContain('sub-processo');
 });
 
 test('export BPMN sem perda (canvas vazio) baixa direto, sem modal', async ({ page }) => {
