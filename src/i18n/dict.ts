@@ -97,6 +97,21 @@ export const DICT = {
   'gov.chain.idle': { pt: '{n} entradas — clique em “Verificar a cadeia inteira”', en: '{n} entries — click “Verify the whole chain”' },
   'gov.now': { pt: 'agora', en: 'now' },
 
+  // /agentes (4c · PR10)
+  'agents.hint': {
+    pt: 'Duplo clique no “Agente de Pesquisa” abre o Agent Studio — simulação determinística, decisão bloqueada declarada e proposta de boundary desfazível.',
+    en: 'Double-click “Research Agent” to open the Agent Studio — deterministic simulation, declared blocked decision and an undoable boundary proposal.',
+  },
+  'agents.openStudio': { pt: 'Abrir Agent Studio', en: 'Open Agent Studio' },
+  'agents.export': { pt: 'Exportar LangGraph', en: 'Export LangGraph' },
+  'agents.subset': { pt: 'subconjunto', en: 'subset' },
+  'agents.close': { pt: 'Fechar', en: 'Close' },
+  'agents.export.done': { pt: 'LangGraph exportado.', en: 'LangGraph exported.' },
+  'agents.export.subsetNote': {
+    pt: 'É um subconjunto documentado — o que não tem representação em LangGraph fica de fora (declarado):',
+    en: 'It is a documented subset — what has no LangGraph representation is left out (declared):',
+  },
+
   // Home — grupos de módulos
   'home.group.modeling': { pt: 'MODELAGEM', en: 'MODELING' },
   'home.group.analysis': { pt: 'ANÁLISE', en: 'ANALYSIS' },

@@ -1,0 +1,87 @@
+/* /agentes (4c · PR10) — só do playground. Tematiza o AgentStudio da lib pelos
+   CSS vars --bpmnr-* (sem recriar o modal). */
+.pg-agentes {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--pg-bg);
+  color: var(--pg-text);
+  font-family: var(--pg-font-sans);
+
+  /* Tokens da biblioteca → paleta do playground (papel + petróleo). */
+  --bpmnr-canvas-bg: var(--pg-bg);
+  --bpmnr-fill: var(--pg-surface);
+  --bpmnr-surface: var(--pg-surface);
+  --bpmnr-border: var(--pg-border);
+  --bpmnr-stroke: var(--pg-text);
+  --bpmnr-text: var(--pg-text);
+  --bpmnr-text-muted: var(--pg-muted);
+  --bpmnr-selected: var(--pg-accent);
+  --bpmnr-btv-gold: var(--pg-accent);
+  --bpmnr-agent-tool: var(--pg-accent);
+  --bpmnr-error: var(--pg-danger);
+}
+.pg-agentes-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--pg-surface);
+  border-bottom: 1px solid var(--pg-border);
+}
+.pg-agentes-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: auto;
+}
+.pg-agentes-overline {
+  font-family: var(--pg-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--pg-accent);
+  font-weight: 600;
+}
+.pg-agentes-hint {
+  font-size: 12px;
+  color: var(--pg-muted);
+}
+.pg-agentes-canvas {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background-image: radial-gradient(circle, var(--pg-dots) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.pg-agentes-canvas > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.pg-agentes-notice {
+  position: relative;
+  margin: 12px 20px 0;
+  padding: 12px 16px;
+  background: var(--pg-warn-weak);
+  border: 1px solid var(--pg-warn-weak);
+  border-left: 3px solid var(--pg-warn);
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: var(--pg-text);
+}
+.pg-agentes-notice ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--pg-muted);
+}
+.pg-agentes-notice li {
+  margin: 2px 0;
+}
+.pg-agentes-notice .pg-icon-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}

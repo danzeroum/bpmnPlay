@@ -22,6 +22,7 @@ import { LibrarySurface } from './LibrarySurface.js';
 import { StudioSurface } from './StudioSurface.js';
 import { SoonSurface } from './SoonSurface.js';
 import { GovernancaSurface } from './GovernancaSurface.js';
+import { AgentesSurface } from './AgentesSurface.js';
 import { PlaygroundNav } from './PlaygroundNav.js';
 import './demo.css';
 import './chrome.css';
@@ -41,10 +42,7 @@ export function App() {
           {/* Rotas novas da Fase 3 — nascem no PR8 com placeholder "em breve"
               (4b/4c/4d); superfície real chega nos PRs 9/10/11. */}
           <Route path="/governanca" element={<SurfaceScreen>{<GovernancaSurface />}</SurfaceScreen>} />
-          <Route
-            path="/agentes"
-            element={<SurfaceScreen>{<SoonSurface titleKey="soon.agentes.title" descKey="soon.agentes.desc" />}</SurfaceScreen>}
-          />
+          <Route path="/agentes" element={<SurfaceScreen>{<AgentesSurface />}</SurfaceScreen>} />
           <Route
             path="/aprenda"
             element={<SurfaceScreen>{<SoonSurface titleKey="soon.aprenda.title" descKey="soon.aprenda.desc" />}</SurfaceScreen>}
