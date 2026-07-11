@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancela runs antigos do mesmo ref quando um novo push chega.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout (com submódulo bpmn pinado)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Instala deps do app
+        run: pnpm install --frozen-lockfile
+
+      # Builda a biblioteca no commit PINADO do submódulo — NÃO usa `update-lib`
+      # (que faria `git submodule update --remote` e moveria o ponteiro).
+      - name: Builda a biblioteca (submódulo)
+        run: |
+          pnpm --dir bpmn install --frozen-lockfile
+          pnpm --dir bpmn -r run build
+
+      - name: Instala o Chromium do Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build do app
+        run: pnpm build
+
+      - name: Testes (Playwright)
+        run: pnpm test
