@@ -58,24 +58,39 @@ function makeConverter(): BpmnXmlConverter {
 }
 
 /**
- * Perda no export BPMN: o toXml/fromXml da lib descarta filhos de sub-process
- * (bug upstream — docs/known-issues.md). Compara antes/depois para avisar o
- * usuário de que o arquivo .bpmn não conterá esses elementos.
+ * Perda no IMPORT BPMN (docs/known-issues.md #1; verificado em `bpmn@bdf2ac18`):
+ * o **export** (`toXml`) é lossless — o arquivo .bpmn contém os filhos aninhados
+ * de sub-process. A perda acontece no **import** (`fromXml`) quando o conversor
+ * usa `preferredTypes` (a config do playground): os filhos aninhados são
+ * descartados. Contamos os elementos com `id` sob `<subProcess>` no XML de origem
+ * que não sobreviveram ao import, para avisar quem importa o arquivo.
  */
-function detectBpmnLoss(diagram: BpmnDiagram): { nodes: number; edges: number } {
+function detectImportLoss(sourceXml: string, imported: BpmnDiagram): number {
   try {
-    const conv = makeConverter();
-    const back = conv.fromXml(conv.toXml(diagram)).diagram;
-    return {
-      nodes: Object.keys(diagram.nodes).length - Object.keys(back.nodes).length,
-      edges: Object.keys(diagram.edges).length - Object.keys(back.edges).length,
-    };
+    const doc = new DOMParser().parseFromString(sourceXml, 'application/xml');
+    if (doc.querySelector('parsererror')) return 0;
+    const present = new Set<string>([
+      ...Object.keys(imported.nodes),
+      ...Object.keys(imported.edges ?? {}),
+    ]);
+    const lost = new Set<string>();
+    const all = Array.from(doc.getElementsByTagName('*'));
+    for (const el of all) {
+      if (el.localName !== 'subProcess') continue;
+      // Descendentes com id no plano semântico são flow nodes + fluxos internos
+      // (extensionElements/meta não têm id; a DI vive noutro plano/elemento).
+      for (const child of Array.from(el.getElementsByTagName('*'))) {
+        const id = child.getAttribute('id');
+        if (id && child.localName !== 'subProcess' && !present.has(id)) lost.add(id);
+      }
+    }
+    return lost.size;
   } catch {
-    return { nodes: 0, edges: 0 };
+    return 0;
   }
 }
 
-type ExportRequest = { variant: 'standard' | 'camunda8'; lostNodes: number; lostEdges: number };
+type ExportRequest = { variant: 'camunda8' };
 
 function pickInitialDiagram(mode: EditorMode, params: URLSearchParams): BpmnDiagram {
   if (mode === 'dmn') return buildDrdDiagram();
@@ -215,16 +230,21 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
       const converter = new BpmnXmlConverter({ registry: config.registry, preferredTypes: config.preferredTypes });
       try {
         const { diagram: imported, warnings } = converter.fromXml(text);
-        if (warnings.length > 0) {
-          config.emitEditorEvent('import.warning', { count: warnings.length, warnings });
-          alert(`Importado com avisos:\n${warnings.join('\n')}`);
+        const lostChildren = detectImportLoss(text, imported);
+        const lines: string[] = [];
+        if (lostChildren > 0) lines.push(t('import.loss.note'));
+        if (warnings.length > 0) lines.push(...warnings);
+        if (lines.length > 0) {
+          // Observabilidade (§2): o host recebe o resumo do import (perda + avisos).
+          config.emitEditorEvent('import.warning', { message: lines.join(' · ') });
+          alert(`${t('import.warned')}\n${lines.join('\n')}`);
         }
         replaceFromOutside(imported);
       } catch (error) {
-        alert(`Falha na importação: ${(error as Error).message}`);
+        alert(`${t('import.failed')} ${(error as Error).message}`);
       }
     },
-    [replaceFromOutside],
+    [replaceFromOutside, t],
   );
 
   const download = (text: string, filename: string, mime: string) => {
@@ -241,21 +261,10 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
     const suffix = variant === 'camunda8' ? '.camunda8.bpmn' : '.bpmn';
     download(xml, `${latestRef.current.id}${suffix}`, 'application/xml');
   }, []);
-  // Pede export: Camunda 8 sempre passa pelo modal (nota experimental); BPMN
-  // padrão só quando há perda de elementos.
-  const requestBpmnExport = useCallback(
-    (variant: 'standard' | 'camunda8') => {
-      const loss = detectBpmnLoss(latestRef.current);
-      if (variant === 'camunda8' || loss.nodes > 0 || loss.edges > 0) {
-        setExportReq({ variant, lostNodes: loss.nodes, lostEdges: loss.edges });
-      } else {
-        doExportBpmn(variant);
-      }
-    },
-    [doExportBpmn],
-  );
-  const onExportXml = useCallback(() => requestBpmnExport('standard'), [requestBpmnExport]);
-  const onExportCamunda8 = useCallback(() => requestBpmnExport('camunda8'), [requestBpmnExport]);
+  // Export BPMN 2.0 padrão é lossless (o arquivo contém os filhos de sub-process)
+  // → baixa direto, sem modal. Camunda 8 passa pelo modal (nota experimental).
+  const onExportXml = useCallback(() => doExportBpmn('standard'), [doExportBpmn]);
+  const onExportCamunda8 = useCallback(() => setExportReq({ variant: 'camunda8' }), []);
   const onExportJson = useCallback(() => {
     download(JSON.stringify(latestRef.current, null, 2), `${latestRef.current.id}.json`, 'application/json');
   }, []);
@@ -332,7 +341,6 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
       )}
       {exportReq && (
         <ExportModal
-          req={exportReq}
           onCancel={() => setExportReq(null)}
           onConfirm={() => {
             doExportBpmn(exportReq.variant);
@@ -344,36 +352,29 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
   );
 }
 
-/** Modal de confirmação da exportação BPMN (perda de elementos e/ou Camunda 8). */
-function ExportModal({ req, onCancel, onConfirm }: { req: ExportRequest; onCancel: () => void; onConfirm: () => void }) {
+/**
+ * Modal da exportação Camunda 8 (nota experimental). O export BPMN 2.0 padrão é
+ * lossless e baixa direto — sem modal (a perda de filhos de sub-process é um bug
+ * de IMPORT, avisado no fluxo de importação, não aqui).
+ */
+function ExportModal({ onCancel, onConfirm }: { onCancel: () => void; onConfirm: () => void }) {
   const { t } = useLang();
-  const hasLoss = req.lostNodes > 0 || req.lostEdges > 0;
-  const isCamunda8 = req.variant === 'camunda8';
   return (
-    <div className="pg-modal-veil" role="dialog" aria-modal="true" aria-label={t(isCamunda8 ? 'export.camunda8.title' : 'export.loss.title')}>
+    <div className="pg-modal-veil" role="dialog" aria-modal="true" aria-label={t('export.camunda8.title')}>
       <div className="pg-modal">
         <div className="pg-modal-head">
-          <h3 className="pg-modal-title">{t(isCamunda8 ? 'export.camunda8.title' : 'export.loss.title')}</h3>
+          <h3 className="pg-modal-title">{t('export.camunda8.title')}</h3>
           <button type="button" className="pg-icon-close" aria-label={t('export.cancel')} onClick={onCancel}>
             <Close size={14} />
           </button>
         </div>
-        {isCamunda8 && <p className="pg-modal-body">{t('export.camunda8.note')}</p>}
-        {hasLoss && (
-          <p className="pg-modal-body">
-            {t('export.loss.intro')}{' '}
-            <strong>
-              {req.lostNodes} {t('status.nodes')} · {req.lostEdges} {t('status.flows')}
-            </strong>
-            . {t('export.loss.note')}
-          </p>
-        )}
+        <p className="pg-modal-body">{t('export.camunda8.note')}</p>
         <div className="pg-modal-foot">
           <button type="button" className="pg-btn" onClick={onCancel}>
             {t('export.cancel')}
           </button>
           <button type="button" className="pg-btn pg-btn-accent" onClick={onConfirm}>
-            {t(hasLoss ? 'export.confirm' : 'export.confirmClean')}
+            {t('export.confirmClean')}
           </button>
         </div>
       </div>
