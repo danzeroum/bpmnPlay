@@ -31,18 +31,19 @@ test('home (/) mostra marca, hero e cards de módulo', async ({ page }) => {
   await expect(page.locator('.pg-home')).toBeVisible();
   await expect(page.locator('.pg-home-brand-name')).toContainText('Estúdio BPMN');
   await expect(page.locator('.pg-hero-title')).toBeVisible();
-  await expect(page.locator('.pg-home-ver')).toContainText('bpmn-react');
+  // nav de dois grupos no topo da home (fonte única compartilhada com a casca)
+  await expect(page.locator('.pg-nav-group-label').filter({ hasText: 'FERRAMENTAS' })).toBeVisible();
   // 6 cards de módulo, cada um linkando para uma rota.
   await expect(page.locator('.pg-module-card')).toHaveCount(6);
   await expect(page.locator('.pg-module-card').first()).toHaveAttribute('href', '/editor');
   expect(errors).toEqual([]);
 });
 
-test('CTA "Abrir o editor" leva ao editor com canvas', async ({ page }) => {
+test('CTA "Abrir no editor completo" leva ao editor com canvas', async ({ page }) => {
   await disableTour(page);
   await page.goto('/');
-  await page.getByRole('button', { name: /Abrir o editor/ }).click();
-  await page.waitForURL('**/editor');
+  await page.getByRole('button', { name: /Abrir no editor completo/ }).click();
+  await page.waitForURL('**/editor**');
   await expect(page.locator('.pg-nav')).toBeVisible();
   await expect(page.locator('#root svg').first()).toBeVisible();
   await expect(page.locator('#root [data-node-id]').first()).toBeVisible();
@@ -100,12 +101,12 @@ test('"Novo processo" zera o canvas', async ({ page }) => {
 test('toggle PT|EN troca as strings e persiste', async ({ page }) => {
   await disableTour(page);
   await page.goto('/');
-  await expect(page.getByRole('button', { name: /Abrir o editor/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Abrir no editor completo/ })).toBeVisible();
   await page.locator('.pg-home-top-right .pg-seg button', { hasText: 'EN' }).click();
-  await expect(page.getByRole('button', { name: /Open the editor/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Open in the full editor/ })).toBeVisible();
   // Persistência: recarrega e continua em EN.
   await page.reload();
-  await expect(page.getByRole('button', { name: /Open the editor/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Open in the full editor/ })).toBeVisible();
 });
 
 test('tour de primeiro acesso abre e some ao pular', async ({ page }) => {

@@ -22,6 +22,66 @@ function base({ size = 16, ...props }: IconProps) {
   };
 }
 
+/** Dedo/toque — badge "funciona no toque" do hero. */
+export function Touch({ size = 13, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 14 14', strokeWidth: 1.3, ...props })} aria-hidden="true">
+      <path d="M5 1.5v6M5 7.5 3 6M5 7.5l2-1.5" />
+      <path d="M8.5 8.5c1.5-.5 3 .3 3.3 1.8.3 1.4-.7 2.6-2.1 2.7l-5.4.5c-1.2.1-2.2-.8-2.3-2" />
+    </svg>
+  );
+}
+
+/** Escudo com check — nota "salvo automaticamente" (cor success no contexto). */
+export function ShieldCheck({ size = 13, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 14 14', strokeWidth: 1.3, ...props })} aria-hidden="true">
+      <path d="M7 1.5 2 3.5v3.2c0 3.2 2.1 5.7 5 7.1 2.9-1.4 5-3.9 5-7.1V3.5L7 1.5Z" />
+      <path d="m4.8 7 1.6 1.6L9.6 5.4" />
+    </svg>
+  );
+}
+
+/** Hamburger (nav mobile). */
+export function Hamburger({ size = 18, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 18 18', ...props })} aria-hidden="true">
+      <path d="M3 5h12M3 9h12M3 13h12" />
+    </svg>
+  );
+}
+
+/** Nós de um evento/tarefa/gateway para a toolbar flutuante do hero vivo. */
+export function NodeEvent({ size = 16, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 18 18', strokeWidth: 1.5, ...props })} aria-hidden="true">
+      <circle cx="9" cy="9" r="7" />
+    </svg>
+  );
+}
+export function NodeTask({ size = 16, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 18 18', strokeWidth: 1.5, ...props })} aria-hidden="true">
+      <rect x="2" y="4.5" width="14" height="9" rx="2.5" />
+    </svg>
+  );
+}
+export function NodeGateway({ size = 16, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 18 18', strokeWidth: 1.5, ...props })} aria-hidden="true">
+      <path d="M9 2 16 9 9 16 2 9 9 2Z" />
+    </svg>
+  );
+}
+export function Undo({ size = 16, ...props }: IconProps) {
+  return (
+    <svg {...base({ size, viewBox: '0 0 18 18', strokeWidth: 1.5, ...props })} aria-hidden="true">
+      <path d="M4 8a5 5 0 0 1 9-2.5M14 10a5 5 0 0 1-9 2.5" />
+      <path d="M13 3.5v3h-3M5 14.5v-3h3" />
+    </svg>
+  );
+}
+
 /** Marca: nós conectados. Cor fixa (papel) para contrastar com o quadrado accent. */
 export function BrandGlyph({ size = 16 }: { size?: number }) {
   return (

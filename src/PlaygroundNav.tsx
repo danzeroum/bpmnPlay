@@ -10,12 +10,26 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLang } from './i18n/index.js';
 import { LangToggle } from './LangToggle.js';
-import { AlertCircle, BrandGlyph, Check, CheckCircleFilled, ChevronDown, Close, LinkChain, Plus } from './icons.js';
+import { AlertCircle, BrandGlyph, Check, CheckCircleFilled, ChevronDown, Close, Hamburger, LinkChain, Plus } from './icons.js';
+import type { DictKey } from './i18n/dict.js';
 import { PERMALINK_LIMIT, permalinkHash } from './permalink.js';
 
 declare const __BPMN_LIB_VERSION__: string;
 
-const TABS: { key: 'nav.tab.editor' | 'nav.tab.dmn' | 'nav.tab.simulate' | 'nav.tab.replay' | 'nav.tab.library' | 'nav.tab.studio'; path: string }[] = [
+type TabKey =
+  | 'nav.tab.editor'
+  | 'nav.tab.dmn'
+  | 'nav.tab.simulate'
+  | 'nav.tab.replay'
+  | 'nav.tab.library'
+  | 'nav.tab.studio'
+  | 'nav.tab.governance'
+  | 'nav.tab.agents'
+  | 'nav.tab.scenarios';
+type Tab = { key: TabKey; path: string };
+
+// Nav em dois grupos (4a): FERRAMENTAS e APRENDA.
+const TOOL_TABS: Tab[] = [
   { key: 'nav.tab.editor', path: '/editor' },
   { key: 'nav.tab.dmn', path: '/dmn' },
   { key: 'nav.tab.simulate', path: '/simulate' },
@@ -23,6 +37,12 @@ const TABS: { key: 'nav.tab.editor' | 'nav.tab.dmn' | 'nav.tab.simulate' | 'nav.
   { key: 'nav.tab.library', path: '/library' },
   { key: 'nav.tab.studio', path: '/studio' },
 ];
+const LEARN_TABS: Tab[] = [
+  { key: 'nav.tab.governance', path: '/governanca' },
+  { key: 'nav.tab.agents', path: '/agentes' },
+  { key: 'nav.tab.scenarios', path: '/aprenda' },
+];
+const ALL_TABS: Tab[] = [...TOOL_TABS, ...LEARN_TABS];
 
 export interface EditorActions {
   showGovernance: boolean;
@@ -98,11 +118,112 @@ function NavMenu({ label, children, minWidth }: { label: ReactNode; children: (c
   );
 }
 
-export function PlaygroundNav({ editorActions, onStartTour }: PlaygroundNavProps) {
+/** Aba roteada da nav (uma linha, destaca a rota ativa). */
+function NavTab({
+  tab,
+  active,
+  navigate,
+  t,
+}: {
+  tab: Tab;
+  active: boolean;
+  navigate: (to: string) => void;
+  t: (k: DictKey) => string;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-current={active}
+      aria-selected={active}
+      className="pg-tab"
+      onClick={() => navigate(tab.path)}
+    >
+      {t(tab.key)}
+    </button>
+  );
+}
+
+/**
+ * Nav em dois grupos (4a): FERRAMENTAS · APRENDA. Fonte única das abas/rotas,
+ * compartilhada pela casca (PlaygroundNav) e pelo cabeçalho da home. Em telas
+ * estreitas o grupo APRENDA colapsa num dropdown; no mobile tudo vira hamburger.
+ */
+export function NavGroups() {
   const { t } = useLang();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const ver = typeof __BPMN_LIB_VERSION__ === 'string' ? __BPMN_LIB_VERSION__ : '';
+  return (
+    <>
+      <div className="pg-nav-groups" role="tablist" aria-label="Módulos">
+        <div className="pg-nav-group">
+          <span className="pg-nav-group-label">{t('nav.group.tools')}</span>
+          {TOOL_TABS.map((tab) => (
+            <NavTab key={tab.path} tab={tab} active={pathname === tab.path} navigate={navigate} t={t} />
+          ))}
+        </div>
+        <div className="pg-nav-group pg-nav-group-learn">
+          <span className="pg-nav-group-label">{t('nav.group.learn')}</span>
+          {LEARN_TABS.map((tab) => (
+            <NavTab key={tab.path} tab={tab} active={pathname === tab.path} navigate={navigate} t={t} />
+          ))}
+        </div>
+        {/* APRENDA colapsado (só telas estreitas) */}
+        <div className="pg-nav-learn-menu">
+          <NavMenu label={t('nav.learnMenu')}>
+            {(close) => (
+              <>
+                {LEARN_TABS.map((tab) => (
+                  <button
+                    key={tab.path}
+                    type="button"
+                    role="menuitem"
+                    className="pg-menu-item"
+                    aria-current={pathname === tab.path}
+                    onClick={() => {
+                      navigate(tab.path);
+                      close();
+                    }}
+                  >
+                    {t(tab.key)}
+                  </button>
+                ))}
+              </>
+            )}
+          </NavMenu>
+        </div>
+      </div>
+
+      {/* Hamburger (só mobile): todas as abas num menu único */}
+      <div className="pg-nav-hamburger">
+        <NavMenu label={<Hamburger />} minWidth={200}>
+          {(close) => (
+            <>
+              {ALL_TABS.map((tab) => (
+                <button
+                  key={tab.path}
+                  type="button"
+                  role="menuitem"
+                  className="pg-menu-item"
+                  aria-current={pathname === tab.path}
+                  onClick={() => {
+                    navigate(tab.path);
+                    close();
+                  }}
+                >
+                  {t(tab.key)}
+                </button>
+              ))}
+            </>
+          )}
+        </NavMenu>
+      </div>
+    </>
+  );
+}
+
+export function PlaygroundNav({ editorActions, onStartTour }: PlaygroundNavProps) {
+  const { t } = useLang();
 
   return (
     <nav className="pg-nav" aria-label="Navegação do playground">
@@ -113,24 +234,7 @@ export function PlaygroundNav({ editorActions, onStartTour }: PlaygroundNavProps
         <span className="pg-brand-name">{t('brand.name')}</span>
       </div>
 
-      <div className="pg-tabs" role="tablist" aria-label="Módulos">
-        {TABS.map((tab) => {
-          const active = pathname === tab.path;
-          return (
-            <button
-              key={tab.path}
-              type="button"
-              role="tab"
-              aria-current={active}
-              aria-selected={active}
-              className="pg-tab"
-              onClick={() => navigate(tab.path)}
-            >
-              {t(tab.key)}
-            </button>
-          );
-        })}
-      </div>
+      <NavGroups />
 
       <div className="pg-nav-actions">
         {editorActions && (
