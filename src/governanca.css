@@ -1,0 +1,302 @@
+/* /governanca em 3 atos (4b · PR9) — só do playground. */
+.pg-gov {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 32px 40px 48px;
+  background: var(--pg-bg);
+  color: var(--pg-text);
+  font-family: var(--pg-font-sans);
+}
+.pg-gov-title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.pg-gov-sub {
+  margin: 0 0 24px;
+  max-width: 720px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--pg-muted);
+}
+
+.pg-gov-acts {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.pg-gov-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.pg-gov-card-accent {
+  border-color: var(--pg-accent);
+  box-shadow: 0 10px 24px -18px rgba(14, 79, 94, 0.6);
+}
+.pg-gov-overline {
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--pg-accent);
+  font-weight: 600;
+}
+.pg-gov-mini {
+  height: 110px;
+  border: 1px solid var(--pg-border-soft);
+  border-radius: 7px;
+  background-image: radial-gradient(circle, var(--pg-border) 1px, transparent 1px);
+  background-size: 16px 16px;
+  display: grid;
+  place-items: center;
+  color: var(--pg-text);
+}
+.pg-gov-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--pg-muted);
+}
+.pg-gov-statusline {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  color: var(--pg-muted);
+  flex-wrap: wrap;
+}
+.pg-gov-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pg-warn);
+}
+
+/* selos canônicos */
+.pg-pill {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.pg-pill-candidate {
+  background: #f6edd4;
+  color: #7a611e;
+}
+.pg-pill-active {
+  background: #dff0e6;
+  color: #1a6a54;
+}
+.pg-pill-deprecated {
+  background: #f7e6e0;
+  color: #b3372f;
+}
+
+/* aprovações (ato 2) */
+.pg-gov-approvals {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pg-gov-approval {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  border: 1px solid var(--pg-border);
+  background: var(--pg-surface);
+  color: var(--pg-text);
+  font: inherit;
+  font-size: 12.5px;
+}
+.pg-gov-approval.is-signed {
+  border-color: var(--pg-success-border);
+  background: var(--pg-success-weak);
+  color: var(--pg-success);
+  font-weight: 500;
+}
+.pg-gov-approval.is-unsigned {
+  border-color: var(--pg-warn-weak);
+  background: var(--pg-warn-weak);
+  color: var(--pg-warn-text);
+}
+.pg-gov-approval-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.pg-gov-approval-state {
+  font-family: var(--pg-font-mono);
+  font-size: 10px;
+}
+.pg-gov-approval-pending {
+  min-height: 44px;
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+.pg-gov-approval-pending:hover:not(:disabled) {
+  border-color: var(--pg-accent);
+}
+.pg-gov-approval-pending:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.pg-gov-approval-count {
+  font-family: var(--pg-font-mono);
+  font-size: 10px;
+  color: var(--pg-muted);
+}
+.pg-gov-keybox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--pg-bg);
+  border: 1px solid var(--pg-border-soft);
+  border-radius: 7px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--pg-muted);
+}
+.pg-gov-keybox svg {
+  margin-top: 1px;
+  flex: 0 0 auto;
+}
+.pg-gov-keybox b {
+  color: var(--pg-text);
+}
+.pg-mono {
+  font-family: var(--pg-font-mono);
+  font-size: 10.5px;
+}
+.pg-gov-fallback {
+  font-size: 11px;
+  color: var(--pg-muted);
+}
+.pg-gov-verify-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  background: var(--pg-accent);
+  color: #fbfaf7;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.pg-gov-verify-btn:hover {
+  background: var(--pg-accent-hover);
+}
+
+/* ledger escuro */
+.pg-ledger {
+  background: #26221d;
+  border-radius: 10px;
+  padding: 18px 22px;
+}
+.pg-ledger-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.pg-ledger-title {
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: #b4ac9c;
+}
+.pg-ledger-sabotage {
+  appearance: none;
+  background: transparent;
+  border: none;
+  font-family: var(--pg-font-mono);
+  font-size: 10.5px;
+  color: #6e675c;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.pg-ledger-sabotage:hover {
+  color: #b4ac9c;
+}
+.pg-ledger-status {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.pg-ledger-status.is-ok {
+  color: #57b895;
+  background: rgba(87, 184, 149, 0.15);
+  border: 1px solid rgba(87, 184, 149, 0.4);
+}
+.pg-ledger-status.is-broken {
+  color: #e07a72;
+  background: rgba(179, 55, 47, 0.18);
+  border: 1px solid rgba(179, 55, 47, 0.5);
+}
+.pg-ledger-rows {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--pg-font-mono);
+  font-size: 11.5px;
+}
+.pg-ledger-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(251, 250, 247, 0.08);
+  color: #b4ac9c;
+}
+.pg-ledger-row:last-child {
+  border-bottom: none;
+}
+.pg-ledger-row.is-new {
+  background: linear-gradient(90deg, rgba(87, 184, 149, 0.1), transparent);
+  border-radius: 5px;
+}
+.pg-ledger-seq {
+  color: #6e675c;
+}
+.pg-ledger-hash {
+  color: #cba84b;
+}
+.pg-ledger-desc {
+  color: #ece8e1;
+}
+.pg-ledger-time {
+  margin-left: auto;
+}
+.pg-ledger-row.is-new .pg-ledger-time {
+  color: #57b895;
+}
+
+@media (max-width: 900px) {
+  .pg-gov-acts {
+    grid-template-columns: 1fr;
+  }
+}

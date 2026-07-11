@@ -53,6 +53,50 @@ export const DICT = {
   },
   'soon.back': { pt: 'Voltar para a home', en: 'Back to home' },
 
+  // /governanca em 3 atos (4b · PR9)
+  'gov.title': { pt: 'Governança que dá para provar', en: 'Governance you can prove' },
+  'gov.sub': {
+    pt: 'Três atos numa página: você edita, promove assinando com uma chave gerada aqui no seu navegador, e vê a entrada nascer num ledger encadeado por hash — que qualquer pessoa pode verificar.',
+    en: 'Three acts on one page: you edit, promote by signing with a key generated here in your browser, and watch the entry appear in a hash-chained ledger — that anyone can verify.',
+  },
+  'gov.act1.tag': { pt: 'ATO 1 · EDITE', en: 'ACT 1 · EDIT' },
+  'gov.act1.body': {
+    pt: 'Mude qualquer coisa no diagrama. Cada comando já entra na trilha — nada é anônimo.',
+    en: 'Change anything in the diagram. Every command already enters the trail — nothing is anonymous.',
+  },
+  'gov.act2.tag': { pt: 'ATO 2 · PROMOVA ASSINANDO', en: 'ACT 2 · PROMOTE BY SIGNING' },
+  'gov.act3.tag': { pt: 'ATO 3 · VEJA NO LEDGER', en: 'ACT 3 · SEE IT IN THE LEDGER' },
+  'gov.act3.body': {
+    pt: 'A ativação vira uma entrada encadeada por hash. Alterar qualquer registro antigo quebra a corrente — e o botão ao lado prova isso.',
+    en: 'Activation becomes a hash-chained entry. Altering any old record breaks the chain — and the button proves it.',
+  },
+  'gov.badge.candidate': { pt: 'CANDIDATA', en: 'CANDIDATE' },
+  'gov.badge.active': { pt: 'ATIVA', en: 'ACTIVE' },
+  'gov.badge.deprecated': { pt: 'DESCONTINUADA', en: 'DEPRECATED' },
+  'gov.approve.ops': { pt: 'Aprovar como Operação', en: 'Approve as Operations' },
+  'gov.approve.compliance': { pt: 'Aprovar como Compliance', en: 'Approve as Compliance' },
+  'gov.signed': { pt: 'assinado', en: 'signed' },
+  'gov.unsigned': { pt: 'não-assinada', en: 'unsigned' },
+  'gov.key.pre': { pt: 'Chave', en: 'Key' },
+  'gov.key.mid': { pt: 'gerada e guardada', en: 'generated and kept' },
+  'gov.key.here': { pt: 'só neste navegador', en: 'only in this browser' },
+  'gov.key.post': { pt: '— a biblioteca nunca vê a chave privada.', en: '— the library never sees the private key.' },
+  'gov.key.unavailable': {
+    pt: 'Este navegador não tem Ed25519 no WebCrypto — a promoção segue não-assinada.',
+    en: 'This browser has no Ed25519 in WebCrypto — promotion proceeds unsigned.',
+  },
+  'gov.fallback': {
+    pt: 'Navegador sem Ed25519 no WebCrypto? A promoção segue sem assinatura, marcada como não-assinada — nunca fingimos assinar.',
+    en: 'Browser without Ed25519 in WebCrypto? Promotion proceeds without a signature, marked unsigned — we never fake signing.',
+  },
+  'gov.verify': { pt: 'Verificar a cadeia inteira', en: 'Verify the whole chain' },
+  'gov.ledger.title': { pt: 'LEDGER · SHA-256 ENCADEADO', en: 'LEDGER · SHA-256 CHAINED' },
+  'gov.sabotage': { pt: 'sabotar (demo)', en: 'tamper (demo)' },
+  'gov.chain.intact': { pt: 'cadeia íntegra — {n} entradas verificadas', en: 'chain intact — {n} entries verified' },
+  'gov.chain.broken': { pt: 'elo quebrado na entrada #{n}', en: 'broken link at entry #{n}' },
+  'gov.chain.idle': { pt: '{n} entradas — clique em “Verificar a cadeia inteira”', en: '{n} entries — click “Verify the whole chain”' },
+  'gov.now': { pt: 'agora', en: 'now' },
+
   // Home — grupos de módulos
   'home.group.modeling': { pt: 'MODELAGEM', en: 'MODELING' },
   'home.group.analysis': { pt: 'ANÁLISE', en: 'ANALYSIS' },

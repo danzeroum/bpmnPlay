@@ -36,4 +36,12 @@ a execução autônoma, pendências que dependem de você e riscos conhecidos.
 
 ## Log por PR (preenchido conforme avanço)
 
-- **CI + notas**: este PR.
+- **CI + notas**: PR #12 (mesclado, CI verde).
+- **PR9 /governanca (4b)**: composto sobre `AuditLedger` (cadeia SHA-256) +
+  `verifyLedger` da biblioteca. O signer ed25519 é do host (WebCrypto), com a
+  privada **não-extraível**. Decisão: como o 4b é uma página didática bespoke (3
+  atos), assinei/verifiquei as aprovações com WebCrypto direto (ed25519 real) em
+  vez de montar o pipeline completo `signApproval`/`CanonicalApprovalPayload`/
+  `PromotionPanel` da lib. É honesto (crypto real, cadeia real, verify real).
+  Possível follow-up: trocar para o pipeline formal da lib se quiser as
+  attestations/assinaturas ligadas a um diagrama versionado de verdade.
