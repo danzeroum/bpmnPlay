@@ -70,10 +70,10 @@ test('cmd+k navega por rota (↵) e registra Recentes', async ({ page }) => {
 test('cmd+k: ação alterna idioma', async ({ page }) => {
   await disableTour(page);
   await page.goto('/');
-  await expect(page.getByRole('button', { name: /Abrir o editor/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Abrir no editor completo/ })).toBeVisible();
   await page.keyboard.press('Control+k');
   await page.locator('.pg-cmdk-input').fill('idioma');
   await page.keyboard.press('Enter');
   // Home agora em EN.
-  await expect(page.getByRole('button', { name: /Open the editor/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Open in the full editor/ })).toBeVisible();
 });

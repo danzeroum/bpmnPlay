@@ -18,12 +18,12 @@ import {
   IconLibrary,
   IconReplay,
   IconSimulate,
-  Play,
+  ShieldCheck,
 } from './icons.js';
+import { NavGroups } from './PlaygroundNav.js';
+import { HeroCanvas } from './HeroCanvas.js';
 import { EXAMPLES, type Example } from './examples.js';
 import './home.css';
-
-declare const __BPMN_LIB_VERSION__: string;
 
 const REPO_URL = 'https://github.com/danzeroum/bpmnPlay';
 
@@ -55,11 +55,10 @@ const GROUPS: { label: DictKey; cards: ModuleCard[] }[] = [
 export function Home() {
   const { t } = useLang();
   const navigate = useNavigate();
-  const ver = typeof __BPMN_LIB_VERSION__ === 'string' ? __BPMN_LIB_VERSION__ : '';
 
   return (
     <div className="pg-home">
-      {/* topbar */}
+      {/* topbar: marca + nav de dois grupos (fonte única) + PT/EN + GitHub (4a) */}
       <header className="pg-home-topbar">
         <div className="pg-home-brand">
           <span className="pg-brand-mark" aria-hidden="true">
@@ -67,7 +66,7 @@ export function Home() {
           </span>
           <span className="pg-home-brand-name">{t('brand.name')}</span>
         </div>
-        <span className="pg-home-ver">bpmn-react {ver}</span>
+        <NavGroups />
         <div className="pg-home-top-right">
           <LangToggle />
           <a className="pg-home-github" href={REPO_URL} target="_blank" rel="noreferrer">
@@ -77,23 +76,24 @@ export function Home() {
         </div>
       </header>
 
-      {/* hero */}
+      {/* hero vivo (4a): texto 420px + canvas editável de verdade */}
       <section className="pg-hero">
-        <div className="pg-hero-inner">
-          <p className="pg-hero-overline">{t('home.hero.overline')}</p>
-          <h1 className="pg-hero-title">{t('home.hero.title')}</h1>
-          <p className="pg-hero-lead">{t('home.hero.lead')}</p>
+        <div className="pg-hero-text">
+          <p className="pg-hero-overline">{t('home.hero2.overline')}</p>
+          <h1 className="pg-hero-title">{t('home.hero2.title')}</h1>
+          <p className="pg-hero-lead">{t('home.hero2.lead')}</p>
           <div className="pg-hero-cta">
-            <button type="button" className="pg-hero-primary" onClick={() => navigate('/editor')}>
-              {t('home.hero.openEditor')}
+            <button type="button" className="pg-hero-primary" onClick={() => navigate('/editor?draft=1')}>
+              {t('home.hero2.cta')}
               <ArrowRight size={14} />
             </button>
-            <button type="button" className="pg-hero-outline" onClick={() => navigate('/editor?tour=1')}>
-              <Play size={14} />
-              {t('home.hero.tour')}
-            </button>
           </div>
+          <span className="pg-hero-saved">
+            <ShieldCheck size={13} />
+            {t('home.hero2.saved')}
+          </span>
         </div>
+        <HeroCanvas />
       </section>
 
       {/* módulos */}
