@@ -1,13 +1,16 @@
-# bpmnplay
+# bpmnplay — Estúdio BPMN
 
-Ambiente de **teste** da biblioteca [`danzeroum/bpmn`](https://github.com/danzeroum/bpmn)
-(`@bpmn-react/*`). É um app **Vite + React** que espelha o `packages/example` do `bpmn`
-e exercita **todos os módulos**: editor, simulação, replay, DMN, healthcare, domínio,
-biblioteca, studio, soundness, auditoria e identidade.
+Playground **100% client-side** da biblioteca [`danzeroum/bpmn`](https://github.com/danzeroum/bpmn)
+(`@bpmn-react/*`). É um app **Vite + React** que **exercita** todos os módulos da lib
+(editor, simulação, replay, DMN, soundness, auditoria, identidade) e, no redesign
+**Estúdio BPMN** (Fases 1–3), os apresenta como produto: home com hero vivo,
+governança que dá para provar, agentes na notação neutra, cenários guiados por papel e
+um copiloto opt-in — **sem login, sem backend, nada sai do seu navegador**.
 
-A biblioteca entra como **submódulo git** em `bpmn/`. O Vite resolve cada
-`@bpmn-react/*` direto do `dist/esm` do submódulo (ver `vite.config.ts`), então
-atualizar a biblioteca é um comando só.
+Tudo consome a biblioteca **como ela é**: ela entra como **submódulo git** em `bpmn/`,
+e o Vite resolve cada `@bpmn-react/*` direto do `dist/esm` do submódulo (ver
+`vite.config.ts`), então atualizar a biblioteca é um comando só. Nenhuma feature deste
+repo altera a lib — só a compõe.
 
 ## Primeira vez
 
@@ -38,13 +41,21 @@ A home fica em `/`. Os módulos têm rotas próprias (React Router):
 
 | Rota | Módulo |
 |------|--------|
-| `/` | **Home** — boas-vindas, módulos e galeria de exemplos |
-| `/editor` | Editor BPMN (paleta, toolbar, propriedades, minimapa) |
+| `/` | **Home** — hero vivo (editor real, editável, com rascunho salvo no navegador), módulos e exemplos |
+| `/editor` | Editor BPMN (paleta, toolbar, propriedades, minimapa) — inclui o **Copiloto** opt-in (botão ⭐) |
 | `/dmn` | **DMN** — DRD + editor de tabela de decisão |
 | `/simulate` | **Simulação** de tokens |
 | `/replay` | **Replay** / conformance-checking |
 | `/library` | **Biblioteca** (catálogo) |
 | `/studio` | **Studio** (Biblioteca + Revisão do Aprovador) |
+| `/governanca` | **Governança** em 3 atos — assinatura Ed25519 no navegador + verificação da cadeia do ledger |
+| `/agentes` | **Agentes** — nó `agentTask` na notação neutra + AgentStudio + export LangGraph |
+| `/aprenda` | **Aprenda** — cenários guiados por papel (Modelador / Aprovador / Auditor) sobre as telas reais |
+
+O **Copiloto** (no `/editor`) roda em **modo demo determinístico por padrão — zero
+rede**; "traga sua chave" mantém a chave **só em memória** (nunca em storage) e avisa
+sobre a saída de rede. Toda proposta aparece como **prévia tracejada** no canvas e só
+entra no diagrama como um **comando único, desfazível e auditado** quando você aceita.
 
 Exemplos e QA entram por query string sobre `/editor`:
 
@@ -100,9 +111,11 @@ submódulo aqui.)
 ```
 bpmnplay/
 ├── bpmn/               ← submódulo git (a biblioteca @bpmn-react/*)
-├── src/                ← app de teste (espelho do packages/example)
-│   ├── App.tsx, main.tsx, sampleDiagram.ts, *Panel.tsx, *Surface.tsx
-│   └── demo.css
+├── src/                ← app (casca "Estúdio BPMN" + superfícies que compõem a lib)
+│   ├── App.tsx, main.tsx, sampleDiagram.ts, *Surface.tsx (Governanca/Agentes/Aprenda…)
+│   ├── copilot/        ← painel + provider demo/chave + prévia fantasma (5b)
+│   ├── i18n/           ← dicionário PT-BR/EN (t() + DICT)
+│   └── chrome.css, demo.css
 ├── index.html
 ├── vite.config.ts      ← resolve @bpmn-react/* → bpmn/packages/*/dist/esm
 ├── tsconfig.json
