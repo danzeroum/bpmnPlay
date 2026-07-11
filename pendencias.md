@@ -30,9 +30,11 @@ a execução autônoma, pendências que dependem de você e riscos conhecidos.
 2. **Chrome da simulação no mobile** não é totalmente responsiva (toolbar/painel da
    lib). O bottom sheet de gateway (deliverable do PR8) funciona; o resto é chrome da
    biblioteca. Tratável à parte se desejado.
-3. **PR10 — import do AgentStudio/agentflow com registry+preferredTypes**: se esse
-   caminho importar modelos que contenham sub-process, pode reincidir o bug do item 1.
-   Vou validar durante o PR10 e registrar aqui o que encontrar.
+3. **PR10 — import do AgentStudio/agentflow** — ✅ **RESOLVIDO/sem risco**: a
+   sub-workflow do agente é `AgentWorkflow` **JSON** (nunca BPMN XML) — o
+   AgentStudio persiste na Library como JSON, por decisão de arquitetura da lib
+   (§1.1). Logo o bug de `fromXml`+`preferredTypes` (item 1) **não toca** este
+   caminho. O macro (BPMN) tem só o nó `agentTask` padrão, sem sub-process.
 
 ## Log por PR (preenchido conforme avanço)
 

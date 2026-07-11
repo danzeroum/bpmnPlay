@@ -68,10 +68,10 @@ test('nav em dois grupos; rotas novas nascem com placeholder honesto "em breve"'
   await expect(page.locator('.pg-nav-group-label').filter({ hasText: 'FERRAMENTAS' })).toBeVisible();
   await expect(page.locator('.pg-nav-group-label').filter({ hasText: 'APRENDA' })).toBeVisible();
 
-  await page.getByRole('tab', { name: 'Agentes' }).click();
-  await page.waitForURL('**/agentes');
+  await page.getByRole('tab', { name: 'Cenários' }).click();
+  await page.waitForURL('**/aprenda');
   await expect(page.locator('.pg-soon-badge')).toContainText(/em breve/i);
-  await expect(page.locator('.pg-soon-title')).toContainText('Agentes');
+  await expect(page.locator('.pg-soon-title')).toContainText(/Cenários|papel/i);
   // Não é tela morta: tem uma frase do que virá + volta para a home.
   await expect(page.locator('.pg-soon-desc')).not.toBeEmpty();
   await expect(page.locator('.pg-soon-back')).toBeVisible();
