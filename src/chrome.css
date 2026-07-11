@@ -103,6 +103,16 @@
 }
 
 /* ---- Shell: nav fixa em cima, conteúdo preenche o resto ---- */
+/* Raiz do app: coluna flex para a barra do cenário (5a) empurrar o conteúdo. */
+.pg-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.pg-app-body {
+  flex: 1;
+  min-height: 0;
+}
 .pg-shell {
   display: flex;
   flex-direction: column;

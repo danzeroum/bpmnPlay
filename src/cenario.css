@@ -1,0 +1,169 @@
+/* Cenários guiados (5a · PR11): barra persistente + balão sobre a superfície
+   real. Só do playground. */
+
+/* barra do cenário (acima da nav) */
+.pg-cenario-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 44px;
+  padding: 0 16px;
+  background: #26221d;
+  color: #ece8e1;
+  z-index: 40;
+}
+.pg-cenario-label {
+  font-family: var(--pg-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: #b4ac9c;
+  white-space: nowrap;
+}
+.pg-cenario-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+}
+.pg-cenario-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.pg-cenario-step-dot {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  flex: 0 0 auto;
+}
+.pg-cenario-step[data-state='done'] .pg-cenario-step-dot {
+  color: #57b895;
+  border: 1px solid rgba(87, 184, 149, 0.5);
+}
+.pg-cenario-step[data-state='done'] .pg-cenario-step-label {
+  color: #57b895;
+}
+.pg-cenario-step[data-state='current'] .pg-cenario-step-dot {
+  background: var(--pg-accent);
+  color: #fbfaf7;
+}
+.pg-cenario-step[data-state='current'] .pg-cenario-step-label {
+  color: #ece8e1;
+  font-weight: 600;
+}
+.pg-cenario-step[data-state='future'] .pg-cenario-step-dot {
+  border: 1px solid rgba(180, 172, 156, 0.5);
+  color: #b4ac9c;
+}
+.pg-cenario-step[data-state='future'] .pg-cenario-step-label {
+  color: rgba(236, 232, 225, 0.55);
+}
+.pg-cenario-connector {
+  width: 22px;
+  height: 1px;
+  margin: 0 10px;
+  background: rgba(180, 172, 156, 0.35);
+}
+.pg-cenario-step[data-state='done'] .pg-cenario-connector {
+  background: rgba(87, 184, 149, 0.5);
+}
+.pg-cenario-exit {
+  margin-left: auto;
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: #b4ac9c;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px 8px;
+}
+.pg-cenario-exit:hover {
+  color: #ece8e1;
+}
+
+/* anel de destaque no alvo (não bloqueia o clique) */
+.pg-cenario-ring {
+  position: fixed;
+  border: 2px solid var(--pg-accent);
+  border-radius: 8px;
+  box-shadow: 0 0 0 4px rgba(14, 79, 94, 0.15);
+  pointer-events: none;
+  z-index: 45;
+  transition: top 0.15s, left 0.15s, width 0.15s, height 0.15s;
+}
+
+/* balão do passo (padrão Tour 1c) */
+.pg-cenario-balloon {
+  position: fixed;
+  z-index: 46;
+  width: 330px;
+  background: var(--pg-surface);
+  border: 1px solid var(--pg-border);
+  border-radius: var(--pg-r-modal);
+  box-shadow: var(--pg-shadow-modal);
+  padding: 16px 18px;
+}
+.pg-cenario-overline {
+  font-family: var(--pg-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--pg-accent);
+  font-weight: 600;
+}
+.pg-cenario-title {
+  margin: 8px 0 6px;
+  font-size: 15.5px;
+  font-weight: 600;
+}
+.pg-cenario-body {
+  margin: 0 0 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--pg-muted);
+}
+.pg-cenario-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pg-cenario-dots {
+  display: flex;
+  gap: 6px;
+  margin-right: auto;
+}
+.pg-cenario-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pg-border);
+}
+.pg-cenario-dot[data-state='done'] {
+  background: #57b895;
+}
+.pg-cenario-dot[data-state='current'] {
+  background: var(--pg-accent);
+}
+.pg-cenario-back {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--pg-muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 7px 10px;
+}
+.pg-cenario-back:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.pg-cenario-balloon .pg-btn-accent {
+  font-size: 13px;
+}

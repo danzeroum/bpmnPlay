@@ -62,19 +62,16 @@ test('"Abrir no editor completo" transfere o draft sem banner de recuperação',
   await expect(page.locator('.bpmnr-recovery')).toHaveCount(0);
 });
 
-test('nav em dois grupos; rotas novas nascem com placeholder honesto "em breve"', async ({ page }) => {
+test('nav em dois grupos; as abas do grupo APRENDA navegam para superfícies reais', async ({ page }) => {
   await disableTour(page);
   await page.goto('/');
   await expect(page.locator('.pg-nav-group-label').filter({ hasText: 'FERRAMENTAS' })).toBeVisible();
   await expect(page.locator('.pg-nav-group-label').filter({ hasText: 'APRENDA' })).toBeVisible();
 
+  // A aba "Cenários" (grupo APRENDA) leva ao hub /aprenda (superfície real).
   await page.getByRole('tab', { name: 'Cenários' }).click();
   await page.waitForURL('**/aprenda');
-  await expect(page.locator('.pg-soon-badge')).toContainText(/em breve/i);
-  await expect(page.locator('.pg-soon-title')).toContainText(/Cenários|papel/i);
-  // Não é tela morta: tem uma frase do que virá + volta para a home.
-  await expect(page.locator('.pg-soon-desc')).not.toBeEmpty();
-  await expect(page.locator('.pg-soon-back')).toBeVisible();
+  await expect(page.locator('.pg-aprenda-title')).toBeVisible();
 });
 
 test('bottom sheet de gateway em viewport mobile', async ({ page }) => {

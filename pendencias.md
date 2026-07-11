@@ -38,6 +38,14 @@ a execução autônoma, pendências que dependem de você e riscos conhecidos.
 
 ## Log por PR (preenchido conforme avanço)
 
+- **PR11 /aprenda (4d/5a)**: framework de cenários (barra + balão sobre as
+  superfícies REAIS, zero UI de produto nova) — o padrão normativo do 5a. Cada
+  passo declara `{ rota, alvo, título, corpo, autoAvança? }`; progresso em
+  `pg:cenario:<id>` sobrevive a reload; auto-detecção via seletor (ex.: aprovar →
+  `.pg-pill-active` → avança). **Escopo do CONTEÚDO**: os 3 cenários são
+  faithful-but-focados (3 passos cada, apontando elementos reais de /editor e
+  /governanca) — o framework é o deliverable normativo; aprofundar o conteúdo
+  (fila de revisão, diff v2.0↔v2.1, time-travel/bindRun do Auditor) é follow-up.
 - **CI + notas**: PR #12 (mesclado, CI verde).
 - **PR9 /governanca (4b)**: composto sobre `AuditLedger` (cadeia SHA-256) +
   `verifyLedger` da biblioteca. O signer ed25519 é do host (WebCrypto), com a
