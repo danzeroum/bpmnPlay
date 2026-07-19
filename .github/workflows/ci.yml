@@ -26,11 +26,13 @@ jobs:
         with:
           version: 10
 
+      # Sem `cache: pnpm` de propósito: o guard é zero-dep e NÃO roda `pnpm
+      # install`, então não há store pnpm para cachear — com o cache ligado, o
+      # post-job de save falharia ("Path Validation Error") e reprovaria o job.
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
 
       # Self-test primeiro: sem ele o guard não conta como "executável".
       - name: Guard — self-test
