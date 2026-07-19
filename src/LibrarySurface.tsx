@@ -142,6 +142,21 @@ export function LibrarySurface() {
           {lastAction}
         </span>
       </header>
+      {/* Fronteira declarada (regra nº 4): a LibraryView ainda não expõe `messages`
+          nem consome I18nProvider — não acompanha o toggle de idioma. Nunca
+          silenciada: nota honesta na UI + issue upstream. Remover quando a lib
+          fechar danzeroum/bpmn#151. */}
+      <p
+        className="demo-muted"
+        style={{ margin: '0 0 12px', fontSize: 12 }}
+        title="Componente da biblioteca ainda não localizável pela API pública (messages / I18nProvider)."
+      >
+        Nota: a Biblioteca ainda não acompanha o idioma da interface —{' '}
+        <a href="https://github.com/danzeroum/bpmn/issues/151" target="_blank" rel="noreferrer">
+          issue upstream danzeroum/bpmn#151
+        </a>
+        .
+      </p>
       <LibraryView
         adapters={adapters}
         onAction={onAction}
