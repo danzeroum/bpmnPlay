@@ -13,12 +13,18 @@
 import { Link, useParams } from 'react-router-dom';
 import { useLang } from './i18n/index.js';
 import { SCENARIO_BY_SLUG } from './scenarioCards.js';
+import { RUN_BY_SLUG } from './scenarioSteps.js';
+import { ScenarioRunner } from './ScenarioRunner.js';
 import './scenario.css';
 
 export function ScenarioPage() {
   const { t } = useLang();
   const { slug } = useParams<{ slug: string }>();
   const card = slug ? SCENARIO_BY_SLUG[slug] : undefined;
+
+  // Cenário interativo (P-2+): rail + editor real. Fallback = scaffold honesto.
+  const run = slug ? RUN_BY_SLUG[slug] : undefined;
+  if (run) return <ScenarioRunner run={run} />;
 
   if (!card) {
     return (
