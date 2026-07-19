@@ -40,10 +40,12 @@ test('Camunda 8 aparece com ?flags=camunda8 e exporta .camunda8.bpmn', async ({ 
   await expect(item).toBeVisible();
   await expect(page.locator('.pg-badge-exp')).toContainText('experimental');
   await item.click();
-  // Modal experimental → confirmar baixa o arquivo.
+  // Modal experimental → confirmar baixa o arquivo. Escopo no .pg-modal: a toolbar
+  // da lib (agora localizada em PT) também tem botões "Exportar XML/JSON/SVG/PNG",
+  // então /Exportar/ solto casaria com 5 elementos (strict mode).
   await expect(page.locator('.pg-modal')).toContainText('Camunda 8');
   const dl = page.waitForEvent('download');
-  await page.getByRole('button', { name: /Exportar/ }).click();
+  await page.locator('.pg-modal').getByRole('button', { name: /Exportar/ }).click();
   expect((await dl).suggestedFilename()).toMatch(/\.camunda8\.bpmn$/);
 });
 
