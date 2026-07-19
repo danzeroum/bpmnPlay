@@ -1,5 +1,5 @@
-import { useDiagram } from '@bpmn-react/react';
-import type { BpmnDiagram } from '@bpmn-react/core';
+import { useDiagram } from '@buildtovalue/react';
+import type { BpmnDiagram } from '@buildtovalue/core';
 import { Close } from './icons.js';
 
 /**

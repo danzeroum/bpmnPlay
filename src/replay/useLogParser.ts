@@ -4,7 +4,7 @@
  * Fallback síncrono se Web Worker não existir (ambientes sem suporte).
  */
 import { useCallback, useEffect, useRef } from 'react';
-import { parseCsv, parseXes, type CsvMapping, type Trace } from '@bpmn-react/replay';
+import { parseCsv, parseXes, type CsvMapping, type Trace } from '@buildtovalue/replay';
 import type { LogWorkerRequest, LogWorkerResponse } from './logWorker.js';
 
 export interface ParsedLog {

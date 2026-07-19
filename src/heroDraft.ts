@@ -12,7 +12,7 @@
  * stores competindo nem banner de recuperação espúrio: quem persiste o hero é só
  * o `pg:draft`.
  */
-import type { BpmnDiagram } from '@bpmn-react/core';
+import type { BpmnDiagram } from '@buildtovalue/core';
 
 export const DRAFT_KEY = 'pg:draft';
 

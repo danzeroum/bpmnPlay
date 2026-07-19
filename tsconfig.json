@@ -12,8 +12,8 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@bpmn-react/react/styles.css": ["bpmn/packages/react/styles.css"],
-      "@bpmn-react/*": ["bpmn/packages/*/dist/esm/index.d.ts"]
+      "@buildtovalue/react/styles.css": ["bpmn/packages/react/styles.css"],
+      "@buildtovalue/*": ["bpmn/packages/*/dist/esm/index.d.ts"]
     }
   },
   "include": ["src", "vite.config.ts"]

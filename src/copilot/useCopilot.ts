@@ -1,7 +1,7 @@
 /**
  * useCopilot — estado do copiloto opt-in (5b · PR12).
  *
- * Orquestra o pipeline da biblioteca (`@bpmn-react/copilot`) SEM aplicar nada
+ * Orquestra o pipeline da biblioteca (`@buildtovalue/copilot`) SEM aplicar nada
  * ao diagrama antes do aceite: provider.complete → parseProposal →
  * validateProposal (rejeição íntegra) → buildPlan → prévia fantasma. O aceite
  * executa `plan.command` (UM composto desfazível e auditado, via
@@ -13,7 +13,7 @@
  * no momento do clique, nunca durante o render.
  */
 import { useCallback, useMemo, useRef, useState } from 'react';
-import type { BpmnDiagram, Command } from '@bpmn-react/core';
+import type { BpmnDiagram, Command } from '@buildtovalue/core';
 import {
   parseProposal,
   validateProposal,
@@ -22,7 +22,7 @@ import {
   type AIProvider,
   type CopilotPlan,
   type Msg,
-} from '@bpmn-react/copilot';
+} from '@buildtovalue/copilot';
 import { createDemoProvider, createKeyProvider } from './provider.js';
 
 export interface DiagramApi {

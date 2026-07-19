@@ -11,7 +11,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Regra nº 1 do Handoff 21 (fronteira EXECUTÁVEL): veta namespace legado
+  # `@bpmn-react/*` e caminho interno da lib. Roda ANTES do build (zero-dep, sem
+  # submódulo) para o vermelho apontar a FRONTEIRA, não um erro de resolve.
+  guard-imports:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout (sem submódulo — o guard só lê o código da app)
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # Self-test primeiro: sem ele o guard não conta como "executável".
+      - name: Guard — self-test
+        run: pnpm guard:selftest
+
+      - name: Guard — fronteira (imports internos/legados)
+        run: pnpm guard
+
   build-test:
+    needs: guard-imports
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -40,6 +69,11 @@ jobs:
         run: |
           pnpm --dir bpmn install --frozen-lockfile
           pnpm --dir bpmn -r run build
+
+      # Typecheck depois do build da lib — os aliases @buildtovalue/* resolvem
+      # para os .d.ts em bpmn/packages/*/dist/esm.
+      - name: Typecheck (tsc --noEmit)
+        run: pnpm typecheck
 
       - name: Instala o Chromium do Playwright
         run: pnpm exec playwright install --with-deps chromium

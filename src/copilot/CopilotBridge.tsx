@@ -4,7 +4,7 @@
  * render com o diagrama vivo + `execute`/`undo`, sem renderizar nada.
  */
 import { useEffect } from 'react';
-import { useDiagram } from '@bpmn-react/react';
+import { useDiagram } from '@buildtovalue/react';
 import type { DiagramApi } from './useCopilot.js';
 
 export function CopilotBridge({ apiRef }: { apiRef: React.MutableRefObject<DiagramApi | null> }) {

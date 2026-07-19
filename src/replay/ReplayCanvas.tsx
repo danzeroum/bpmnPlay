@@ -14,7 +14,7 @@
  * nenhum atalho/Esc extra além do que o BpmnEditor read-only + useReplay já dão.
  */
 import { useMemo, useState } from 'react';
-import type { BpmnDiagram } from '@bpmn-react/core';
+import type { BpmnDiagram } from '@buildtovalue/core';
 import {
   BpmnEditor,
   formatDuration,
@@ -23,8 +23,8 @@ import {
   useReplay,
   type BpmnPlugin,
   type ReplayVersion,
-} from '@bpmn-react/react';
-import { summarizeReplay, type AggregatedLog, type ReplayAnalysis } from '@bpmn-react/replay';
+} from '@buildtovalue/react';
+import { summarizeReplay, type AggregatedLog, type ReplayAnalysis } from '@buildtovalue/replay';
 import { useLang } from '../i18n/index.js';
 import type { DictKey } from '../i18n/dict.js';
 

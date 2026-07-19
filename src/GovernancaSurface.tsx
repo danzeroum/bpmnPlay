@@ -12,8 +12,8 @@
  * entrada em memória e o verify aponta o elo quebrado (pill vermelha).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AuditLedger, type AuditEntry } from '@bpmn-react/core';
-import { verifyLedger } from '@bpmn-react/audit';
+import { AuditLedger, type AuditEntry } from '@buildtovalue/core';
+import { verifyLedger } from '@buildtovalue/audit';
 import { getSigner, type GovernanceSigner } from './governance/signer.js';
 import { useLang } from './i18n/index.js';
 import { ShieldCheck, Check, AlertCircle } from './icons.js';

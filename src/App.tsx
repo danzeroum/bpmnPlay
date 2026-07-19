@@ -10,8 +10,8 @@
  */
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { type ReactNode } from 'react';
-import { BpmnSimulator } from '@bpmn-react/react';
-import { simulationSessionEntry } from '@bpmn-react/adapters-bpmn';
+import { BpmnSimulator } from '@buildtovalue/react';
+import { simulationSessionEntry } from '@buildtovalue/adapters-bpmn';
 import { buildSimulationDiagram } from './sampleDiagram.js';
 import { PLUGINS, simulationDemoLedger } from './plugins.js';
 import { EditorScreen, type EditorMode } from './EditorScreen.js';

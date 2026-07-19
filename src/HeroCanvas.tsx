@@ -12,8 +12,8 @@
  * recuperação espúrio nem dois stores competindo.
  */
 import { useCallback, useMemo, useRef } from 'react';
-import { BpmnDesigner, useDiagram, useCanvasStore, useEditorConfig, type BpmnPlugin } from '@bpmn-react/react';
-import { addNodeCommand, createNode, type BpmnDiagram } from '@bpmn-react/core';
+import { BpmnDesigner, useDiagram, useCanvasStore, useEditorConfig, type BpmnPlugin } from '@buildtovalue/react';
+import { addNodeCommand, createNode, type BpmnDiagram } from '@buildtovalue/core';
 import { buildSimulationDiagram } from './sampleDiagram.js';
 import { PLUGINS } from './plugins.js';
 import { readDraft, writeDraft } from './heroDraft.js';

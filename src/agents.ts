@@ -1,6 +1,6 @@
 /**
  * /agentes (4c · PR10) — registry client-side de agentes + macro com agentTask +
- * fixtures determinísticas. Compõe `@bpmn-react/agentflow` (schema, simulate,
+ * fixtures determinísticas. Compõe `@buildtovalue/agentflow` (schema, simulate,
  * exportLangGraph, templates) — não recria o motor. O AgentStudio da lib é
  * embrulhado na superfície (AgentesSurface).
  *
@@ -8,8 +8,8 @@
  * AgentWorkflow JSON (nunca XML) — o bug de import de sub-process (known-issues
  * #1) NÃO toca este caminho.
  */
-import { CommandStack, createDiagram, createEdge, createNode, type BpmnDiagram } from '@bpmn-react/core';
-import { resolveEditorConfig, proposeErrorBoundaryCommand } from '@bpmn-react/react';
+import { CommandStack, createDiagram, createEdge, createNode, type BpmnDiagram } from '@buildtovalue/core';
+import { resolveEditorConfig, proposeErrorBoundaryCommand } from '@buildtovalue/react';
 import {
   RESEARCH_AGENT,
   simulate,
@@ -17,7 +17,7 @@ import {
   type AgentWorkflow,
   type Fixtures,
   type SimulationState,
-} from '@bpmn-react/agentflow';
+} from '@buildtovalue/agentflow';
 import { PLUGINS } from './plugins.js';
 
 export const AGENT_WORKFLOW: AgentWorkflow = RESEARCH_AGENT;

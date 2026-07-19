@@ -14,8 +14,6 @@ import { AlertCircle, BrandGlyph, Check, CheckCircleFilled, ChevronDown, Close, 
 import type { DictKey } from './i18n/dict.js';
 import { PERMALINK_LIMIT, permalinkHash } from './permalink.js';
 
-declare const __BPMN_LIB_VERSION__: string;
-
 type TabKey =
   | 'nav.tab.editor'
   | 'nav.tab.dmn'

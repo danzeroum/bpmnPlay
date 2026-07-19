@@ -3,13 +3,13 @@
  * (editor, DMN, simulação, replay). Extraído do App.tsx para que a nova casca
  * com rotas reutilize a mesma configuração sem duplicar.
  */
-import { AuditLedger } from '@bpmn-react/core';
-import { astarConnection, type BpmnPlugin, type EdgeRouterContext } from '@bpmn-react/react';
-import { decisionInspectorSection, dmnPlugin, type DecisionSummary } from '@bpmn-react/dmn';
-import { domainExamplePlugin } from '@bpmn-react/domain-example';
-import { healthcarePlugin } from '@bpmn-react/healthcare';
-import { callActivityBindingRule, VersionRegistry } from '@bpmn-react/registry';
-import { soundnessPromotionRule, soundnessRules } from '@bpmn-react/soundness';
+import { AuditLedger } from '@buildtovalue/core';
+import { astarConnection, type BpmnPlugin, type EdgeRouterContext } from '@buildtovalue/react';
+import { decisionInspectorSection, dmnPlugin, type DecisionSummary } from '@buildtovalue/dmn';
+import { domainExamplePlugin } from '@buildtovalue/domain-example';
+import { healthcarePlugin } from '@buildtovalue/healthcare';
+import { callActivityBindingRule, VersionRegistry } from '@buildtovalue/registry';
+import { soundnessPromotionRule, soundnessRules } from '@buildtovalue/soundness';
 import { buildReplayTraces, DEMO_DECISION_TABLE } from './sampleDiagram.js';
 
 // Observability sink (§2): o host decide o que fazer com os eventos do editor —

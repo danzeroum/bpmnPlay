@@ -230,6 +230,8 @@ export const DICT = {
   // Home — footer
   'home.footer.license': { pt: 'Código aberto · Licença MIT', en: 'Open source · MIT License' },
   'home.footer.docs': { pt: 'Documentação', en: 'Documentation' },
+  'home.footer.lib': { pt: 'biblioteca', en: 'library' },
+  'home.footer.lib.changelog': { pt: 'Ver o CHANGELOG no commit pinado', en: 'View the CHANGELOG at the pinned commit' },
   'home.footer.dev': {
     pt: 'Modo desenvolvedor: rotas de QA (A*, stress, fechados) em ?dev=1',
     en: 'Developer mode: QA routes (A*, stress, closed) at ?dev=1',

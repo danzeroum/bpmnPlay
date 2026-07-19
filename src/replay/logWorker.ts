@@ -1,11 +1,11 @@
 /// <reference lib="webworker" />
 /**
  * Web worker do parsing de logs (tela 2b/3a). Roda parseXes/parseCsv da
- * biblioteca (@bpmn-react/replay) fora da main thread, para logs grandes
+ * biblioteca (@buildtovalue/replay) fora da main thread, para logs grandes
  * (>10k eventos) não travarem a UI. O parsing e a agregação continuam sendo da
  * lib — o worker é só o host client-side.
  */
-import { parseCsv, parseXes, type CsvMapping } from '@bpmn-react/replay';
+import { parseCsv, parseXes, type CsvMapping } from '@buildtovalue/replay';
 
 export type LogWorkerRequest =
   | { id: number; kind: 'xes'; text: string }

@@ -1,6 +1,6 @@
 /**
  * Providers de IA do copiloto (5b · PR12) — ambos implementam o contrato
- * `AIProvider` da biblioteca (`@bpmn-react/copilot`). O provider é injetado
+ * `AIProvider` da biblioteca (`@buildtovalue/copilot`). O provider é injetado
  * pelo host: a biblioteca não tem SDK de LLM, rede nem telemetria — quem
  * decide o que trafega é o playground.
  *
@@ -12,7 +12,7 @@
  *   de rede do painel é honesto). Sem proxy/CORS o fetch falha e o painel
  *   mostra o erro; execução real de agente está fora do escopo.
  */
-import type { AIProvider, Msg } from '@bpmn-react/copilot';
+import type { AIProvider, Msg } from '@buildtovalue/copilot';
 import { pickDemoFixture } from './fixtures.js';
 
 /** Provider do modo demo: determinístico, sem rede. */

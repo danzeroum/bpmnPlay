@@ -4,8 +4,8 @@
  * o Studio também *publica* o seu próprio registry (via navegação client-side)
  * para o `?load` resolver a versão exata que estava em revisão.
  */
-import { computeDiagramHash, type BpmnDiagram } from '@bpmn-react/core';
-import { VersionRegistry } from '@bpmn-react/registry';
+import { computeDiagramHash, type BpmnDiagram } from '@buildtovalue/core';
+import { VersionRegistry } from '@buildtovalue/registry';
 import {
   buildCollaborationDiagram,
   buildDrdDiagram,

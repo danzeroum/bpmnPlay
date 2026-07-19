@@ -2,7 +2,7 @@
  * Serializa o ledger de auditoria (hash-encadeado) em CSV, para a exportação
  * "Trilha de auditoria (.csv)" do menu Arquivo. Tudo no navegador.
  */
-import type { AuditEntry } from '@bpmn-react/core';
+import type { AuditEntry } from '@buildtovalue/core';
 
 const HEADER = ['seq', 'timestamp', 'type', 'userId', 'versionId', 'description', 'hash', 'previousHash'];
 
