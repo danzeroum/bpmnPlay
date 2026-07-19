@@ -18,6 +18,7 @@ import { buildSimulationDiagram } from './sampleDiagram.js';
 import { PLUGINS } from './plugins.js';
 import { readDraft, writeDraft } from './heroDraft.js';
 import { useLang } from './i18n/index.js';
+import { useLibMessages } from './i18n/libMessages.js';
 import { NodeEvent, NodeTask, NodeGateway, Undo, Touch } from './icons.js';
 
 const DRAFT_DEBOUNCE_MS = 800;
@@ -25,6 +26,7 @@ const NO_AUTOSAVE: BpmnPlugin = { id: 'hero/no-autosave', autosave: false };
 
 export function HeroCanvas() {
   const { t } = useLang();
+  const messages = useLibMessages();
   const initial = useMemo<BpmnDiagram>(() => readDraft() ?? buildSimulationDiagram(), []);
   const plugins = useMemo(() => [...PLUGINS, NO_AUTOSAVE], []);
   const timer = useRef<number | null>(null);
@@ -37,7 +39,7 @@ export function HeroCanvas() {
   return (
     <div className="pg-hero-canvas">
       <div className="pg-hero-designer">
-        <BpmnDesigner diagram={initial} plugins={plugins} onChange={onChange}>
+        <BpmnDesigner diagram={initial} plugins={plugins} onChange={onChange} messages={messages}>
           <HeroToolbar />
         </BpmnDesigner>
       </div>

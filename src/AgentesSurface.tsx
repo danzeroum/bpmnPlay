@@ -8,8 +8,9 @@
  * "Exportar LangGraph" usa exportLangGraph e declara o subconjunto (avisos).
  */
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { BpmnDesigner, AgentStudio, PT_BR } from '@buildtovalue/react';
+import { BpmnDesigner, AgentStudio } from '@buildtovalue/react';
 import { useLang } from './i18n/index.js';
+import { useLibMessages } from './i18n/libMessages.js';
 import { PLUGINS } from './plugins.js';
 import { Play, Close } from './icons.js';
 import {
@@ -24,6 +25,7 @@ import './agentes.css';
 
 export function AgentesSurface() {
   const { t } = useLang();
+  const messages = useLibMessages();
   const macro = useMemo(() => buildAgentMacroDiagram(), []);
   const [open, setOpen] = useState(false);
   const [langgraph, setLanggraph] = useState<{ warnings: string[] } | null>(null);
@@ -78,7 +80,7 @@ export function AgentesSurface() {
       )}
 
       <div className="pg-agentes-canvas" onDoubleClick={onDoubleClick}>
-        <BpmnDesigner diagram={macro} plugins={PLUGINS} messages={PT_BR}>
+        <BpmnDesigner diagram={macro} plugins={PLUGINS} messages={messages}>
           <AgentStudio
             open={open}
             workflow={AGENT_WORKFLOW}

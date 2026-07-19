@@ -29,6 +29,7 @@ import { createGitAnchor, type GitAnchorTransport } from '@buildtovalue/anchor-g
 import { StudioShell } from '@buildtovalue/studio';
 import '@buildtovalue/library-react/styles.css';
 import '@buildtovalue/studio/styles.css';
+import { useLibMessages } from './i18n/libMessages.js';
 
 /**
  * `?studio=1` — the full BuildToValue Studio (Handoff 6 S-4/S-5/S-6):
@@ -282,6 +283,7 @@ function syncUrl(mutate: (params: URLSearchParams) => void): void {
 
 export function StudioSurface() {
   const navigate = useNavigate();
+  const messages = useLibMessages();
   const [world, setWorld] = useState<StudioWorld>();
   const [user, setUser] = useState<UserContext>(USERS[0]);
   const [lastAction, setLastAction] = useState('');
@@ -411,6 +413,7 @@ export function StudioSurface() {
       </div>
       <StudioShell
         key={user.id}
+        messages={messages}
         user={user}
         library={{
           adapters: world.adapters,
