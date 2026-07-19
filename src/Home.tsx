@@ -22,6 +22,7 @@ import {
 } from './icons.js';
 import { NavGroups } from './PlaygroundNav.js';
 import { HeroCanvas } from './HeroCanvas.js';
+import { ScenariosSection } from './ScenariosSection.js';
 import { EXAMPLES, type Example } from './examples.js';
 import './home.css';
 
@@ -98,6 +99,9 @@ export function Home() {
         </div>
         <HeroCanvas />
       </section>
+
+      {/* cenários curados (galeria de 8, P-1b) — abaixo do hero-canvas vivo */}
+      <ScenariosSection />
 
       {/* módulos */}
       <section className="pg-modules">

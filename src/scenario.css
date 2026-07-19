@@ -1,0 +1,62 @@
+/* Página /scenario/<slug> — scaffold P-1b. Chrome tokens --pg-*. */
+.pg-scenario-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pg-scenario-page-code {
+  font-family: var(--pg-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--pg-accent);
+}
+.pg-scenario-page-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+}
+.pg-scenario-page-roteiro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  background: var(--pg-sub);
+  border: 1px solid var(--pg-border);
+  border-radius: var(--pg-r-card);
+}
+.pg-scenario-page-roteiro-label {
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pg-muted);
+}
+.pg-scenario-page-verbs {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.pg-scenario-page-status {
+  margin: 0;
+  font-size: 14px;
+  color: var(--pg-muted);
+}
+.pg-scenario-page-body {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--pg-muted);
+}
+.pg-scenario-page-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.pg-scenario-page-empty {
+  text-align: left;
+}

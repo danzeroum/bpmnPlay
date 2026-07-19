@@ -43,6 +43,7 @@ import { hasFlag } from './flags.js';
 import { ledgerToCsv } from './audit-csv.js';
 import { Close } from './icons.js';
 import { useLang } from './i18n/index.js';
+import { useLibMessages } from './i18n/libMessages.js';
 import { PlaygroundNav, type EditorActions } from './PlaygroundNav.js';
 import { StatusBar, type DiagramStats } from './StatusBar.js';
 import { Tour, isTourDone } from './Tour.js';
@@ -161,6 +162,7 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLang();
+  const messages = useLibMessages();
   const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
   const devMode = params.get('dev') !== null;
   const astarMode = devMode && params.get('astar') !== null;
@@ -337,6 +339,7 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
               <BpmnEditor
                 key={editorKey}
                 diagram={diagram}
+                messages={messages}
                 plugins={astarMode ? ASTAR_PLUGINS : PLUGINS}
                 overlay={showCopilot && copilot.pending ? <CopilotGhost ghost={copilot.pending.ghost} /> : undefined}
                 onChange={(next) => {

@@ -232,6 +232,79 @@ export const DICT = {
   'home.footer.docs': { pt: 'Documentação', en: 'Documentation' },
   'home.footer.lib': { pt: 'biblioteca', en: 'library' },
   'home.footer.lib.changelog': { pt: 'Ver o CHANGELOG no commit pinado', en: 'View the CHANGELOG at the pinned commit' },
+
+  // Home — cenários curados (galeria de 8, P-1b). Títulos PT verbatim do §2 (H20),
+  // sem o emoji do documento; EN cunhado imperativo (≤5 palavras). Verbos do roteiro.
+  'scn.section.title': { pt: 'Cenários curados', en: 'Curated scenarios' },
+  'scn.section.subtitle': {
+    pt: 'Oito trilhas pela ferramenta real — cada roteiro é o teste de ponta a ponta.',
+    en: 'Eight tracks through the real tool — each script is the end-to-end test.',
+  },
+  'scn.freecanvas': { pt: 'Canvas livre →', en: 'Free canvas →' },
+  'scn.phase.soon': { pt: 'chega na', en: 'coming in' },
+  'scn.drop.hint': {
+    pt: 'Solte um .bpmn para abrir no editor',
+    en: 'Drop a .bpmn to open it in the editor',
+  },
+  'scn.drop.error': { pt: 'Não consegui ler esse .bpmn.', en: 'Could not read that .bpmn.' },
+  // C1–C8 títulos
+  'scn.c1.title': { pt: 'Modelar em 60s', en: 'Model in 60 seconds' },
+  'scn.c2.title': { pt: 'Pacote de viagem (compensação)', en: 'Compensate a failed step' },
+  'scn.c3.title': { pt: 'Acima da alçada (escalação)', en: 'Escalate above authority' },
+  'scn.c4.title': { pt: 'Ciclo de governança', en: 'Run a governance cycle' },
+  'scn.c5.title': { pt: 'Agente → humano', en: 'Bridge agent to human' },
+  'scn.c6.title': { pt: 'Copiloto governado', en: 'Draft with a copilot' },
+  'scn.c7.title': { pt: 'Simular & replay', en: 'Simulate and replay' },
+  'scn.c8.title': { pt: 'Interop OMG 100%', en: 'Import real BPMN' },
+  // C1–C8 verbos do roteiro (§2 H20)
+  'scn.c1.verbs': {
+    pt: 'context pad, Tab encadeia, ⌘K, «Arrumar», smart guides, Ctrl+F',
+    en: 'context pad, Tab chains, ⌘K, «Tidy», smart guides, Ctrl+F',
+  },
+  'scn.c2.verbs': {
+    pt: 'simular falha do cartão → esub de erro → «⟲ Compensar» → trilha reversa → risco declarado',
+    en: 'simulate card failure → error esub → «⟲ Compensate» → reverse trail → declared risk',
+  },
+  'scn.c3.verbs': {
+    pt: 'boundary não-interruptivo, chip de autoridade, throwEscalation com destino, dissolve declarado',
+    en: 'non-interrupting boundary, authority chip, throwEscalation with target, declared dissolve',
+  },
+  'scn.c4.verbs': {
+    pt: 'CANDIDATA → revisão com diff → thread ancorada → «Pedir mudanças» assinado → aprovar → VIGENTE → Ledger',
+    en: 'CANDIDATE → review diff → anchored thread → signed «Request changes» → approve → CURRENT → Ledger',
+  },
+  'scn.c5.verbs': {
+    pt: 'agentTask governado + boundary de escalação + revisão assinada; AgentStudio ao lado',
+    en: 'governed agentTask + escalation boundary + signed review; AgentStudio alongside',
+  },
+  'scn.c6.verbs': {
+    pt: 'fake provider → rascunho → ajuste → autoria+hash → «Desfazer tudo» = 1 undo; BYO-key opcional',
+    en: 'fake provider → draft → tweak → authorship+hash → «Undo all» = 1 undo; optional BYO-key',
+  },
+  'scn.c7.verbs': {
+    pt: 'tokens, escolha de gateway, roteiros salvos; importar XES → heatmap de fitness',
+    en: 'tokens, gateway choice, saved scripts; import XES → fitness heatmap',
+  },
+  'scn.c8.verbs': {
+    pt: 'importar 2 arquivos reais (Camunda/bpmn.io) → significado pleno → matriz CONFORMANCE → round-trip',
+    en: 'import 2 real files (Camunda/bpmn.io) → full meaning → CONFORMANCE matrix → round-trip',
+  },
+  // Página /scenario/<slug> (scaffold P-1b)
+  'scn.page.roteiro': { pt: 'Roteiro', en: 'Script' },
+  'scn.page.soon': {
+    pt: 'A trilha guiada e interativa deste cenário chega na',
+    en: 'This scenario’s guided, interactive track arrives in',
+  },
+  'scn.page.now': {
+    pt: 'Você já pode modelar agora mesmo no editor.',
+    en: 'You can already model right now in the editor.',
+  },
+  'scn.notfound.title': { pt: 'Cenário não encontrado', en: 'Scenario not found' },
+  'scn.notfound.body': {
+    pt: 'Não há cenário neste endereço. A URL foi preservada para depuração.',
+    en: 'There is no scenario at this address. The URL was kept for debugging.',
+  },
+  'scn.home': { pt: 'Ir para a home', en: 'Go to home' },
   'home.footer.dev': {
     pt: 'Modo desenvolvedor: rotas de QA (A*, stress, fechados) em ?dev=1',
     en: 'Developer mode: QA routes (A*, stress, closed) at ?dev=1',

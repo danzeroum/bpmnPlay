@@ -10,7 +10,7 @@
  */
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { type ReactNode } from 'react';
-import { BpmnSimulator } from '@buildtovalue/react';
+import { BpmnSimulator, I18nProvider } from '@buildtovalue/react';
 import { simulationSessionEntry } from '@buildtovalue/adapters-bpmn';
 import { buildSimulationDiagram } from './sampleDiagram.js';
 import { PLUGINS, simulationDemoLedger } from './plugins.js';
@@ -23,8 +23,10 @@ import { StudioSurface } from './StudioSurface.js';
 import { GovernancaSurface } from './GovernancaSurface.js';
 import { AgentesSurface } from './AgentesSurface.js';
 import { AprendaSurface } from './AprendaSurface.js';
+import { ScenarioPage } from './ScenarioPage.js';
 import { ScenarioController } from './ScenarioController.js';
 import { PlaygroundNav } from './PlaygroundNav.js';
+import { useLibMessages } from './i18n/libMessages.js';
 import './demo.css';
 import './chrome.css';
 
@@ -49,6 +51,8 @@ export function App() {
           <Route path="/governanca" element={<SurfaceScreen>{<GovernancaSurface />}</SurfaceScreen>} />
           <Route path="/agentes" element={<SurfaceScreen>{<AgentesSurface />}</SurfaceScreen>} />
           <Route path="/aprenda" element={<SurfaceScreen>{<AprendaSurface />}</SurfaceScreen>} />
+          {/* Cenário curado (galeria de 8, P-1b) — página scaffold por slug */}
+          <Route path="/scenario/:slug" element={<SurfaceScreen>{<ScenarioPage />}</SurfaceScreen>} />
           <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </LegacyGate>
@@ -79,19 +83,23 @@ function SurfaceScreen({ children }: { children: ReactNode }) {
 
 function SimulateScreen() {
   const navigate = useNavigate();
+  // BpmnSimulator não expõe prop `messages` — localiza-se pelo I18nProvider ao redor.
+  const messages = useLibMessages();
   return (
     <div className="pg-shell">
       <PlaygroundNav />
       <div className="pg-content">
-        <BpmnSimulator
-          diagram={buildSimulationDiagram()}
-          plugins={PLUGINS}
-          author="demo"
-          onRecord={(session) => {
-            void simulationDemoLedger.append(simulationSessionEntry(session, { id: 'demo' }));
-          }}
-          onExit={() => navigate('/editor')}
-        />
+        <I18nProvider messages={messages}>
+          <BpmnSimulator
+            diagram={buildSimulationDiagram()}
+            plugins={PLUGINS}
+            author="demo"
+            onRecord={(session) => {
+              void simulationDemoLedger.append(simulationSessionEntry(session, { id: 'demo' }));
+            }}
+            onExit={() => navigate('/editor')}
+          />
+        </I18nProvider>
       </div>
     </div>
   );
