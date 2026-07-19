@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Fraunces:opsz,wght@9..144,500;9..144,600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #2b2824; }
+  a { color: #33567e; } a:hover { color: #24405f; }
+  ::selection { background: #e3ecf7; }
+</style>
+</helmet>
+<section style="font-family: 'Space Grotesk', system-ui, sans-serif; color: #262220; padding: 34px 30px 70px;">
+  <div style="max-width: 1560px; margin: 0 auto;">
+    <div style="color: #efece6; margin-bottom: 24px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 3px; color: #c9a94e;">SPEC DE REFERÊNCIA · HANDOFF 20 · PLAYGROUND (REPO bpmnPlay)</div>
+      <h1 style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 34px; margin: 8px 0 6px;">Playground — a vitrine que prova a API pública em 30 segundos</h1>
+      <div style="font-size: 13px; color: #a49c8f; max-width: 104ch;">Repo SEPARADO (<span style="font-family: 'IBM Plex Mono', monospace;">danzeroum/bpmnPlay</span>) consumindo a biblioteca como primeiro cliente real — padrão demo.bpmn.io / Camunda Play. Três funções: <strong style="color: #c9a94e;">teste de verdade da API pública</strong> (se precisar de gambiarra, é gap da lib), <strong style="color: #c9a94e;">vitrine comercial</strong> (modelar → simular → compensar → governar → IA em cenários curados) e <strong style="color: #c9a94e;">reprodutor de bugs</strong> (permalink). Regra de ouro: o playground DEMONSTRA, nunca estende — extensão é plugin pelos contratos; falta = issue na lib.</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(560px, 1fr)); gap: 20px; align-items: start;">
+
+      <!-- 7a ARQUITETURA -->
+      <div id="7a" style="background: #faf9f6; border-radius: 16px; overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,0.35);">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 13px 18px; background: #262220; color: #efece6;">
+          <span style="background: #c9a94e; color: #262220; font-weight: 700; font-size: 11px; border-radius: 6px; padding: 2px 8px;">7a</span>
+          <span style="font-size: 14px; font-weight: 600;">Arquitetura de consumo — cliente real, nunca fork</span>
+        </div>
+        <div style="padding: 18px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div style="border: 1px solid #e2ddd3; border-radius: 12px; background: #262220; overflow: hidden;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #a49c8f; padding: 9px 12px; border-bottom: 1px solid #3a352f;">STACK + PINAGEM</div>
+              <pre style="margin: 0; padding: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; line-height: 1.7; color: #d8d2c6; white-space: pre-wrap; word-break: break-all;">Vite + React 18 + TypeScript
+<span style="color: #7fb59a;">// HOJE (pré-I-6): pin por git tag</span>
+"@buildtovalue/react":
+  "github:danzeroum/bpmn#v1.0.0&amp;path:packages/react"
+<span style="color: #7fb59a;">// PÓS-I-6: pin semver npm</span>
+"@buildtovalue/react": "~1.0.0"
+
+<span style="color: #c9a94e;">Imports SÓ da raiz pública:</span>
+import { BpmnDesigner } from '@buildtovalue/react'
+import { BpmnViewer } from '@buildtovalue/react/viewer'
+<span style="color: #b3372f;">NUNCA: import …/dist/internal/…</span></pre>
+            </div>
+            <div style="border: 1px solid #e2ddd3; border-radius: 12px; background: #fff; padding: 12px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #6b6357; margin-bottom: 7px;">MAPA DE PACOTES CONSUMIDOS</div>
+              <div style="font-size: 10.5px; line-height: 1.8; color: #3a352f;"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #9a7b1e;">react</span> Designer/Viewer/Simulator/paleta/lint dock<br><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #9a7b1e;">studio</span> Biblioteca/Revisão/Ledger Explorer<br><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #9a7b1e;">core·lint·simulation·soundness</span> headless<br><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #9a7b1e;">identity·audit·registry·adapters-bpmn</span> governança<br><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #9a7b1e;">copilot·sfeel·dmn·agentflow</span> IA + decisão + agentes</div>
+              <div style="border-top: 1px dashed #e2ddd3; margin-top: 8px; padding-top: 8px; font-size: 10px; line-height: 1.6; color: #6b6357;"><strong style="color: #3a352f;">Persistência:</strong> localStorage (diagramas + ledger por cenário) — sem backend; reset por cenário sempre visível.</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px;">
+            <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #9a7b1e; margin-bottom: 7px;">SEMÂNTICA VINCULANTE</div>
+              <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">Toda cola é HOST-side pelos contratos públicos: plugins (BpmnPlugin), resolvers injetados, AIProvider, AnchorAdapter, ArtifactAdapter, onEditorEvent (16 eventos N-3)<br>Zero código copiado da lib; zero lógica de negócio própria<br>Gap descoberto = issue no danzeroum/bpmn com repro — nunca workaround interno<br>i18n: toggle EN⇄PT-BR usando os dicionários da lib (prop messages)</div>
+            </div>
+            <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #1a6a54; margin-bottom: 7px;">CHECKLIST DE ACEITE ✓</div>
+              <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">□ guard de CI no bpmnPlay: grep vetando imports de caminhos internos (dist/, src/ da lib)<br>□ versão pinada + exibida no footer («biblioteca v1.0.0 · commit abc123»)<br>□ build estático (Vite) deployável em Pages/Netlify — zero backend<br>□ lighthouse ≥90 performance/a11y na home<br>□ README do bpmnPlay declara as 4 regras de fronteira</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7b HOME -->
+      <div id="7b" style="background: #faf9f6; border-radius: 16px; overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,0.35);">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 13px 18px; background: #262220; color: #efece6;">
+          <span style="background: #c9a94e; color: #262220; font-weight: 700; font-size: 11px; border-radius: 6px; padding: 2px 8px;">7b</span>
+          <span style="font-size: 14px; font-weight: 600;">Home — galeria de cenários (30s até o "uau")</span>
+        </div>
+        <div style="padding: 18px;">
+          <div style="border: 1px solid #e2ddd3; border-radius: 12px; background: #f2efe9; padding: 14px;">
+            <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px;">
+              <span style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px;">BuildToValue BPMN · Playground</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #6b6357;">biblioteca v1.0.0</span>
+              <span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; border: 1px solid #a49c8f; border-radius: 999px; padding: 2px 8px; color: #3a352f;">EN ⇄ PT-BR</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+              <div style="background: #fff; border: 1px solid #e2ddd3; border-radius: 10px; padding: 10px;"><div style="font-size: 15px;">✏️</div><div style="font-size: 10.5px; font-weight: 600; margin: 3px 0 2px;">Modelar em 60s</div><div style="font-size: 8.5px; color: #6b6357; line-height: 1.5;">context pad · Tab · ⌘K · arrumar · guias</div></div>
+              <div style="background: #fff; border: 1px solid #9a7b1e; border-radius: 10px; padding: 10px; box-shadow: 0 3px 10px rgba(154,123,30,0.18);"><div style="font-size: 15px;">🧳</div><div style="font-size: 10.5px; font-weight: 600; margin: 3px 0 2px;">Pacote de viagem</div><div style="font-size: 8.5px; color: #6b6357; line-height: 1.5;">erro → compensar ⟲ reverso + ledger</div></div>
+              <div style="background: #fff; border: 1px solid #e2ddd3; border-radius: 10px; padding: 10px;"><div style="font-size: 15px;">↟</div><div style="font-size: 10.5px; font-weight: 600; margin: 3px 0 2px;">Acima da alçada</div><div style="font-size: 8.5px; color: #6b6357; line-height: 1.5;">escalação NI · autoridade · dissolve</div></div>
+              <div style="background: #fff; border: 1px solid #e2ddd3; border-radius: 10px; padding: 10px;"><div style="font-size: 15px;">✅</div><div style="font-size: 10.5px; font-weight: 600; margin: 3px 0 2px;">Ciclo de governança</div><div style="font-size: 8.5px; color: #6b6357; line-height: 1.5;">diff no canvas · threads · assinar · ⟲</div></div>
+              <div style="background: #fff; border: 1px solid #e2ddd3; border-radius: 10px; padding: 10px;"><div style="font-size: 15px;">🤖</div><div style="font-size: 10.5px; font-weight: 600; margin: 3px 0 2px;">Agente → humano</div><div style="font-size: 8.5px; color: #6b6357; line-height: 1.5;">agentTask · escalação · assinatura</div></div>
+              <div style="background: #fff; border: 1px solid #e2ddd3; border-radius: 10px; padding: 10px;"><div style="font-size: 15px;">✦</div><div style="font-size: 10.5px; font-weight: 600; margin: 3px 0 2px;">Copiloto governado</div><div style="font-size: 8.5px; color: #6b6357; line-height: 1.5;">IA rascunha · humano assina · S-FEEL</div></div>
+              <div style="background: #fff; border: 1px solid #e2ddd3; border-radius: 10px; padding: 10px;"><div style="font-size: 15px;">▶</div><div style="font-size: 10.5px; font-weight: 600; margin: 3px 0 2px;">Simular &amp; replay</div><div style="font-size: 8.5px; color: #6b6357; line-height: 1.5;">tokens · roteiros · XES heatmap</div></div>
+              <div style="background: #fff; border: 1px solid #e2ddd3; border-radius: 10px; padding: 10px;"><div style="font-size: 15px;">🔄</div><div style="font-size: 10.5px; font-weight: 600; margin: 3px 0 2px;">Interop OMG 100%</div><div style="font-size: 8.5px; color: #6b6357; line-height: 1.5;">importar Camunda/bpmn.io · matriz</div></div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 10px; align-items: center;">
+              <span style="border: 1px solid #44403a; background: #262220; color: #efece6; border-radius: 8px; padding: 4px 12px; font-size: 10px; font-weight: 600;">Canvas livre →</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; color: #6b6357;">ou arraste um .bpmn para cá</span>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px;">
+            <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #9a7b1e; margin-bottom: 7px;">SEMÂNTICA VINCULANTE</div>
+              <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">8 cenários curados = os demos já validados por e2e na lib (?compensation, ?agentbridge, ?copilot, ?escalation, ?simulate, corpus real) — pouco e polido vence muito e raso<br>Cada card: 1 emoji-glifo + título + subtítulo de 5 palavras; clique abre o cenário JÁ CARREGADO<br>Drag-and-drop de .bpmn na home abre o canvas livre com o arquivo (import real do converter)<br>Rota por cenário (/scenario/pacote-viagem) — permalink compartilhável</div>
+            </div>
+            <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #1a6a54; margin-bottom: 7px;">CHECKLIST DE ACEITE ✓</div>
+              <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">□ home → primeiro cenário interativo em &lt;3s (bundle viewer/lazy por rota)<br>□ toggle EN⇄PT-BR troca TODA a UI (dicionários da lib via prop messages)<br>□ drop de .bpmn real (Camunda) abre sem erro; inválido = aviso declarado<br>□ mobile: home navegável; cenários com aviso «melhor no desktop» (canvas touch ≥44px herdado)<br>□ dark/light seguindo o tema da lib (data-bpmnr-theme)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7c CENARIO PLAYER -->
+      <div id="7c" style="background: #faf9f6; border-radius: 16px; overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,0.35);">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 13px 18px; background: #262220; color: #efece6;">
+          <span style="background: #c9a94e; color: #262220; font-weight: 700; font-size: 11px; border-radius: 6px; padding: 2px 8px;">7c</span>
+          <span style="font-size: 14px; font-weight: 600;">Cenário guiado — narrativa ao lado, ferramenta de verdade no centro</span>
+        </div>
+        <div style="padding: 18px;">
+          <div style="border: 1px solid #e2ddd3; border-radius: 12px; background: #fff; overflow: hidden;">
+            <div style="display: grid; grid-template-columns: 200px 1fr; min-height: 200px;">
+              <div style="background: #f2efe9; border-right: 1px solid #e2ddd3; padding: 12px;">
+                <div style="font-size: 11px; font-weight: 700;">🧳 Pacote de viagem</div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 7.5px; color: #6b6357; margin: 2px 0 10px;">compensação · passo 3 de 5</div>
+                <div style="font-size: 9.5px; line-height: 1.6; color: #3a352f;">
+                  <div style="color: #a49c8f;">✓ 1. Conheça o processo</div>
+                  <div style="color: #a49c8f;">✓ 2. Simule a falha do cartão</div>
+                  <div style="background: #fdfaf1; border: 1px solid #9a7b1e; border-radius: 6px; padding: 5px 7px; margin: 3px 0;"><strong>3. Compense o escopo</strong><br><span style="font-size: 8.5px; color: #6b6357;">Clique «⟲ Compensar» no painel de simulação — repare na ordem REVERSA</span></div>
+                  <div>4. Veja o risco declarado</div>
+                  <div>5. Audite no ledger</div>
+                </div>
+                <div style="margin-top: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #6b6357;">↺ resetar cenário</div>
+              </div>
+              <div style="padding: 12px; position: relative;">
+                <div style="position: absolute; top: 10px; right: 12px; display: flex; gap: 6px;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; border: 1px solid #e2ddd3; border-radius: 999px; padding: 2px 8px; color: #6b6357;">🔗 compartilhar estado</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; border: 1px solid #e2ddd3; border-radius: 999px; padding: 2px 8px; color: #6b6357;">⤓ exportar .bpmn</span>
+                </div>
+                <svg width="100%" viewBox="0 0 420 150" style="display: block; margin-top: 16px;">
+                  <rect x="10" y="30" width="100" height="42" rx="8" fill="#fff" stroke="#44403a" stroke-width="1.2"></rect>
+                  <text x="60" y="49" text-anchor="middle" font-size="8.5" font-family="Space Grotesk, sans-serif">Reservar hotel</text>
+                  <text x="60" y="61" text-anchor="middle" font-size="7" font-family="IBM Plex Mono, monospace" fill="#1a6a54">✓ completada</text>
+                  <circle cx="98" cy="72" r="9" fill="#fdfcfa" stroke="#44403a" stroke-width="1.1"></circle>
+                  <circle cx="98" cy="72" r="6.5" fill="none" stroke="#44403a" stroke-width="0.9"></circle>
+                  <path d="M 97 68.5 L 93.5 72 L 97 75.5 Z M 101.5 68.5 L 98 72 L 101.5 75.5 Z" fill="none" stroke="#44403a" stroke-width="0.9"></path>
+                  <path d="M 98 81 C 98 96, 120 100, 140 100" fill="none" stroke="#6b6357" stroke-width="1" stroke-dasharray="3 3"></path>
+                  <rect x="142" y="86" width="96" height="30" rx="6" fill="#fdfcfa" stroke="#44403a" stroke-width="1.1"></rect>
+                  <text x="190" y="103" text-anchor="middle" font-size="8" font-family="Space Grotesk, sans-serif">Cancelar reserva</text>
+                  <rect x="150" y="20" width="120" height="42" rx="8" fill="#fff" stroke="#44403a" stroke-width="1.2"></rect>
+                  <text x="210" y="39" text-anchor="middle" font-size="8.5" font-family="Space Grotesk, sans-serif">Comprar passagem</text>
+                  <text x="210" y="51" text-anchor="middle" font-size="7" font-family="IBM Plex Mono, monospace" fill="#1a6a54">✓ completada</text>
+                  <rect x="300" y="20" width="108" height="42" rx="8" fill="#fff" stroke="#b3372f" stroke-width="1.3"></rect>
+                  <text x="354" y="39" text-anchor="middle" font-size="8.5" font-family="Space Grotesk, sans-serif">Pagar cartão</text>
+                  <text x="354" y="51" text-anchor="middle" font-size="7" font-family="IBM Plex Mono, monospace" fill="#b3372f">⚠ sem handler ⟲</text>
+                  <rect x="288" y="96" width="126" height="40" rx="8" fill="#262220"></rect>
+                  <text x="296" y="110" font-size="7" font-family="IBM Plex Mono, monospace" fill="#c9a94e">TRILHA · ordem reversa</text>
+                  <text x="296" y="120" font-size="6.8" font-family="IBM Plex Mono, monospace" fill="#d8d2c6">1. Passagem → Estornar</text>
+                  <text x="296" y="129" font-size="6.8" font-family="IBM Plex Mono, monospace" fill="#d8d2c6">2. Hotel → Cancelar</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px;">
+            <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #9a7b1e; margin-bottom: 7px;">SEMÂNTICA VINCULANTE</div>
+              <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">Rail de passos (esq.) é o ÚNICO chrome do playground — o centro é o Designer/Studio REAL da lib, nunca screenshot ou réplica<br>Passo avança por DETECÇÃO (onEditorEvent/estado da simulação) quando possível; botão «feito, próximo» como fallback — nunca bloqueia exploração livre<br>«↺ resetar» restaura o diagrama semente do cenário (localStorage limpo do cenário, NUNCA global)<br>«🔗 compartilhar estado» = permalink com o XML comprimido no hash (lz-string) — o reprodutor de bugs<br>«⤓ exportar .bpmn» usa o toXml público — prova o round-trip</div>
+            </div>
+            <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #1a6a54; margin-bottom: 7px;">CHECKLIST DE ACEITE ✓</div>
+              <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">□ os 8 cenários com roteiro de 4–6 passos cada (roteiros no §2 do README)<br>□ detecção de passo via onEditorEvent (16 eventos N-3) — zero hack de DOM<br>□ permalink abre o estado exato (XML + cenário + passo) em outra máquina<br>□ reset por cenário nunca toca outros cenários (chaves localStorage isoladas)<br>□ e2e Playwright: o fluxo completo de CADA cenário (o roteiro é o teste)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7d GOVERNANCA + IA -->
+      <div id="7d" style="background: #faf9f6; border-radius: 16px; overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,0.35);">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 13px 18px; background: #262220; color: #efece6;">
+          <span style="background: #c9a94e; color: #262220; font-weight: 700; font-size: 11px; border-radius: 6px; padding: 2px 8px;">7d</span>
+          <span style="font-size: 14px; font-weight: 600;">Governança + IA — o fosso que nenhum concorrente mostra</span>
+        </div>
+        <div style="padding: 18px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div style="border: 1px solid #e2ddd3; border-radius: 12px; background: #fff; padding: 12px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #6b6357; margin-bottom: 8px;">CENÁRIO «CICLO DE GOVERNANÇA» — STUDIO REAL</div>
+              <div style="font-size: 10.5px; line-height: 1.75; color: #3a352f;">v1.1.0 CANDIDATA → abrir Revisão → <strong>diff no canvas</strong> (+ADD/−REM/→MOV) → thread ancorada 💬 → «Pedir mudanças» ASSINADO (⟲ EM REVISÃO) → re-submeter → aprovar assinado → ● VIGENTE → <strong>Ledger Explorer</strong>: cadeia íntegra 7/7 + selo de âncora</div>
+              <div style="border-top: 1px dashed #e2ddd3; margin-top: 8px; padding-top: 8px; font-size: 9.5px; color: #6b6357; line-height: 1.6;">Identidades demo pré-semeadas (ana.ruiz designer · bruno.lima aprovador) com chaves ed25519 geradas NO navegador — nada sai da máquina (cerca §1.7 da lib respeitada).</div>
+            </div>
+            <div style="border: 1px solid #e2ddd3; border-radius: 12px; background: #fff; padding: 12px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #6b6357; margin-bottom: 8px;">CENÁRIO «COPILOTO» — PROVIDER EM DUAS CAMADAS</div>
+              <div style="font-size: 10.5px; line-height: 1.75; color: #3a352f;"><strong>Default: provider fake determinístico</strong> (o mesmo dos e2e da lib) — o cenário funciona offline, sem chave, sempre igual.<br><strong>Opcional: «usar minha chave»</strong> — modal BYO-key (Anthropic/OpenAI), chave SÓ em memória (nunca localStorage), badge «IA real ativa» enquanto vige.</div>
+              <div style="border-top: 1px dashed #e2ddd3; margin-top: 8px; padding-top: 8px; font-size: 9.5px; color: #6b6357; line-height: 1.6;">Rodapé sempre visível: ✦ autoria IA + hash do ledger + «Desfazer tudo» = 1 undo — as cercas do H9 viram o show.</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px;">
+            <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #9a7b1e; margin-bottom: 7px;">SEMÂNTICA VINCULANTE</div>
+              <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">Studio montado pelos adapters PÚBLICOS (registry + lint profiles + prompts do copiloto + catálogo de eventos + agentes)<br>BYO-key: a chave vive só em memória; refresh = some; aviso claro de custo/tráfego — o host (playground) é dono do transporte, exatamente o contrato AIProvider<br>Cenário agente→humano usa o AgentStudio + agentbridge da lib (template real)<br>Replay XES usa o parser público + heatmap (7B)</div>
+            </div>
+            <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #1a6a54; margin-bottom: 7px;">CHECKLIST DE ACEITE ✓</div>
+              <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">□ ciclo completo de governança executável de ponta a ponta SEM backend<br>□ copiloto: fake default SEMPRE funciona; BYO-key opcional com aviso + memória-só (teste de que refresh limpa)<br>□ verifyLedger no Explorer mostra cadeia íntegra; adulterar via devtools → divergência DETECTADA (o cenário convida a tentar!)<br>□ interop: importar 2 arquivos reais do corpus (Camunda/bpmn.io) + link para a matriz CONFORMANCE<br>□ e2e dos 2 cenários de governança/IA com provider fake</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7e REGRAS DE FRONTEIRA -->
+      <div id="7e" style="background: #faf9f6; border-radius: 16px; overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,0.35); grid-column: 1 / -1;">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 13px 18px; background: #262220; color: #efece6;">
+          <span style="background: #c9a94e; color: #262220; font-weight: 700; font-size: 11px; border-radius: 6px; padding: 2px 8px;">7e</span>
+          <span style="font-size: 14px; font-weight: 600;">Regras de fronteira — o contrato playground ⇄ biblioteca</span>
+        </div>
+        <div style="padding: 18px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px;">
+          <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #9a7b1e; margin-bottom: 7px;">1 · SÓ API PÚBLICA</div>
+            <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">Imports da raiz dos pacotes (ou /viewer). Guard de CI vetando caminhos internos. O que a apiSurface congela é o que existe.</div>
+          </div>
+          <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #9a7b1e; margin-bottom: 7px;">2 · VERSÃO PINADA</div>
+            <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">Git tag hoje; semver npm pós-I-6. Versão visível no footer. Upgrade = PR dedicada com changelog lido — nunca «latest».</div>
+          </div>
+          <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #9a7b1e; margin-bottom: 7px;">3 · DEMONSTRA, NÃO ESTENDE</div>
+            <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">Zero lógica de negócio própria; extensão só via contratos (plugins, adapters, resolvers, AIProvider). Cola de host é bem-vinda; fork de internals é vetado.</div>
+          </div>
+          <div style="border: 1px solid #e2ddd3; border-radius: 10px; padding: 11px 13px; background: #fff;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #9a7b1e; margin-bottom: 7px;">4 · GAP = ISSUE UPSTREAM</div>
+            <div style="font-size: 11px; line-height: 1.7; color: #3a352f;">Faltou API? Issue no danzeroum/bpmn com permalink de repro do próprio playground. Workaround interno é dívida proibida — o playground é o detector de gaps da lib.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 26px; color: #a49c8f; font-size: 11.5px; display: flex; gap: 26px; flex-wrap: wrap;">
+      <span><strong style="color: #c9a94e;">Ordem vinculante:</strong> P-0 reconciliação (estado real do bpmnPlay) → P-1 shell+consumo+guard → P-2 cenários de modelagem/simulação (modelar · viagem · alçada · simular) → P-3 governança (ciclo + ledger + interop) → P-4 IA (copiloto BYO-key + agente→humano) → P-5 permalink+deploy+polish</span>
+      <span><strong style="color: #c9a94e;">Cercas:</strong> 4 regras de fronteira · ferramenta REAL no centro (nunca réplica) · fake provider default · chave só em memória · reset isolado · roteiro = e2e</span>
+    </div>
+  </div>
+</section>
+</x-dc>
+</body>
+</html>
