@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body { margin: 0; background: #F2EFE8; }
+a { color: #0E4F5E; } a:hover { color: #26221D; }
+</style>
+</helmet>
+<div style="max-width: 1240px; margin: 0 auto; padding: 56px 48px 72px; font-family: 'IBM Plex Sans', sans-serif; color: #26221D;">
+  <div style="background: #FBFAF7; border: 1px solid #E3DED2; border-radius: 12px; padding: 44px 52px 52px; display: flex; flex-direction: column; gap: 40px;">
+
+    <header data-screen-label="Header H21" style="display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #E3DED2; padding-bottom: 24px;">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; color: #0E4F5E; font-weight: 600;">HANDOFF 21 · COBERTURA MÁXIMA DA BIBLIOTECA</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #B4AC9C;">bpmn @ main 2d65a69 × bpmnPlay @ main fb208a6 · 19 jul 2026</span>
+        <span style="margin-left: auto; padding: 3px 12px; border-radius: 999px; background: #E3EEF0; border: 1px solid #0E4F5E; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: #0E4F5E;">PRIMEIRO CLIENTE REAL</span>
+      </div>
+      <h1 style="margin: 0; font-size: 27px; font-weight: 700; letter-spacing: -0.01em; text-wrap: pretty;">O playground usa 17 dos 24 pacotes — e ainda deixa na mesa o melhor de 9 deles</h1>
+      <p style="margin: 0; font-size: 14.5px; line-height: 1.6; color: #6E675C; max-width: 82ch; text-wrap: pretty;">Auditei os <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">apiSurface.test.ts</span> dos 24 pacotes (a superfície pública congelada), o CHANGELOG, <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">pendencias.md</span> e <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">limitations.md</span> da lib, e cruzei com os 69 imports reais do bpmnPlay. Este doc soma escopo às PRs P-1→P-5 do Handoff 20 (não as substitui) e fecha com as notas de comunicação para os mantenedores da lib.</p>
+    </header>
+
+    <section data-screen-label="S0 Errata" style="display: flex; flex-direction: column; gap: 12px;">
+      <h2 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #A8452F; font-weight: 600;">0 · ERRATA AO PARECER P-0 + DELTA QUE O PLAYGROUND NÃO ABSORVEU</h2>
+      <div style="border: 1px solid #E8C4B4; background: #FBF1EC; border-radius: 9px; padding: 16px 20px; font-size: 13px; line-height: 1.6; color: #4A453D;">
+        <b style="color: #A8452F;">O rename já aconteceu.</b> Upstream executou <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">@bpmn-react/* → @buildtovalue/*</span> em <b>10/07/2026</b> (pendências §1 da lib: org npm criada, release.yml pronto, falta só o NPM_TOKEN). O bpmnPlay consome pelo namespace <i>legado</i> — funciona porque o alias do Vite casa por caminho de pasta, não pelo nome real do pacote. Corrige a divergência 1 do parecer: <b style="color: #26221D;">a migração de imports entra na P-1 junto do bump do submódulo</b>, e o guard de CI passa a vetar caminho interno E o namespace legado.
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <sc-for list="{{ deltas }}" as="d" hint-placeholder-count="6">
+          <span style="padding: 6px 12px; border: 1px solid #E3DED2; border-radius: 999px; background: #FFFFFF; font-size: 12px; color: #4A453D;"><b style="color: #0E4F5E; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;">{{ d.tag }}</b> {{ d.txt }}</span>
+        </sc-for>
+      </div>
+      <p style="margin: 0; font-size: 12.5px; color: #6E675C;">Tudo acima já está na main da lib com apiSurface congelada — o bump do submódulo na P-1 traz de graça; os cenários abaixo é que dão palco.</p>
+    </section>
+
+    <section data-screen-label="S1 Mapa de cobertura" style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">1 · MAPA DE COBERTURA — PACOTE A PACOTE (API PÚBLICA CONGELADA × CONSUMO REAL)</h2>
+      <div style="display: grid; grid-template-columns: 168px 92px 1fr; border: 1px solid #E3DED2; border-radius: 9px; overflow: hidden; font-size: 12.5px; line-height: 1.55;">
+        <div style="display: contents;">
+          <div style="padding: 9px 16px; background: #26221D; color: #B4AC9C; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em;">PACOTE</div>
+          <div style="padding: 9px 0; background: #26221D; color: #B4AC9C; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em;">STATUS</div>
+          <div style="padding: 9px 16px; background: #26221D; color: #B4AC9C; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em;">O QUE EXTRAIR (EXPORTS PÚBLICOS HOJE SEM USO)</div>
+        </div>
+        <sc-for list="{{ mapa }}" as="p" hint-placeholder-count="12">
+          <div style="display: contents;">
+            <div style="padding: 10px 16px; border-top: 1px solid #EFEBE1; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; font-weight: 600; color: #26221D;">{{ p.pkg }}</div>
+            <div style="padding: 10px 0; border-top: 1px solid #EFEBE1;"><span style="padding: 1px 8px; border-radius: 999px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600; background: {{ p.bg }}; color: {{ p.cor }};">{{ p.st }}</span></div>
+            <div style="padding: 10px 16px; border-top: 1px solid #EFEBE1; color: #4A453D;">{{ p.ex }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin: 0; font-size: 12.5px; color: #6E675C;"><b style="color: #26221D;">Leitura:</b> INTOCADO = zero import no bpmnPlay hoje. Os 7 intocados são exatamente os que provam as teses comerciais — lint com quick-fix, conformidade certificável, simulação de decisão honesta, assinatura canônica. <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">cli</span> é Node-only: vira copy no cenário 8 («valide você mesmo: bpmn-react certify»), não import.</p>
+    </section>
+
+    <section data-screen-label="S2 Melhorias por PR" style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">2 · HANDOFF DE MELHORIAS — O QUE CADA PR SOMA (SEM MUDAR A ORDEM P-1→P-5)</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch;">
+        <sc-for list="{{ prs }}" as="pr" hint-placeholder-count="5">
+          <div style="border: 1px solid #E3DED2; border-radius: 9px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; background: #FFFFFF;">
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <span style="display: inline-grid; place-items: center; min-width: 34px; height: 22px; padding: 0 7px; background: #26221D; color: #FBFAF7; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; border-radius: 5px;">{{ pr.id }}</span>
+              <span style="font-size: 13.5px; font-weight: 600;">{{ pr.titulo }}</span>
+            </div>
+            <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.65; color: #4A453D; display: flex; flex-direction: column; gap: 3px;">
+              <sc-for list="{{ pr.itens }}" as="it" hint-placeholder-count="4">
+                <li>{{ it }}</li>
+              </sc-for>
+            </ul>
+          </div>
+        </sc-for>
+        <div style="border: 1px dashed #B4AC9C; border-radius: 9px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; background: #F7F5F0;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: #6E675C;">HONESTIDADE DECLARADA = COPY DOS CENÁRIOS</span>
+          <p style="margin: 0; font-size: 12.5px; line-height: 1.65; color: #4A453D; text-wrap: pretty;">As fronteiras que a lib declara em <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">limitations.md</span> viram texto na tela, nunca surpresa: OR-join com selo «semântica aproximada (limite teórico)»; célula S-FEEL fora do subset para o token com motivo declarado; escalação sem catch <b>dissolve</b> (no-op declarado); descida em sub-process não simulada; RBAC é <i>verificação</i>, não bloqueio. Vender a honestidade é parte do roteiro — nenhum concorrente declara.</p>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="S3 Notas upstream" style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">3 · NOTAS DE COMUNICAÇÃO AOS MANTENEDORES DO danzeroum/bpmn (REGRA 4 — GAP = ISSUE, NUNCA WORKAROUND)</h2>
+      <div style="border: 1px solid #CBE3D3; background: #F4FAF6; border-radius: 9px; padding: 12px 18px; font-size: 12.5px; line-height: 1.6; color: #4A453D;"><b style="color: #1F7A4D;">Triagem upstream recebida (19 jul):</b> degradações silenciosas do import corrigidas (warnings nomeados, comportamento inalterado); matriz de contrato em <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">docs/format-spec.md</span> + teste por célula; nada mais bloqueia P-1→P-5. Duas ações ficaram <b style="color: #26221D;">conosco</b> — entregues em <a href="Micro-handoff N1 e Proposta N3.dc.html" style="font-weight: 600;">Micro-handoff N1 e Proposta N3</a>.</div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <sc-for list="{{ notas }}" as="n" hint-placeholder-count="5">
+          <div style="border: 1px solid #E3DED2; border-radius: 9px; padding: 14px 18px; display: grid; grid-template-columns: 56px 1fr; gap: 14px; background: #FFFFFF;">
+            <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: #26221D;">{{ n.id }}</span>
+              <span style="padding: 1px 8px; border-radius: 999px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600; background: {{ n.bg }}; color: {{ n.cor }};">{{ n.sev }}</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;"><span style="font-size: 13.5px; font-weight: 600;">{{ n.titulo }}</span><span style="padding: 1px 8px; border-radius: 999px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; font-weight: 600; background: {{ n.tbg }}; color: {{ n.tcor }};">{{ n.tri }}</span></div>
+              <p style="margin: 0; font-size: 12.5px; line-height: 1.6; color: #4A453D; text-wrap: pretty;">{{ n.corpo }}</p>
+              <p style="margin: 0; font-size: 12px; line-height: 1.55; color: #6E675C;"><b style="color: #0E4F5E;">Pedimos:</b> {{ n.pede }} <b style="color: #A8452F; margin-left: 6px;">Não pedimos:</b> {{ n.naopede }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin: 0; font-size: 12.5px; color: #6E675C;">Cada nota vira issue no danzeroum/bpmn com permalink de repro do próprio playground; o número da issue entra no relatório da PR correspondente. Fronteiras já declaradas em <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">limitations.md</span> (OR-join aproximado, subset S-FEEL, propagação cross-escopo, correlação de mensagem) <b style="color: #26221D;">não</b> viram issue — viram copy honesta (seção 2).</p>
+    </section>
+
+    <footer style="border-top: 1px solid #E3DED2; padding-top: 18px; display: flex; align-items: baseline; gap: 14px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">ACEITE DESTE HANDOFF</span>
+      <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #6E675C; text-wrap: pretty;">Some ao aceite do Handoff 20: bump do submódulo para pós-18/07 + migração de namespace na P-1 (guard veta interno E legado) · cada pacote INTOCADO da seção 1 exercitado por pelo menos um cenário · triagem das 5 notas registrada nos chips da seção 3 (N-1 gated no NOSSO permalink — anexar na issue durante a P-3; N-3 aguarda NOSSA proposta de UX — entregue) · fronteiras declaradas visíveis na UI como copy, nunca silenciadas.</p>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1320}}">
+class Component extends DCLogic {
+  renderVals() {
+    const usado = { bg: '#E8F3EC', cor: '#1F7A4D', st: 'USADO' };
+    const parcial = { bg: '#F6EDD4', cor: '#7A6116', st: 'PARCIAL' };
+    const intocado = { bg: '#F7E9E4', cor: '#A8452F', st: 'INTOCADO' };
+    const P = (pkg, s, ex) => ({ pkg, ex, ...s });
+    const alta = { bg: '#F7E9E4', cor: '#A8452F', sev: 'ALTA' };
+    const media = { bg: '#F6EDD4', cor: '#7A6116', sev: 'MÉDIA' };
+    const baixa = { bg: '#F2EFE8', cor: '#6E675C', sev: 'BAIXA' };
+    return {
+      deltas: [
+        { tag: 'H16', txt: 'event definitions nomeadas + timer ISO 8601 com preview + bindings governados nome@semver' },
+        { tag: 'H17', txt: 'event subprocess completo (predicados, palette factory, lint, simulação)' },
+        { tag: 'H18', txt: 'escalação: boundary NI, throwEscalation com destino previsto, dissolve declarado' },
+        { tag: 'H19', txt: 'compensação: par boundary+handler, trilha REVERSA, compensableActivitiesOf' },
+        { tag: 'H15', txt: 'ciclo pedir-mudanças assinado + diffDiagrams review-grade + threads ancoradas' },
+        { tag: '18/07', txt: 'passthrough zeebe:*/camunda:* lossless com Δ nomeado no diff — destrava o cenário 8 com arquivos reais' },
+        { tag: 'N-8', txt: 'createWorkerExecutor — A*/jobs fora da main thread (munição para lighthouse ≥ 90)' },
+      ],
+      mapa: [
+        P('core', parcial, 'computeLayeredLayout + alignPositions/distributePositions («Arrumar»), parseTimerExpression, CRUD de event definitions (E-1), compensableActivitiesOf, eligibleEscalationCatches'),
+        P('react', parcial, 'Cheatsheet + KEYBOARD_SHORTCUT_CATALOG, LayoutProposalCard, SearchPanel, LintPanel, CommandPalette da lib (hoje o playground tem uma própria — ver P-2), BpmnDiffViewer + createInMemoryReviewStore + reviewThreadsRule, PromotionPanel + buildApprovalPayloadFor/buildChangeRequestPayloadFor, EventBindingOverlay, TimerSection, buildCompensationPairInsert, buildEscalationBoundaryInsert, I18nProvider/mergeMessages/EN/PT_BR, createWorkerExecutor, exportPng/exportSvg'),
+        P('lint', intocado, 'LINT_PROFILES 1.4.0 (etiqueta + executabilidade), lintFindings, fixCommandFor (quick-fix undoável) e as regras EVT_*/ESC_*/COMP_* — o dock do cenário 1 e as verificações do 2/3'),
+        P('conformance', intocado, 'certifyXml (badge «certificado Descriptive/Analytic» pós-import), CONFORMANCE_MATRIX + classCoverage (matriz VIVA no cenário 8, não link), EXTERNAL_CORPUS_SOURCES (escolher os 2 arquivos reais da política de corpus)'),
+        P('simulation', intocado, 'canonicalizeScenario + hashScenario (os «roteiros salvos» do cenário 7 com identidade estável), coveragePercent + enumerateStructuralPaths (chip de cobertura de caminhos), CoverageTracker'),
+        P('sfeel · dmn', parcial, 'createSfeelDecisionSupport + nonSimulableCells: o token decide no businessRuleTask pela decision table, e célula fora do subset vira parada DECLARADA — a simulação de decisão honesta que nenhum demo mostra'),
+        P('identity', intocado, 'signApproval + buildApprovalPayload/buildChangeRequestPayload + verifySignature + evaluateRoleRequirement + verificationState — o cenário 4 troca o signer bespoke do playground pelo pipeline canônico (regra 3)'),
+        P('audit', parcial, 'toXES (exportar o ledger para ProM/Celonis/Disco — mining do processo de design), buildAssuranceCase + renderAssuranceCaseHtml (relatório SACM baixável), verifyLedgerSignatures, anchorRecordedEntry, signaturePromotionRule'),
+        P('registry', parcial, 'bindRun + verifyRunBinding (time-travel do auditor: «esta execução rodou pinada na v2.1.0»), activeAt com canais/janelas de publicação'),
+        P('copilot', parcial, 'COPILOT_PROMPTS (registro canônico), COPILOT_FIX_PROMPT (C5 fix de soundness — exigido pelo cenário 6), COPILOT_QUERY_PROMPT + parseLedgerAnswer (C6 consulta com citações do ledger), soundnessErrors'),
+        P('agentflow', parcial, 'TEMPLATES + validateGraph + autonomyCoherence, simulate (dry-run do workflow do agente), exportLangGraph/importLangGraph com aviso de subconjunto (deferido na Fase 3 — cenário 5 dá o palco)'),
+        P('studio', usado, 'requestChanges já coberto; somar runReviewChecks nos 4 cards de verificação REAL e aiAuthorOf (selo ✦ nas entradas de IA do Explorer)'),
+        P('replay', usado, 'aggregate 100k eventos < 2s vira copy de prova no cenário 7; heatWidth/fitness já no plano'),
+        P('soundness', usado, 'alimenta o C5 do copiloto (soundnessErrors) além do dock'),
+        P('library ·-react · adapters', usado, 'somar o chip do dmnDecisionAdapter («decisões como mais um adapter») e thumbnails headless como prova da regra 3'),
+        P('anchor-git · -rfc3161 · -s3', parcial, 'git usado; rfc3161/s3 aparecem como OPÇÕES no selo de âncora do cenário 4 (copy/tooltip — sem integração de rede no playground)'),
+        P('cli', intocado, 'Node-only: no cenário 8, copy «reproduza no seu CI: bpmn-react certify arquivo.bpmn --require analytic»'),
+      ],
+      prs: [
+        { id: 'P-1', titulo: 'Shell + consumo + guard (emendas)', itens: [
+          'Bump do submódulo para pós-18/07 (traz rename + passthrough + H15-19) e migração de TODOS os imports para @buildtovalue/*',
+          'Guard de CI veta caminho interno (dist/…/internal, packages/*/src) E o namespace legado @bpmn-react/*',
+          'i18n: dicionários EN/PT_BR da lib via prop messages + mergeMessages — o dict do host cobre só o chrome do playground (teste: TODA a UI troca)',
+          'Footer «biblioteca vX.Y.Z · commit abc123» + link para o CHANGELOG lido no upgrade',
+        ]},
+        { id: 'P-2', titulo: 'Cenários 1-3 + 7 (emendas)', itens: [
+          'Cenário 1: LintPanel com LINT_PROFILES + fixCommandFor (quick-fix aplicar/desfazer), «Arrumar» = LayoutProposalCard (card aplicar/recusar), Cheatsheet do catálogo público — e trocar a CommandPalette própria pela da lib (builtinGlobalCommands + comandos do host injetados); manter a própria só se faltar seam público → vira nota N-6',
+          'Cenário 2: buildCompensationPairInsert na paleta, trilha reversa do simulador, risco «sem handler» via regra COMP_* do lint',
+          'Cenário 3: buildEscalationBoundaryInsert + destino previsto ANTES do throw (eligibleEscalationCatches) + dissolve declarado',
+          'Cenário 7: roteiros salvos = canonicalizeScenario/hashScenario, chip de cobertura = coveragePercent, decisão S-FEEL no token (createSfeelDecisionSupport) com ⚠ nonSimulable declarado',
+        ]},
+        { id: 'P-3', titulo: 'Cenários 4 + 8 (emendas)', itens: [
+          'Cenário 4: substituir o signer bespoke pelo pipeline canônico (signApproval/buildApprovalPayload + verifySignature + evaluateRoleRequirement), runReviewChecks nos 4 cards, threads via createInMemoryReviewStore + reviewThreadsRule, diff via diffDiagrams/BpmnDiffViewer',
+          'Cenário 4+: botões «Exportar XES» (toXES) e «Relatório de garantia» (buildAssuranceCase → HTML) — diferenciais que só esta lib tem',
+          'Cenário 8: certifyXml no import (badge de classe), matriz CONFORMANCE_MATRIX viva com classCoverage, arquivos de EXTERNAL_CORPUS_SOURCES, e um .bpmn com zeebe:* provando passthrough com Δ nomeado no diff — montado sobre o comportamento ATUAL declarado na matriz format-spec (copy honesta, warnings novos visíveis no canal import.warning); aceite final destrava com o fix N-1',
+          'Selo de âncora: useAnchorCycle/AnchorSeal com git real e rfc3161/s3 como opções declaradas',
+        ]},
+        { id: 'P-4', titulo: 'Cenários 5 + 6 (emendas)', itens: [
+          'Cenário 6: C5 fix de soundness (COPILOT_FIX_PROMPT + soundnessErrors) e C6 consulta com citações (COPILOT_QUERY_PROMPT + parseLedgerAnswer) — ambos funcionam no provider fake',
+          'Selo ✦ de autoria nas entradas do Explorer via aiAuthorOf; «Desfazer tudo» segue = 1 comando composto',
+          'Cenário 5: simulate do agentflow como dry-run + exportLangGraph com aviso de subconjunto (fecha o deferido da Fase 3)',
+        ]},
+        { id: 'P-5', titulo: 'Permalink + polish (emendas)', itens: [
+          'Rotas A* e jobs pesados via createWorkerExecutor (off-thread — mira direta no lighthouse ≥ 90)',
+          'Permalink segue pako (ratificado) e passa a carregar id do cenário + passo + hash do roteiro salvo',
+          'Home: drop de .bpmn roda certifyXml e já abre com o badge de classe',
+        ]},
+      ],
+      notas: [
+        { id: 'N-1', ...alta, tri: 'TRIAGEM: PARCIAL · GATED EM NÓS', tbg: '#F6EDD4', tcor: '#7A6116', titulo: 'fromXml descarta filhos de sub-process quando preferredTypes está setado', corpo: 'Export é lossless; o import perde os filhos aninhados EXATAMENTE na config de qualquer cliente com plugins (registry + preferredTypes) — a matriz 4×4 e o repro Node estão em bpmnPlay/docs/known-issues.md #1. O contract-lock do PR #99 cobre só o caminho bare, por isso passa verde upstream. Bloqueia o aceite do cenário 8 (import de corpus real sob a config do app).', pede: 'fix + teste de contrato na matriz completa {bare · registry · preferredTypes · ambos} na suíte de round-trip.', naopede: 'mudança de comportamento do export nem do permalink (transporta JSON por decisão nossa).' },
+        { id: 'N-2', ...media, tri: 'TRIAGEM: FEITO', tbg: '#E8F3EC', tcor: '#1F7A4D', titulo: 'Rename @buildtovalue executado sem registro no CHANGELOG nem nota de migração', corpo: 'O rename global de 10/07 está em pendencias.md §1, mas o CHANGELOG (Unreleased) não o menciona; consumidor por submódulo descobre no erro de resolve ao dar bump. As fronteiras que NÃO mudam (namespace XML bpmnr:, prefixos CSS bpmnr-/btv-, binário bpmn-react) merecem a mesma linha.', pede: 'entrada no CHANGELOG + nota de migração de 5 linhas (sem pacote-alias — só documentar).', naopede: 'pacote de compatibilidade @bpmn-react/*.' },
+        { id: 'N-3', ...media, tri: 'TRIAGEM: AGUARDA NOSSA UX', tbg: '#F6EDD4', tcor: '#7A6116', titulo: 'CopilotPanel aplica a proposta na hora — sem gate de aceite para o host', corpo: 'O panel público não expõe o ciclo propor → prévia fantasma → aceitar/recusar; o playground teve de construir casca própria (Fase 3, PR12) usando parseProposal/validateProposal/buildPlan. É cola de host legítima, mas todo cliente vai reconstruir a mesma casca.', pede: 'prop opcional (ex.: onPlan/acceptGate) para o panel entregar o plano SEM aplicar, deixando aceite/undo com o host.', naopede: 'UI de chave/provider no panel — isso é do host por design.' },
+        { id: 'N-4', ...baixa, tri: 'TRIAGEM: ENDOSSADA', tbg: '#E8F3EC', tcor: '#1F7A4D', titulo: 'Designer sem API pública de carga por versionId (deep-link) — endosso da pendência 1.2', corpo: 'Já registrado em pendencias.md §1.2 da lib. Caso de uso novo do playground: galeria → cenário com semente por versão exata e permalink de artefato governado («abra a v2.1.0 CANDIDATA»). Hoje resolvemos com estado no hash; a API oficial tiraria a cola.', pede: 'priorização com este caso de uso somado ao do Studio (?load=<versionId> com modo leitura para versões fechadas).', naopede: 'router — hash navigation da lib já basta.' },
+        { id: 'N-5', ...baixa, tri: 'TRIAGEM: ONDA FUTURA', tbg: '#F2EFE8', tcor: '#6E675C', titulo: 'Chrome do BpmnSimulator/painéis não responsivo < 768px', corpo: 'Toolbar e painel da simulação estouram no mobile (registrado como risco 2 na Fase 3 do playground; o bottom sheet de gateway do host contorna a escolha, não o chrome). Os 8 cenários do Handoff 20 rodam em ferramenta real também no telefone da demo comercial.', pede: 'passe de responsividade nos painéis de simulação (ou seam de layout para o host reordenar).', naopede: 'mobile-first no editor inteiro.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

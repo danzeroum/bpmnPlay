@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body { margin: 0; background: #F2EFE8; }
+a { color: #0E4F5E; } a:hover { color: #26221D; }
+</style>
+</helmet>
+<div style="max-width: 1160px; margin: 0 auto; padding: 56px 48px 72px; font-family: 'IBM Plex Sans', sans-serif; color: #26221D;">
+  <div style="background: #FBFAF7; border: 1px solid #E3DED2; border-radius: 12px; padding: 44px 52px 52px; display: flex; flex-direction: column; gap: 40px;">
+
+    <header data-screen-label="Header N1+N3" style="display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #E3DED2; padding-bottom: 24px;">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; color: #0E4F5E; font-weight: 600;">MICRO-HANDOFF N-1 · PROPOSTA UX N-3</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #B4AC9C;">resposta à triagem upstream · 19 jul 2026</span>
+      </div>
+      <h1 style="margin: 0; font-size: 27px; font-weight: 700; letter-spacing: -0.01em; text-wrap: pretty;">As duas ações que ficaram conosco, prontas para anexar nas issues</h1>
+      <p style="margin: 0; font-size: 14.5px; line-height: 1.6; color: #6E675C; max-width: 80ch; text-wrap: pretty;"><b style="color: #26221D;">A</b> — a especificação exata do permalink de repro do cenário 8 (o dev cunha o link na P-3 e cola na issue N-1; eu valido em máquina limpa). <b style="color: #26221D;">B</b> — o fluxo de UX completo do gate de aceite do CopilotPanel, para avaliação como evolução (as cercas do H9 ficam intactas).</p>
+    </header>
+
+    <section data-screen-label="A Micro-handoff N1" style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">A · MICRO-HANDOFF N-1 — O QUE O PERMALINK DE REPRO CODIFICA</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch;">
+        <div style="border: 1px solid #E3DED2; border-radius: 9px; padding: 16px 18px; background: #FFFFFF; display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: #6E675C;">FIXTURE — corpus-interop-subprocess.bpmn</span>
+          <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.65; color: #4A453D; display: flex; flex-direction: column; gap: 3px;">
+            <li><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">subProcess</span> «Tratar exceção» com <b>3 filhos</b>: userTask + serviceTask (com <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">zeebe:taskDefinition</span>, prova o passthrough junto) + boundary timer, e os sequence flows internos</li>
+            <li>Config do app que dispara a falha: registry com os plugins reais do playground <b>e</b> <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">preferredTypes</span> setado (célula «ambos» da matriz)</li>
+            <li>Fixture entra em <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">public/corpus/</span> do bpmnPlay — mesmo arquivo serve o e2e do cenário 8</li>
+          </ul>
+        </div>
+        <div style="border: 1px solid #E3DED2; border-radius: 9px; padding: 16px 18px; background: #FFFFFF; display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: #6E675C;">ROTEIRO CODIFICADO (= PASSOS DO E2E)</span>
+          <ol style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.65; color: #4A453D; display: flex; flex-direction: column; gap: 3px;">
+            <li>Importar a fixture (o permalink abre já neste passo, arquivo carregado)</li>
+            <li>Contar filhos do sub-process no canvas — <b>esperado 3 · atual 0</b></li>
+            <li>Exportar e diffar contra o original — Δ deve nomear só o passthrough, não a perda</li>
+            <li>Painel exibe os warnings novos do <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">import.warning</span> nomeando o downgrade</li>
+          </ol>
+        </div>
+      </div>
+      <div style="border: 1px solid #E8D9A8; background: #FBF6E8; border-radius: 9px; padding: 12px 18px; font-size: 12.5px; line-height: 1.6; color: #4A453D;"><b style="color: #7A6116;">Frase de aceite (vai na issue, no vocabulário da matriz):</b> «na célula registry + preferredTypes, este arquivo deve ser <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">supported</span> (round-trip lossless dos filhos); hoje é <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">degraded</span> com warning. A correção será medida contra esta matriz e contra este permalink.» <b style="color: #26221D;">Dono:</b> dev cunha o permalink na P-3 e anexa na issue; eu valido o estado aberto em máquina limpa antes do envio.</div>
+    </section>
+
+    <section data-screen-label="B Proposta UX N3" style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">B · PROPOSTA UX N-3 — COPILOTPANEL COM GATE DE ACEITE DO HOST (EVOLUÇÃO, NÃO QUEBRA)</h2>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+        <sc-for list="{{ estados }}" as="e" hint-placeholder-count="4">
+          <div style="border: 1px solid #E3DED2; border-radius: 9px; padding: 14px 16px; background: #FFFFFF; display: flex; flex-direction: column; gap: 7px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="display: inline-grid; place-items: center; width: 22px; height: 22px; background: #26221D; color: #FBFAF7; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; border-radius: 50%;">{{ e.n }}</span>
+              <span style="font-size: 13px; font-weight: 600;">{{ e.titulo }}</span>
+            </div>
+            <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #4A453D; text-wrap: pretty;">{{ e.corpo }}</p>
+            <span style="margin-top: auto; padding: 6px 10px; border-radius: 6px; background: {{ e.cbg }}; border: 1px dashed {{ e.cborda }}; font-size: 11.5px; line-height: 1.5; color: {{ e.ccor }}; font-style: italic;">“{{ e.copy }}”</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; align-items: stretch;">
+        <div style="background: #26221D; border-radius: 9px; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: #B4AC9C;">SEAM PROPOSTO — 1 PROP OPCIONAL, RETROCOMPATÍVEL</span>
+          <pre style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; line-height: 1.7; color: #ECE8E1; white-space: pre-wrap;">&lt;CopilotPanel&gt; ganha 1 prop opcional:
+  provider = fake        (como hoje)
+  onPlan   = host.review (novo)
+
+// onPlan PRESENTE ⇒ o panel entrega e NUNCA aplica:
+// plan = { summary, commands,
+//   preview: { show(), hide() },   // fantasma no canvas
+//   accept(),   // 1 comando composto = 1 undo, ✦ no ledger
+//   reject() }  // nada aplicado; recusa registrada íntegra
+// onPlan AUSENTE ⇒ comportamento atual (retrocompatível)</pre>
+        </div>
+        <div style="border: 1px solid #E3DED2; border-radius: 9px; padding: 16px 18px; background: #FFFFFF; display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: #0E4F5E;">CERCAS DO H9 — INTACTAS POR CONSTRUÇÃO</span>
+          <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.65; color: #4A453D; display: flex; flex-direction: column; gap: 3px;">
+            <li>Whitelist de comandos: o plano só carrega comandos já permitidos</li>
+            <li>Rejeição íntegra: <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">reject()</span> não aplica nada parcial</li>
+            <li>1 undo: <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">accept()</span> = mesmo comando composto de hoje</li>
+            <li>Prévia fantasma usa o tema da lib (tokens <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">--btv-*</span>): tracejado, 45% opacidade, selo ✦; Esc só oculta a prévia — recusar é sempre botão explícito</li>
+            <li><b style="color: #A8452F;">Não pedimos:</b> UI de chave/provider no panel (é do host, por design) nem mudança no fluxo default</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin: 0; font-size: 12.5px; color: #6E675C;">Strings em EN e PT-BR via <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">messages</span> (chaves novas: <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">copilot.plan.preview / .accept / .reject / .ledgerApplied / .ledgerRejected</span>). Enquanto a evolução não chega, o playground segue com a casca da Fase 3 (PR12) — que é exatamente este fluxo; quando a lib absorver, a casca vira remoção de código.</p>
+    </section>
+
+    <footer style="border-top: 1px solid #E3DED2; padding-top: 18px; display: flex; align-items: baseline; gap: 14px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">STATUS</span>
+      <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #6E675C; text-wrap: pretty;">Nada mais bloqueia P-1→P-5. A = anexar na issue N-1 durante a P-3 (permalink cunhado pelo dev, validado por mim). B = colar na issue N-3 para avaliação upstream — sem dependência para o playground.</p>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1240}}">
+class Component extends DCLogic {
+  renderVals() {
+    const neutro = { cbg: '#F7F5F0', cborda: '#B4AC9C', ccor: '#6E675C' };
+    return { estados: [
+      { n: '1', titulo: 'Proposta chega', corpo: 'Card «Plano» no panel: resumo + lista dos comandos. Nada tocou o canvas; o botão primário é ver a prévia, não aplicar.', copy: 'Plano proposto — nada foi aplicado ainda.', ...neutro },
+      { n: '2', titulo: 'Prévia fantasma', corpo: 'Elementos propostos aparecem tracejados a 45% com selo ✦ sobre o diagrama real; os existentes ficam intactos. Esc oculta a prévia (não recusa).', copy: 'Prévia — tracejado é proposta, sólido é seu.', cbg: '#E3EEF0', cborda: '#0E4F5E', ccor: '#0E4F5E' },
+      { n: '3', titulo: 'Aceitar ou recusar', corpo: 'Dois botões explícitos, mesmo peso. Aceitar aplica tudo como 1 comando composto; recusar descarta íntegro — nunca metade.', copy: 'Aplicar plano (1 desfazer) · Recusar — nada muda', ...neutro },
+      { n: '4', titulo: 'Registro no ledger', corpo: 'Aceite vira entrada ✦ (autoria de IA via aiAuthorOf); recusa também é registrada — a trilha conta as duas decisões.', copy: '✦ Proposta do copiloto aplicada · recusada', cbg: '#E8F3EC', cborda: '#1F7A4D', ccor: '#1F7A4D' },
+    ] };
+  }
+}
+</script>
+</body>
+</html>

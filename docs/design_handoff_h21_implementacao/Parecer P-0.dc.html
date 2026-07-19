@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body { margin: 0; background: #F2EFE8; }
+a { color: #0E4F5E; } a:hover { color: #26221D; }
+</style>
+</helmet>
+<div style="max-width: 1160px; margin: 0 auto; padding: 56px 48px 72px; font-family: 'IBM Plex Sans', sans-serif; color: #26221D;">
+  <div style="background: #FBFAF7; border: 1px solid #E3DED2; border-radius: 12px; padding: 44px 52px 52px; display: flex; flex-direction: column; gap: 36px;">
+
+    <header style="display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #E3DED2; padding-bottom: 24px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; color: #0E4F5E; font-weight: 600;">PARECER · P-0 RECONCILIAÇÃO</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #B4AC9C;">handoff 20 · bpmnPlay @ main fb208a6 · 19 jul 2026</span>
+        <span style="margin-left: auto; display: inline-flex; align-items: center; gap: 7px; padding: 4px 12px; border-radius: 999px; background: #E8F3EC; border: 1px solid #CBE3D3; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: #1F7A4D;">✓ VALIDADO PELO OWNER · 19 JUL</span>
+      </div>
+      <h1 style="margin: 0; font-size: 27px; font-weight: 700; letter-spacing: -0.01em;">P-0 ainda não existe como entrega — segue o gabarito auditado e minhas adaptações</h1>
+      <p style="margin: 0; font-size: 14.5px; line-height: 1.6; color: #6E675C; max-width: 74ch; text-wrap: pretty;">Não há documento de reconciliação na <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">main</span> — o <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px;">pendencias.md</span> é da Fase 3 (regime anterior). Auditei o estado real do repo; a P-0 do dev fica aprovada quando bater com os fatos abaixo <b style="color: #26221D;">e trouxer o plano P-1 com critérios</b>.</p>
+    </header>
+
+    <section style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">1 · ESTADO REAL AUDITADO — O QUE A P-0 TEM DE DIZER</h2>
+      <div style="display: grid; grid-template-columns: 150px 1fr 76px; border: 1px solid #E3DED2; border-radius: 9px; overflow: hidden; font-size: 13px; line-height: 1.5;">
+        <sc-for list="{{ fatos }}" as="f" hint-placeholder-count="8">
+          <div style="display: contents;">
+            <div style="padding: 12px 16px; border-top: 1px solid #EFEBE1; background: #F7F5F0; font-weight: 600; font-size: 12.5px;">{{ f.item }}</div>
+            <div style="padding: 12px 16px; border-top: 1px solid #EFEBE1; color: #4A453D;">{{ f.texto }} <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #B4AC9C;">{{ f.ev }}</span></div>
+            <div style="padding: 12px 14px 12px 0; border-top: 1px solid #EFEBE1; display: flex; align-items: flex-start; justify-content: flex-end;">
+              <span style="padding: 2px 9px; border-radius: 999px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; background: {{ f.bg }}; color: {{ f.cor }};">{{ f.chip }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin: 0; font-size: 12.5px; color: #6E675C;">Regra 4 pendurada: o gap <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px;">fromXml + preferredTypes</span> está documentado em <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px;">docs/known-issues.md #1</span> mas <b style="color: #A8452F;">sem issue aberta no danzeroum/bpmn</b> — cobrar na P-0, com o permalink de repro.</p>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">2 · TRÊS DIVERGÊNCIAS DO HANDOFF QUE RECOMENDO ACEITAR</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+        <div style="border: 1px solid #E3DED2; border-radius: 9px; padding: 16px 18px; display: flex; flex-direction: column; gap: 7px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #7A6116; font-weight: 600;">@bpmn-react/* ≠ @buildtovalue/*</span>
+          <p style="margin: 0; font-size: 12.5px; line-height: 1.55; color: #4A453D;">O namespace real é outro. Manter até a lib publicar npm (pós-I-6); o guard de CI vale para o namespace <i>real</i>, e o rename vira PR dedicada.</p>
+          <p style="margin: 0; padding: 8px 10px; border-radius: 6px; background: #FBF1EC; border: 1px solid #E8C4B4; font-size: 11.5px; line-height: 1.5; color: #A8452F;"><b>ERRATA (H21, 19 jul):</b> o rename @buildtovalue já foi EXECUTADO upstream em 10/07 — a migração entra na P-1 junto do bump; o guard veta o legado @bpmn-react/*. Ver Handoff 21.</p>
+        </div>
+        <div style="border: 1px solid #E3DED2; border-radius: 9px; padding: 16px 18px; display: flex; flex-direction: column; gap: 7px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #7A6116; font-weight: 600;">submódulo SHA ≠ github:#tag</span>
+          <p style="margin: 0; font-size: 12.5px; line-height: 1.55; color: #4A453D;">Pin por ponteiro de submódulo, CI builda no commit pinado. Semanticamente igual (ou mais forte) que tag; upgrade já é PR movendo o ponteiro. Footer passa a exibir <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">vX.Y.Z · commit</span>.</p>
+        </div>
+        <div style="border: 1px solid #E3DED2; border-radius: 9px; padding: 16px 18px; display: flex; flex-direction: column; gap: 7px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #7A6116; font-weight: 600;">pako ≠ lz-string</span>
+          <p style="margin: 0; font-size: 12.5px; line-height: 1.55; color: #4A453D;">O permalink já existe com pako e tem spec de teste. O vinculante é «abre o estado exato em máquina limpa» — trocar a lib de compressão é churn sem ganho.</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">3 · O QUE MANTENHO LITERAL × O QUE ADAPTEI AO MEU ESTILO</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start;">
+        <div style="background: #26221D; color: #FBFAF7; border-radius: 9px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: #B4AC9C;">LITERAL — CONTRATO, NÃO TOCO</span>
+          <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.7; color: #ECE8E1; display: flex; flex-direction: column; gap: 4px;">
+            <li>4 regras de fronteira + guard de CI executável (P-1)</li>
+            <li>Anatomia 7c: rail à esquerda é o único chrome; o centro é o Designer/Studio <b>real</b> com o tema da lib (<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">data-bpmnr-theme</span>, tokens <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">--btv-*</span>) — nunca réplica</li>
+            <li>Detecção via <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">onEditorEvent</span> + fallback «feito, próximo»; exploração livre nunca bloqueada; ↺ reset isolado por cenário</li>
+            <li>Copiloto: fake provider default offline; BYO-key só em memória + aviso de custo + badge «IA real ativa»; footer ✦ autoria + hash + «desfazer tudo» = 1 undo</li>
+            <li>8 cenários com os roteiros do §2 como specs e2e; identidades demo ed25519; convite à adulteração no cenário 4</li>
+            <li>Critérios: primeiro cenário &lt; 3s · EN⇄PT-BR total · lighthouse ≥ 90 · permalink em máquina limpa</li>
+          </ul>
+        </div>
+        <div style="border: 1px solid #E3DED2; border-radius: 9px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: #0E4F5E;">ADAPTADO — MEU TERRITÓRIO, COM O PORQUÊ</span>
+          <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.7; color: #4A453D; display: flex; flex-direction: column; gap: 4px;">
+            <li><b style="color: #26221D;">Identidade do chrome:</b> o Fraunces/dourado da spec é a voz do <i>documento</i>, não do produto. O chrome segue a linguagem já estabelecida no bpmnPlay — IBM Plex Sans/Mono, tinta <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">#26221D</span> sobre <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">#FBFAF7</span>, acento teal — neutra para emoldurar o tema da ferramenta, nunca competir.</li>
+            <li><b style="color: #26221D;">Home:</b> a galeria de 8 entra <i>abaixo</i> do hero-canvas vivo, não no lugar dele — o canvas editável em 5s é o melhor «uau» que já temos, e o critério &lt; 3s continua valendo pelos cards. Mantido literal nos cards: título + verbos do roteiro, «Canvas livre →», drop de .bpmn, EN⇄PT, versão no footer.</li>
+            <li><b style="color: #26221D;">Voz do rail:</b> imperativo curto, títulos ≤ 5 palavras, um «repare em…» por passo apontando o que o passo prova. Roteiro (ordem e conteúdo) literal.</li>
+            <li><b style="color: #26221D;">Copy sensível</b> (proposta, me valida): cenário 4 — «Abra o devtools e corrompa uma entrada do ledger. “Verificar” detecta e aponta onde.»; BYO-key — «Sua chave vive só nesta aba: recarregou, sumiu. Chamadas reais têm custo.»</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">4 · DECISÕES RATIFICADAS PELO OWNER (19 JUL) — VALEM COMO CONTRATO</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start;">
+        <div style="border: 1px solid #CBE3D3; background: #F4FAF6; border-radius: 9px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: #1F7A4D; font-weight: 600;">ACEITO</span>
+          <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.65; color: #4A453D; display: flex; flex-direction: column; gap: 4px;">
+            <li>Guard de CI sobre o namespace <b style="color: #26221D;">real</b> <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">@bpmn-react/*</span>; rename = PR dedicada pós-I-6, registrada como pendência nomeada</li>
+            <li>Pin por submódulo SHA; footer no formato <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">biblioteca vX.Y.Z · commit</span></li>
+            <li>Permalink continua com pako — o vinculante é o critério («estado exato em máquina limpa»), não a lib</li>
+            <li>Adaptações de chrome, home (galeria sob o hero) e voz do rail; as duas copies sensíveis (cenário 4 e BYO-key) aprovadas como estão</li>
+          </ul>
+        </div>
+        <div style="border: 1px solid #E8D9A8; background: #FBF6E8; border-radius: 9px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: #7A6116; font-weight: 600;">CONDIÇÕES PARA ACEITAR A P-0 DO DEV</span>
+          <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.65; color: #4A453D; display: flex; flex-direction: column; gap: 4px;">
+            <li><b style="color: #26221D;">1 ·</b> Bater com os fatos da seção 1 <b style="color: #26221D;">e</b> trazer o plano P-1 com critérios: guard executável sobre <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">@bpmn-react/*</span>, footer no formato aprovado, e o item <span style="padding: 1px 7px; border-radius: 999px; background: #F6EDD4; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: #7A6116;">CONFIRMAR</span> vira teste — TODA a UI troca no toggle EN⇄PT-BR</li>
+            <li><b style="color: #26221D;">2 ·</b> Issue upstream <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px;">fromXml + preferredTypes</span> ABERTA no danzeroum/bpmn com permalink de repro <b style="color: #26221D;">antes do merge da P-0</b>; o link entra no doc da P-0 (regra 4 não fica pendurada)</li>
+            <li>A linha <span style="padding: 1px 7px; border-radius: 999px; background: #F7E9E4; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: #A8452F;">FALTA</span> da seção 1 é o escopo declarado de P-1/P-2 — o plano P-1 mapeia cada item a uma PR</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer style="border-top: 1px solid #E3DED2; padding-top: 18px; display: flex; align-items: baseline; gap: 14px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #0E4F5E; font-weight: 600;">PRÓXIMO PASSO</span>
+      <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #6E675C; text-wrap: pretty;">Dev publica a P-0 cumprindo as duas condições da seção 4 → aprovo → P-1 a P-5 na ordem do §4, uma PR por vez, relatório contra o checklist do painel correspondente; decisões de design intermediárias passam por mim antes de virar código.</p>
+    </footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1240}}">
+class Component extends DCLogic {
+  renderVals() {
+    const ok = { bg: '#E8F3EC', cor: '#1F7A4D' }, div = { bg: '#F6EDD4', cor: '#7A6116' }, falta = { bg: '#F7E9E4', cor: '#A8452F' };
+    const F = (item, texto, ev, s, chip) => ({ item, texto, ev, chip, ...s });
+    return { fatos: [
+      F('Imports', '69 imports em src/, todos da raiz @bpmn-react/<pkg> — zero caminho interno (dist/, src/, internal). Regra 1 já é fato; falta só o guard executável.', 'grep em src/**', ok, 'OK'),
+      F('Consumo', 'Alias Vite @bpmn-react/* → dist/esm do submódulo bpmn/ buildado, com dedupe de React. API pública de fato; namespace difere do handoff.', 'vite.config.ts', div, 'DIVERG.'),
+      F('Pin de versão', 'Submódulo pinado por SHA; CI builda no commit pinado e não roda update-lib. Versão exposta via __BPMN_LIB_VERSION__ (badge no nav — falta o formato de footer).', 'ci.yml', ok, 'OK'),
+      F('Permalink', 'Existe e tem teste — mas com pako, não lz-string.', 'src/permalink.ts · tests/permalink.spec.ts', div, 'DIVERG.'),
+      F('Copiloto', 'Provider demo determinístico offline por default; BYO-key em closure, nunca em storage — as cercas do 7d já valem na base.', 'src/copilot/', ok, 'OK'),
+      F('Reset isolado', 'Chaves por cenário (pg:cenario:<id>) e autosave por id — padrão já estabelecido.', 'src/heroDraft.ts · scenarios', ok, 'OK'),
+      F('i18n / tema', 'Toggle EN⇄PT-BR + dicionário host; PT_BR importado da lib. P-0 deve confirmar que TODA a UI troca (critério 7b).', 'src/i18n/ · LangToggle', div, 'CONFIRMAR'),
+      F('Não existe ainda', 'Rota /scenario/<slug> (hoje /aprenda, 3 cenários × 3 passos — a semente do rail 7c) · home-galeria de 8 · guard de CI · lint/typecheck no pipeline · lighthouse medido.', '→ escopo P-1/P-2', falta, 'FALTA'),
+    ] };
+  }
+}
+</script>
+</body>
+</html>
