@@ -12,9 +12,9 @@
 import { useMemo, useRef, useState, type DragEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ungzip } from 'pako';
-import type { ReplayVersion } from '@bpmn-react/react';
-import { replayAnalysisEntry } from '@bpmn-react/adapters-bpmn';
-import type { Trace } from '@bpmn-react/replay';
+import type { ReplayVersion } from '@buildtovalue/react';
+import { replayAnalysisEntry } from '@buildtovalue/adapters-bpmn';
+import type { Trace } from '@buildtovalue/replay';
 import { PLUGINS, replayDemoLedger } from '../plugins.js';
 import { buildReplayTraces, buildSimulationDiagram } from '../sampleDiagram.js';
 import { PlaygroundNav } from '../PlaygroundNav.js';

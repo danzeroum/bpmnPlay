@@ -10,7 +10,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BpmnXmlConverter, createDiagram, getEdgeChain, type BpmnDiagram } from '@bpmn-react/core';
+import { BpmnXmlConverter, createDiagram, getEdgeChain, type BpmnDiagram } from '@buildtovalue/core';
 import {
   BpmnEditor,
   clearAutosave,
@@ -20,8 +20,8 @@ import {
   useDiagram,
   useDismissal,
   type GovernanceBreadcrumbLevel,
-} from '@bpmn-react/react';
-import { DecisionPeek, DecisionTableEditor } from '@bpmn-react/dmn';
+} from '@buildtovalue/react';
+import { DecisionPeek, DecisionTableEditor } from '@buildtovalue/dmn';
 import {
   buildAstarDiagram,
   buildClosedDiagram,
@@ -49,7 +49,7 @@ import { Tour, isTourDone } from './Tour.js';
 import { LifecyclePanel } from './LifecyclePanel.js';
 import { AuditPanel } from './AuditPanel.js';
 import { ModelInspector } from './ModelInspector.js';
-import { AuditLedger } from '@bpmn-react/core';
+import { AuditLedger } from '@buildtovalue/core';
 import { useCopilot } from './copilot/useCopilot.js';
 import { CopilotPanel } from './copilot/CopilotPanel.js';
 import { CopilotBridge } from './copilot/CopilotBridge.js';

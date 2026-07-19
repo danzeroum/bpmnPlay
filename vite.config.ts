@@ -1,13 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { readdirSync, existsSync, readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const pkgsDir = resolve(here, 'bpmn/packages');
 
-// Versão da biblioteca (submódulo) — exibida no badge da barra de navegação.
+// Versão da biblioteca (submódulo) — exibida no footer (regra nº 2: pinada e visível).
 function bpmnLibVersion(): string {
   try {
     return JSON.parse(readFileSync(resolve(here, 'bpmn/package.json'), 'utf8')).version ?? '';
@@ -16,8 +17,20 @@ function bpmnLibVersion(): string {
   }
 }
 
+// SHA curto do commit PINADO do submódulo — a fronteira "versão pinada" fica
+// visível no footer junto com a versão. Lê o HEAD do submódulo (checkout pinado).
+function bpmnLibCommit(): string {
+  try {
+    return execFileSync('git', ['-C', resolve(here, 'bpmn'), 'rev-parse', '--short', 'HEAD'], {
+      encoding: 'utf8',
+    }).trim();
+  } catch {
+    return '';
+  }
+}
+
 /**
- * Resolve todos os `@bpmn-react/*` para o `dist/esm` do submódulo `bpmn/`.
+ * Resolve todos os `@buildtovalue/*` para o `dist/esm` do submódulo `bpmn/`.
  * Assim, ao atualizar a biblioteca (`git submodule update --remote` + rebuild),
  * o playground pega automaticamente a versão nova, sem editar nada aqui.
  *
@@ -34,18 +47,18 @@ function bpmnAliases() {
   const alias: { find: string | RegExp; replacement: string }[] = [];
   const dirs = readdirSync(pkgsDir);
   // Subpaths `/styles.css` PRIMEIRO — o resolver do Vite casa por prefixo, então
-  // `@bpmn-react/react` capturaria `@bpmn-react/react/styles.css` se viesse antes.
+  // `@buildtovalue/react` capturaria `@buildtovalue/react/styles.css` se viesse antes.
   for (const dir of dirs) {
     const css = resolve(pkgsDir, dir, 'styles.css');
     if (existsSync(css)) {
-      alias.push({ find: `@bpmn-react/${dir}/styles.css`, replacement: css });
+      alias.push({ find: `@buildtovalue/${dir}/styles.css`, replacement: css });
     }
   }
   // Ponto de entrada de cada pacote.
   for (const dir of dirs) {
     const entry = resolve(pkgsDir, dir, 'dist/esm/index.js');
     if (existsSync(entry)) {
-      alias.push({ find: `@bpmn-react/${dir}`, replacement: entry });
+      alias.push({ find: `@buildtovalue/${dir}`, replacement: entry });
     }
   }
   return alias;
@@ -55,6 +68,7 @@ export default defineConfig({
   plugins: [react()],
   define: {
     __BPMN_LIB_VERSION__: JSON.stringify(`v${bpmnLibVersion()}`),
+    __BPMN_LIB_COMMIT__: JSON.stringify(bpmnLibCommit()),
   },
   resolve: {
     alias: bpmnAliases(),

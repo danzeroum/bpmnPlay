@@ -16,10 +16,10 @@
  * lossless), independentemente desse bug.
  *
  * Rodado no navegador pelo teste (via import servido pelo Vite), porque os
- * builders e o conversor dependem dos aliases `@bpmn-react/*`.
+ * builders e o conversor dependem dos aliases `@buildtovalue/*`.
  */
-import { BpmnXmlConverter, type BpmnDiagram } from '@bpmn-react/core';
-import { resolveEditorConfig } from '@bpmn-react/react';
+import { BpmnXmlConverter, type BpmnDiagram } from '@buildtovalue/core';
+import { resolveEditorConfig } from '@buildtovalue/react';
 import { PLUGINS } from './plugins.js';
 import {
   buildClosedDiagram,

@@ -9,7 +9,7 @@ import { useLang } from '../i18n/index.js';
 import { Check, Close } from '../icons.js';
 import { csvPreview, detectIsoTimestamp, fmtInt, guessMapping, toCsvMapping } from './parsePreview.js';
 import type { ParsedLog } from './useLogParser.js';
-import type { CsvMapping } from '@bpmn-react/replay';
+import type { CsvMapping } from '@buildtovalue/replay';
 
 export function CsvMappingModal({
   fileName,

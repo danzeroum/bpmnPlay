@@ -8,7 +8,7 @@
  * "Exportar LangGraph" usa exportLangGraph e declara o subconjunto (avisos).
  */
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { BpmnDesigner, AgentStudio, PT_BR } from '@bpmn-react/react';
+import { BpmnDesigner, AgentStudio, PT_BR } from '@buildtovalue/react';
 import { useLang } from './i18n/index.js';
 import { PLUGINS } from './plugins.js';
 import { Play, Close } from './icons.js';

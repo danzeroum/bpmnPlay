@@ -8,7 +8,7 @@
 ## Contexto
 
 O H21 (`README.md` desta pasta) define 4 regras de fronteira inegociáveis e um
-escopo faseado P-1→P-5. A **regra #1 é EXECUTÁVEL**: um guard de CI que veta
+escopo faseado P-1→P-5. A **regra nº 1 é EXECUTÁVEL**: um guard de CI que veta
 import de caminho interno (`dist/**/internal`, `packages/*/src`) **e** o namespace
 legado `@bpmn-react/*` (rename para `@buildtovalue/*` executado upstream em 10/07).
 
@@ -109,7 +109,7 @@ alias**) e veta alvos de alias apontando para subpath interno (`/internal`,
 `dist/esm/index.d.ts`, `styles.css`) é whitelisted — senão o guard flagraria o
 próprio alias legítimo.
 
-Fonte da verdade dos padrões: regra #1 (README:18) + P-1 (README:30) + aceite
+Fonte da verdade dos padrões: regra nº 1 (README:18) + P-1 (README:30) + aceite
 global (README:65, "guard de CI vermelho para import interno/legado").
 
 ### Passo 5 — Self-test do guard (`node --test`, built-in)
@@ -139,7 +139,7 @@ pipeline, README:30).
 ### Passo 7 — Footer `biblioteca vX.Y.Z · commit` + canal `import.warning`
 
 - Footer: expor versão (já em `__BPMN_LIB_VERSION__`) **+ SHA curto do submódulo**
-  (injetar via `vite.config.ts` lendo o gitlink) + link CHANGELOG. Regra #2 (versão
+  (injetar via `vite.config.ts` lendo o gitlink) + link CHANGELOG. Regra nº 2 (versão
   pinada e visível).
 - `import.warning`: fiar os warnings nomeados que o bump passa a emitir no canal
   `import.warning` para aparecerem na UI (mecânico — vem do bump; entra na P-1a).
@@ -147,7 +147,7 @@ pipeline, README:30).
 ### Relatório da P-1a (no draft-PR)
 
 Checklist do painel correspondente da **Spec UX Playground BTV** (7a–7e) + itens do
-README h21: regra #1 executável (guard vermelho comprovado), regra #2 (footer
+README h21: regra nº 1 executável (guard vermelho comprovado), regra nº 2 (footer
 versão·commit), migração 100% para `@buildtovalue/*`, zero `@bpmn-react/*`
 remanescente (o próprio guard prova).
 

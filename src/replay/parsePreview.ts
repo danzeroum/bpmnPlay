@@ -2,7 +2,7 @@
  * Helpers de prévia/heurística para o modal de mapeamento CSV (3a) e o chip do
  * log (2b). Só apresentação — o parsing de verdade é da lib (parseCsv/parseXes).
  */
-import type { CsvMapping, Trace } from '@bpmn-react/replay';
+import type { CsvMapping, Trace } from '@buildtovalue/replay';
 
 /** Divide uma linha de CSV respeitando aspas duplas (o suficiente para a prévia). */
 function splitLine(line: string, delimiter: string): string[] {

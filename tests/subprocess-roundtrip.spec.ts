@@ -17,7 +17,7 @@ import { test, expect, type Page } from '@playwright/test';
  *    verde quando a lib corrigir o import — sem esconder o gap.
  *
  * Roda no navegador (import servido pelo Vite) porque os builders/conversor
- * dependem dos aliases `@bpmn-react/*`.
+ * dependem dos aliases `@buildtovalue/*`.
  */
 
 async function disableTour(page: Page) {

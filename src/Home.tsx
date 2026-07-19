@@ -26,6 +26,9 @@ import { EXAMPLES, type Example } from './examples.js';
 import './home.css';
 
 const REPO_URL = 'https://github.com/danzeroum/bpmnPlay';
+// Repositório da biblioteca (submódulo pinado) — o footer aponta o CHANGELOG no
+// commit exato consumido (regra nº 2: versão pinada e visível).
+const LIB_REPO_URL = 'https://github.com/danzeroum/bpmn';
 
 type ModuleCard = { icon: ComponentType<{ size?: number }>; title: DictKey; desc: DictKey; to: string };
 const GROUPS: { label: DictKey; cards: ModuleCard[] }[] = [
@@ -150,6 +153,18 @@ export function Home() {
         <a href={REPO_URL} target="_blank" rel="noreferrer">
           {t('home.github')}
         </a>
+        <span className="pg-home-footer-lib">
+          {t('home.footer.lib')}{' '}
+          <a
+            href={`${LIB_REPO_URL}/blob/${__BPMN_LIB_COMMIT__}/CHANGELOG.md`}
+            target="_blank"
+            rel="noreferrer"
+            title={t('home.footer.lib.changelog')}
+          >
+            {__BPMN_LIB_VERSION__}
+            {__BPMN_LIB_COMMIT__ ? ` · ${__BPMN_LIB_COMMIT__}` : ''}
+          </a>
+        </span>
         <span className="pg-home-footer-dev">{t('home.footer.dev')}</span>
       </footer>
     </div>
