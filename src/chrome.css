@@ -1112,3 +1112,59 @@
 .pg-route-loading {
   min-height: 60vh;
 }
+
+/* Badge de classe OMG (P-5) — aparece quando um .bpmn solto na Home é certificado
+   e aberto no editor (?draft=1). Pílula fixa no topo; dispensável. Cores = C8. */
+.pg-certify-badge {
+  position: fixed;
+  top: 104px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--pg-line, #e7e2d8);
+  background: var(--pg-surface, #fff);
+}
+.pg-certify-label {
+  color: var(--pg-muted, #6e675c);
+}
+.pg-certify-class {
+  font-family: var(--pg-font-mono, ui-monospace, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+.pg-certify-badge.is-analytic .pg-certify-class {
+  background: #d8ecdd;
+  color: #276b46;
+}
+.pg-certify-badge.is-descriptive .pg-certify-class {
+  background: #dbe7f5;
+  color: #2f5c94;
+}
+.pg-certify-badge.is-none .pg-certify-class {
+  background: #f3ddd5;
+  color: #a1442b;
+}
+.pg-certify-reason {
+  color: var(--pg-muted, #6e675c);
+}
+.pg-certify-x {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--pg-muted, #6e675c);
+  padding: 0 2px;
+}
+.pg-certify-x:hover {
+  color: var(--pg-ink, #2b2721);
+}

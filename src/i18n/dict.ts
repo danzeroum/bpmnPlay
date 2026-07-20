@@ -510,6 +510,14 @@ export const DICT = {
     en: 'Some sub-process children may have been lost while importing this file (a limitation of the library converter on import). The file itself is complete; the loss happens on read.',
   },
   'corpus.error': { pt: 'Não consegui carregar esse arquivo do corpus.', en: 'Could not load that corpus file.' },
+  // Badge de classe (P-5) — drop de .bpmn na Home certifica e abre no editor
+  'editor.certify.label': { pt: 'Certificação OMG:', en: 'OMG certification:' },
+  'editor.certify.none': { pt: 'não certificável', en: 'not certifiable' },
+  'editor.certify.dismiss': { pt: 'Dispensar', en: 'Dismiss' },
+  'editor.certify.reason.malformed': { pt: 'arquivo malformado', en: 'malformed file' },
+  'editor.certify.reason.structure': { pt: 'estrutura inválida', en: 'invalid structure' },
+  'editor.certify.reason.unsupported': { pt: 'elementos não suportados', en: 'unsupported elements' },
+  'editor.certify.reason.lossy': { pt: 'round-trip com perda', en: 'lossy round-trip' },
 
   // Menu Exibir
   'view.governance': { pt: 'Painéis de governança', en: 'Governance panels' },

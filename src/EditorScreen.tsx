@@ -38,7 +38,7 @@ import {
 import { ASTAR_PLUGINS, DEMO_DECISIONS, openDecisionSurface, PLUGINS } from './plugins.js';
 import { decodeDiagram, encodeDiagram, permalinkHash, PERMALINK_VERSION, readPermalink } from './permalink.js';
 import { resolveVersion } from './demoRegistry.js';
-import { readDraft } from './heroDraft.js';
+import { readDraft, readDraftCertify, type DraftCertify } from './heroDraft.js';
 import { hasFlag } from './flags.js';
 import { ledgerToCsv } from './audit-csv.js';
 import { Close } from './icons.js';
@@ -184,6 +184,11 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
   const copilot = useCopilot();
   const [toast, setToast] = useState<string | null>(null);
   const [exportReq, setExportReq] = useState<ExportRequest | null>(null);
+  // Badge de classe (P-5): quando a Home certificou o `.bpmn` solto (drop → ?draft=1),
+  // o editor abre mostrando a classe OMG atingida (ou `none` + motivo, declarado).
+  const [certify, setCertify] = useState<DraftCertify | null>(() =>
+    mode === 'editor' && params.get('draft') !== null ? readDraftCertify() : null,
+  );
   const latestRef = useRef(diagram);
 
   const camunda8Available = hasFlag(location.search, 'camunda8');
@@ -413,6 +418,22 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
         </div>
       </div>
       {tourOpen && <Tour onClose={() => setTourOpen(false)} />}
+      {certify && (
+        <div className={`pg-certify-badge is-${certify.class}`} role="status" data-testid="certify-badge" data-class={certify.class}>
+          <span className="pg-certify-label">{t('editor.certify.label')}</span>
+          <strong className="pg-certify-class">
+            {certify.class === 'none' ? t('editor.certify.none') : certify.class}
+          </strong>
+          {certify.class === 'none' && certify.reason && (
+            <span className="pg-certify-reason">
+              — {t(`editor.certify.reason.${certify.reason}` as Parameters<typeof t>[0])}
+            </span>
+          )}
+          <button type="button" className="pg-certify-x" aria-label={t('editor.certify.dismiss')} onClick={() => setCertify(null)}>
+            ×
+          </button>
+        </div>
+      )}
       {toast && (
         <div className="pg-toast" role="status">
           {toast}
