@@ -81,6 +81,18 @@
   padding: 1px 5px;
   border-radius: 4px;
 }
+/* Rótulo de fronteira: um motivo de engine NÃO-mapeado é marcado como técnico
+   (nunca passado como copy do host). Ver docs/known-issues.md #2. */
+.pg-agent2h-enginetag {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pg-muted, #6e675c);
+  border: 1px dashed var(--pg-line, #d9c98a);
+  border-radius: 4px;
+  padding: 0 5px;
+  margin-right: 4px;
+}
 .pg-agent2h-trail {
   margin: 0;
   padding-left: 18px;

@@ -17,6 +17,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { BpmnDesigner, AgentStudio } from '@buildtovalue/react';
 import type { SimulationState } from '@buildtovalue/agentflow';
 import { useLang } from '../i18n/index.js';
+import type { DictKey } from '../i18n/index.js';
 import { useLibMessages } from '../i18n/libMessages.js';
 import { PLUGINS } from '../plugins.js';
 import { publishEditorEvent } from '../scenarioEvents.js';
@@ -35,6 +36,19 @@ import './agent2h.css';
 
 type DryRun = { trail: SimulationState['trail']; blocked: SimulationState['blockedDecision']; deterministic: boolean };
 type Escalation = ReturnType<typeof boundaryUndoableCheck>;
+
+/**
+ * Localiza o motivo do BlockedDecision. O engine devolve `reason` como texto livre
+ * em EN (sem código estável — ver docs/known-issues.md #2). O caso «retry esgotado»
+ * tem padrão estável → mapeamos para o dict (toggle troca TODA a UI). Motivos
+ * arbitrários viram FRONTEIRA declarada: o texto do engine, rotulado como técnico —
+ * nunca interpolado como se fosse copy do host.
+ */
+function localizeBlockedReason(reason: string, t: (k: DictKey) => string): { text: string; technical: boolean } {
+  const m = /retry exhausted after (\d+) attempts/.exec(reason);
+  if (m) return { text: t('run.c5.dry.retry').replace('{n}', m[1]), technical: false };
+  return { text: reason, technical: true };
+}
 
 export function ScenarioAgentToHuman() {
   const { t } = useLang();
@@ -122,12 +136,17 @@ export function ScenarioAgentToHuman() {
                 {sim.deterministic ? <Check size={12} /> : <AlertCircle size={12} />}
                 {t('run.c5.dry.deterministic')}
               </span>
-              {sim.blocked && (
-                <span className="pg-agent2h-stop">
-                  <AlertCircle size={12} />
-                  {t('run.c5.dry.blocked')}: <code>{sim.blocked.nodeId}</code> · {sim.blocked.reason}
-                </span>
-              )}
+              {sim.blocked &&
+                (() => {
+                  const r = localizeBlockedReason(sim.blocked.reason, t);
+                  return (
+                    <span className="pg-agent2h-stop">
+                      <AlertCircle size={12} />
+                      {t('run.c5.dry.blocked')}: <code>{sim.blocked.nodeId}</code> ·{' '}
+                      {r.technical && <span className="pg-agent2h-enginetag">{t('run.c5.dry.enginereason')}</span>} {r.text}
+                    </span>
+                  );
+                })()}
             </div>
             <ol className="pg-agent2h-trail">
               {sim.trail.map((r, i) => (

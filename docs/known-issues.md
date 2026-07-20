@@ -105,3 +105,14 @@ matriz de contrato). A correção é **upstream** e será medida contra a matriz
 quando corrigida, o `test.fixme` de `tests/subprocess-roundtrip.spec.ts` passa a rodar
 verde e o `tests/p3-n1.spec.ts` deixa de reproduzir o bug (3 → 3). Aqui apenas avisamos
 no import (`detectImportLoss` → `import.loss.note`) e transportamos JSON no permalink.
+
+## 2. `BlockedDecision.reason` do agentflow é texto livre em EN (sem código estável)
+
+**Severidade:** baixa (i18n — barreira de tradução, não perda de dados).
+**Onde:** `@buildtovalue/agentflow` — `simulate()` devolve `blockedDecision: { nodeId, cell, reason }`, e `reason` é a explicação humana **em inglês, interpolada** (ex.: `retry exhausted after 3 attempts (4 tries)` em `simulate.ts:225`). `cell` nomeia *o que* bloqueou (a rota), não *por quê* de forma estável.
+
+**Impacto no bpmnPlay (C5 «agent-to-human»):** o critério «o toggle troca TODA a UI» exige que a parada honesta seja copy do host. Como `reason` vem cru do engine em EN, interpolá-lo numa frase PT quebraria o critério.
+
+**Mitigação (host):** `src/agent-to-human/ScenarioAgentToHuman.tsx` (`localizeBlockedReason`) **mapeia o caso estável** «retry esgotado» para o dict (`run.c5.dry.retry`, PT/EN) — é o único motivo que este cenário determinístico produz. Motivos **arbitrários** (não mapeáveis) viram **fronteira declarada**: o texto do engine é exibido **rotulado como técnico** (`run.c5.dry.enginereason` + `.pg-agent2h-enginetag`), nunca passado como se fosse copy do host.
+
+**Ação (nota upstream):** pedir à lib **códigos de motivo estáveis** para `BlockedDecision` (um enum/kind + parâmetros, ex.: `{ kind: 'retryExhausted', attempts: 3 }`), para que o host possa localizar **todo** motivo em vez de só o caso mapeado. Enquanto não houver, a fronteira declarada acima é a leitura honesta.

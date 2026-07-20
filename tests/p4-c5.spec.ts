@@ -35,8 +35,12 @@ test('C5: agentTask + AgentStudio; dry-run determinístico + parada honesta; esc
   await page.locator('[data-testid="agent-simulate"]').click();
   await expect(page.locator('[data-testid="dry-run-result"]')).toBeVisible();
   await expect(page.locator('.pg-agent2h-ok')).toContainText(/determinística|deterministic/);
-  await expect(page.locator('.pg-agent2h-stop')).toBeVisible(); // BlockedDecision honesta
   await expect(page.locator('.pg-run-progress')).toHaveText(/2.*4/);
+
+  // A parada honesta é COPY DO HOST (dict), não texto de engine em EN interpolado:
+  // em PT rende «tentativas esgotadas (3)» e a string crua do engine não aparece.
+  await expect(page.locator('.pg-agent2h-stop')).toContainText('tentativas esgotadas (3)');
+  await expect(page.locator('.pg-agent2h-stop')).not.toContainText(/after \d+ attempts/);
 
   // Passo 2: a escalação agente→humano é 1 comando undoable.
   await page.locator('[data-testid="agent-escalation"]').click();
@@ -63,4 +67,22 @@ test('C5: agentTask + AgentStudio; dry-run determinístico + parada honesta; esc
   await page.locator('.pg-run-actions').getByRole('button', { name: /Reiniciar/ }).click();
   await expect(page.locator('.pg-run-progress')).toHaveText(/1.*4/);
   await expect(page.locator('[data-testid="dry-run-result"]')).toHaveCount(0);
+});
+
+test('C5: a parada honesta é copy do host — o toggle EN⇄PT troca o motivo', async ({ page }) => {
+  await disableTour(page);
+  await page.goto('/scenario/agent-to-human');
+  await page.locator('[data-testid="agent-simulate"]').click();
+
+  const stop = page.locator('.pg-agent2h-stop');
+  // PT (padrão): motivo mapeado no dict, sem a string crua do engine.
+  await expect(stop).toContainText('tentativas esgotadas (3)');
+  await expect(stop).not.toContainText(/after \d+ attempts/);
+
+  // Toggle (Cmd+K → idioma) troca TODA a UI — o motivo vira a copy EN do host.
+  await page.keyboard.press('Control+k');
+  await page.locator('.pg-cmdk-input').fill('idioma');
+  await page.keyboard.press('Enter');
+  await expect(stop).toContainText('retry exhausted (3 attempts)');
+  await expect(stop).not.toContainText('tentativas esgotadas');
 });

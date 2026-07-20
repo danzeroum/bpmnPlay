@@ -437,6 +437,10 @@ export const DICT = {
   'run.c5.dry.action': { pt: 'Simular (dry-run)', en: 'Simulate (dry-run)' },
   'run.c5.dry.deterministic': { pt: 'trilha determinística (2 rodadas idênticas)', en: 'deterministic trail (2 identical runs)' },
   'run.c5.dry.blocked': { pt: 'parada honesta', en: 'honest stop' },
+  // Motivo do BlockedDecision: o caso «retry esgotado» é mapeado p/ o dict (toggle
+  // troca TODA a UI). Motivos arbitrários do engine viram fronteira declarada (rótulo).
+  'run.c5.dry.retry': { pt: 'tentativas esgotadas ({n})', en: 'retry exhausted ({n} attempts)' },
+  'run.c5.dry.enginereason': { pt: 'motivo do engine (técnico):', en: 'engine reason (technical):' },
   'run.c5.esc.h': { pt: 'Escalação agente → humano', en: 'Agent → human escalation' },
   'run.c5.esc.sub': { pt: 'Anexar o boundary de erro (a escalação para um humano) é UM comando pelo command bus — e é desfazível. Aceitar no macro nunca é irreversível.', en: 'Attaching the error boundary (the escalation to a human) is ONE command over the command bus — and it is undoable. Accepting in the macro is never irreversible.' },
   'run.c5.esc.action': { pt: 'Provar escalação (1 undo)', en: 'Prove escalation (1 undo)' },
