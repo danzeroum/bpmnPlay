@@ -18,7 +18,15 @@ import { useLang } from './i18n/index.js';
 import { useLibMessages } from './i18n/libMessages.js';
 import { PLUGINS, compensationDemoLedger, escalationDemoLedger } from './plugins.js';
 import { writeDraft } from './heroDraft.js';
-import { encodeDiagram, permalinkHash, PERMALINK_LIMIT } from './permalink.js';
+import {
+  buildShareHash,
+  decodeDiagram,
+  encodeDiagram,
+  PERMALINK_LIMIT,
+  PERMALINK_VERSION,
+  readPermalink,
+  readScenarioLink,
+} from './permalink.js';
 import {
   advanceScenario,
   exitScenario,
@@ -65,7 +73,21 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
   const store = useSyncExternalStore(subscribeScenario, getScenarioState);
 
   const [editorKey, setEditorKey] = useState(0);
-  const [diagram, setDiagram] = useState<BpmnDiagram>(() => run.seed());
+  // Semente: se o permalink traz um diagrama (`#d=`), ele tem precedência sobre o
+  // seed do cenário (abre o estado exato em máquina limpa); senão, run.seed().
+  const [diagram, setDiagram] = useState<BpmnDiagram>(() => {
+    if (typeof window !== 'undefined') {
+      const link = readPermalink(window.location.hash);
+      if (link && link.version === PERMALINK_VERSION) {
+        try {
+          return decodeDiagram<BpmnDiagram>(link.payload);
+        } catch {
+          /* payload inválido → cai no seed */
+        }
+      }
+    }
+    return run.seed();
+  });
   const [toast, setToast] = useState<string | null>(null);
   const [comp, setComp] = useState<CompResult | null>(null);
   const [esc, setEsc] = useState<EscResult | null>(null);
@@ -86,9 +108,14 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
   if (active) startedRef.current = true;
   const finished = startedRef.current && store.id === null;
 
-  // Começa (ou retoma) o cenário ao montar.
+  // Começa (ou retoma) o cenário ao montar. Se o permalink traz `#s=<slug>.<passo>`
+  // e o slug bate, abre no passo exato (o critério «estado exato em máquina limpa»).
   useEffect(() => {
     if (getScenarioState().id !== run.slug) startScenario(run.slug);
+    if (typeof window !== 'undefined') {
+      const link = readScenarioLink(window.location.hash);
+      if (link && link.slug === run.slug) goToStep(link.step);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [run.slug]);
 
@@ -175,10 +202,18 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
       setToast(t('run.share.toolong'));
       return;
     }
-    window.history.replaceState(null, '', permalinkHash(payload));
+    // Permalink de cenário (P-5): diagrama (`#d=`) + contexto (`#s=<slug>.<passo>`),
+    // para o link reabrir o cenário no passo exato numa máquina limpa.
+    const st = getScenarioState();
+    const stepNow = st.id === run.slug ? st.step : 0;
+    window.history.replaceState(
+      null,
+      '',
+      buildShareHash({ diagramPayload: payload, scenario: { slug: run.slug, step: stepNow } }),
+    );
     void navigator.clipboard?.writeText(window.location.href).catch(() => {});
     setToast(t('run.shared'));
-  }, [t]);
+  }, [t, run.slug]);
 
   const onOpenFull = useCallback(() => {
     writeDraft(latest.current);
