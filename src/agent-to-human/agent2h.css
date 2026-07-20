@@ -1,0 +1,155 @@
+/* C5 «agent-to-human» — centro chrome-free do runner (P-4). Tokens --pg-* do chrome. */
+.pg-agent2h {
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px 24px 40px;
+  background: var(--pg-bg, #faf8f4);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.pg-agent2h-block {
+  border: 1px solid var(--pg-line, #e7e2d8);
+  border-radius: 10px;
+  background: var(--pg-surface, #fff);
+  padding: 16px 18px;
+}
+.pg-agent2h-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.pg-agent2h-h {
+  font-size: 14px;
+  font-weight: 650;
+  margin: 0 0 4px;
+  color: var(--pg-ink, #2b2721);
+}
+.pg-agent2h-sub {
+  font-size: 12.5px;
+  color: var(--pg-muted, #6e675c);
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+.pg-agent2h-canvas {
+  position: relative;
+  height: 320px;
+  border: 1px solid var(--pg-line, #e7e2d8);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+/* o BpmnDesigner preenche o canvas; o AgentStudio abre por cima (overlay da lib). */
+.pg-agent2h-canvas > * {
+  height: 100%;
+}
+.pg-agent2h-dry,
+.pg-agent2h-esc {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pg-agent2h-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+.pg-agent2h-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #276b46;
+}
+.pg-agent2h-warn,
+.pg-agent2h-stop {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #a1442b;
+}
+.pg-agent2h-stop code {
+  font-family: var(--pg-font-mono, ui-monospace, monospace);
+  font-size: 11.5px;
+  background: var(--pg-bg, #f3efe7);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+/* Rótulo de fronteira: um motivo de engine NÃO-mapeado é marcado como técnico
+   (nunca passado como copy do host). Ver docs/known-issues.md #2. */
+.pg-agent2h-enginetag {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pg-muted, #6e675c);
+  border: 1px dashed var(--pg-line, #d9c98a);
+  border-radius: 4px;
+  padding: 0 5px;
+  margin-right: 4px;
+}
+.pg-agent2h-trail {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--pg-ink, #2b2721);
+  max-height: 220px;
+  overflow-y: auto;
+}
+.pg-agent2h-trail-type {
+  font-family: var(--pg-font-mono, ui-monospace, monospace);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--pg-muted, #6e675c);
+  margin-right: 7px;
+}
+.pg-agent2h-esc {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.pg-agent2h-counts {
+  font-family: var(--pg-font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  color: var(--pg-muted, #6e675c);
+}
+.pg-agent2h-notice {
+  position: relative;
+  margin-top: 12px;
+  border: 1px solid #d9c98a;
+  background: #fbf6e6;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: #6b5a1f;
+}
+.pg-agent2h-notice ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pg-agent2h-notice code {
+  font-family: var(--pg-font-mono, ui-monospace, monospace);
+}
+.pg-badge-exp {
+  margin-left: 7px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--pg-bg, #efe9df);
+  border: 1px solid var(--pg-line, #e7e2d8);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
