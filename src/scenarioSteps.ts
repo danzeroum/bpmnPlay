@@ -42,7 +42,7 @@ export interface RunScenario {
   seed: () => BpmnDiagram;
   /** Ferramenta no centro: editor (modelagem), simulador (execução), replay
    *  (análise de log) ou governança (revisão + ledger, C4). Default editor. */
-  tool?: 'editor' | 'simulator' | 'replay' | 'governance' | 'interop' | 'agent-to-human';
+  tool?: 'editor' | 'simulator' | 'replay' | 'governance' | 'interop' | 'agent-to-human' | 'copilot';
 }
 
 // C1 — Modelar em 60s (§2 H20): context pad (criar conectado), Tab encadeia, ⌘K,
@@ -193,7 +193,27 @@ const C5: RunScenario = {
   ],
 };
 
-export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3, C4, C5, C7, C8];
+// C6 — Copiloto governado (P-4): centro que compõe o copiloto (src/copilot/*) + o
+// LedgerExplorer da lib. Fake provider offline por padrão → rascunho → prévia fantasma
+// (tema da lib) → aceitar (1 comando composto) → selo ✦ via aiAuthorOf no ledger →
+// «Desfazer tudo» (1 undo). BYO-key é opcional, só em memória, com badge «IA real ativa».
+// Avança por evento (copilot.proposed / copilot.accepted / copilot.undoall).
+const C6: RunScenario = {
+  slug: 'governed-copilot',
+  code: 'C6',
+  title: 'scn.c6.title',
+  intro: 'run.c6.intro',
+  tool: 'copilot',
+  seed: () => createDiagram({ id: 'scn-c6', name: 'Copiloto governado', createdBy: 'playground' }),
+  steps: [
+    { title: 'run.c6.s1.t', look: 'run.c6.s1.l', advanceOn: (e) => e.type === 'copilot.proposed' },
+    { title: 'run.c6.s2.t', look: 'run.c6.s2.l', advanceOn: (e) => e.type === 'copilot.accepted' },
+    { title: 'run.c6.s3.t', look: 'run.c6.s3.l' },
+    { title: 'run.c6.s4.t', look: 'run.c6.s4.l', advanceOn: (e) => e.type === 'copilot.undoall' },
+  ],
+};
+
+export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3, C4, C5, C6, C7, C8];
 export const RUN_BY_SLUG: Record<string, RunScenario> = Object.fromEntries(
   RUN_SCENARIOS.map((s) => [s.slug, s]),
 );

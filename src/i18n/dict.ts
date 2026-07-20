@@ -698,6 +698,26 @@ export const DICT = {
   'copilot.bar.aria': { pt: 'Proposta do copiloto', en: 'Copilot proposal' },
   'copilot.accept': { pt: 'Aceitar', en: 'Accept' },
   'copilot.reject': { pt: 'Recusar', en: 'Reject' },
+  // C6 «governed-copilot» — gates de IA (badge, copy do BYO-key, desfazer tudo)
+  'copilot.badge.live': { pt: 'IA real ativa', en: 'Real AI active' },
+  'copilot.badge.demo': { pt: 'demo · offline', en: 'demo · offline' },
+  'copilot.key.tabonly': {
+    pt: 'Sua chave vive só nesta aba: recarregou, sumiu. Chamadas reais têm custo.',
+    en: 'Your key lives only in this tab: reload and it’s gone. Real calls cost money.',
+  },
+  'copilot.undoAll': { pt: 'Desfazer tudo', en: 'Undo all' },
+
+  // C6 — rail do runner
+  'run.c6.intro': { pt: 'Um copiloto governado: o provider fake (offline, determinístico) rascunha, você vê a prévia fantasma e aceita — um comando composto que o ledger sela com ✦ de autoria. «Desfazer tudo» é 1 undo. Trazer sua chave é opcional e só em memória.', en: 'A governed copilot: the fake provider (offline, deterministic) drafts, you see the ghost preview and accept — one composite command the ledger seals with a ✦ authorship mark. «Undo all» is 1 undo. Bringing your key is optional and in-memory only.' },
+  'run.c6.gov.h': { pt: 'Governança da IA', en: 'AI governance' },
+  'run.c6.s1.t': { pt: 'Peça um rascunho', en: 'Ask for a draft' },
+  'run.c6.s1.l': { pt: 'o provider fake responde offline (nada sai do navegador)', en: 'the fake provider answers offline (nothing leaves the browser)' },
+  'run.c6.s2.t': { pt: 'Aceite a proposta', en: 'Accept the proposal' },
+  'run.c6.s2.l': { pt: 'a prévia fantasma (tema da lib) vira diagrama num comando', en: 'the ghost preview (library theme) becomes diagram in one command' },
+  'run.c6.s3.t': { pt: 'Veja o selo ✦ no ledger', en: 'See the ✦ mark in the ledger' },
+  'run.c6.s3.l': { pt: 'a autoria da IA registrada via aiAuthorOf', en: 'the AI authorship recorded via aiAuthorOf' },
+  'run.c6.s4.t': { pt: 'Desfaça tudo', en: 'Undo all' },
+  'run.c6.s4.l': { pt: 'um único undo reverte a proposta inteira (comando composto)', en: 'a single undo reverts the whole proposal (composite command)' },
 } as const;
 
 export type DictKey = keyof typeof DICT;

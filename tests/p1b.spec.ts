@@ -55,17 +55,14 @@ test('galeria de 8 cenários sob o hero navega para /scenario/<slug>', async ({ 
     'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8',
   ]);
 
-  // C1 (interativo) não tem chip de fase; C6 (ainda scaffold, P-4) tem «chega na …».
-  const c1 = cards.filter({ has: page.getByText('C1', { exact: true }) });
-  await expect(c1.locator('.pg-scenario-phase')).toHaveCount(0);
-  const c6chip = cards.filter({ has: page.getByText('C6', { exact: true }) });
-  await expect(c6chip.locator('.pg-scenario-phase')).toHaveCount(1);
+  // Todos os 8 cenários (C1–C8) agora são interativos — nenhum chip de fase «chega na …».
+  await expect(page.locator('.pg-scenario-phase')).toHaveCount(0);
 
-  // Abrir um cenário AINDA scaffold (C6) leva à página /scenario/<slug> com o roteiro.
+  // Abrir um cenário leva à página /scenario/<slug> com o RUNNER (rail de passos).
   await page.locator('.pg-scenario-card', { hasText: 'C6' }).click();
   await expect(page).toHaveURL(/\/scenario\/governed-copilot$/);
-  await expect(page.locator('.pg-scenario-page-code')).toHaveText('C6');
-  await expect(page.locator('.pg-scenario-page-roteiro')).toBeVisible();
+  await expect(page.locator('.pg-run-rail')).toBeVisible();
+  await expect(page.locator('[data-testid="c6-copilot"]')).toBeVisible();
 });
 
 test('slug desconhecido mostra estado vazio na própria página (sem redirect)', async ({ page }) => {

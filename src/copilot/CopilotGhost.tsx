@@ -6,8 +6,10 @@
  */
 import type { GhostGeom } from './useCopilot.js';
 
-const STROKE = '#0E4F5E';
-const FILL = 'rgba(227, 238, 240, 0.55)';
+// Tema da lib: a fantasma É uma "seleção proposta" → `--bpmnr-selected` no traço/
+// rótulos e `--bpmnr-fill-event` no preenchimento. Fallback preserva o teal do mockup.
+const STROKE = 'var(--bpmnr-selected, #0E4F5E)';
+const FILL = 'var(--bpmnr-fill-event, rgba(227, 238, 240, 0.55))';
 
 export function CopilotGhost({ ghost }: { ghost: GhostGeom }) {
   return (
