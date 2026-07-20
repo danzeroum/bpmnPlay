@@ -60,3 +60,176 @@
 .pg-scenario-page-empty {
   text-align: left;
 }
+
+/* ── Runner interativo (P-2): rail à esquerda + editor real + barra ── */
+.pg-run {
+  display: flex;
+  min-height: 0;
+  height: 100%;
+}
+.pg-run-rail {
+  width: 320px;
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 18px;
+  border-right: 1px solid var(--pg-border);
+  background: var(--pg-surface);
+  overflow-y: auto;
+}
+.pg-run-rail-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pg-run-code {
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--pg-accent);
+}
+.pg-run-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+.pg-run-intro {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--pg-muted);
+}
+.pg-run-steps {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pg-run-step-btn {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  border-radius: var(--pg-r-btn);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+.pg-run-step-btn:hover {
+  background: var(--pg-sub);
+}
+.pg-run-step.is-current .pg-run-step-btn {
+  background: var(--pg-accent-weak);
+}
+.pg-run-step-mark {
+  flex: 0 0 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  background: var(--pg-sub);
+  border: 1px solid var(--pg-border);
+  color: var(--pg-muted);
+}
+.pg-run-step.is-current .pg-run-step-mark {
+  background: var(--pg-accent);
+  border-color: var(--pg-accent);
+  color: #fff;
+}
+.pg-run-step.is-done .pg-run-step-mark {
+  background: var(--pg-success, #1f7a4d);
+  border-color: var(--pg-success, #1f7a4d);
+  color: #fff;
+}
+.pg-run-step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pg-run-step-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.pg-run-step-look {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--pg-muted);
+}
+.pg-run-progress {
+  font-family: var(--pg-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--pg-muted);
+}
+.pg-run-done {
+  padding: 12px 14px;
+  border: 1px solid var(--pg-success-border, var(--pg-border));
+  background: var(--pg-success-weak, var(--pg-sub));
+  border-radius: var(--pg-r-card);
+}
+.pg-run-done p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--pg-muted);
+}
+.pg-run-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pg-run-next {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+.pg-run-free {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--pg-muted);
+}
+.pg-run-stage {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.pg-run-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--pg-border);
+}
+.pg-run-openfull {
+  margin-left: auto;
+}
+.pg-run-toast {
+  font-size: 12px;
+  color: var(--pg-accent);
+}
+.pg-run-canvas {
+  flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .pg-run {
+    flex-direction: column;
+  }
+  .pg-run-rail {
+    width: auto;
+    flex: 0 0 auto;
+    border-right: none;
+    border-bottom: 1px solid var(--pg-border);
+  }
+}

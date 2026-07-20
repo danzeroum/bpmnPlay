@@ -11,13 +11,16 @@ import { healthcarePlugin } from '@buildtovalue/healthcare';
 import { callActivityBindingRule, VersionRegistry } from '@buildtovalue/registry';
 import { soundnessPromotionRule, soundnessRules } from '@buildtovalue/soundness';
 import { buildReplayTraces, DEMO_DECISION_TABLE } from './sampleDiagram.js';
+import { publishEditorEvent } from './scenarioEvents.js';
 
 // Observability sink (§2): o host decide o que fazer com os eventos do editor —
-// aqui vão para o console (lead time, avisos de import, frames lentos = KPIs).
+// console (lead time, avisos de import, frames lentos = KPIs) + bus do rail de
+// cenários (P-2), que avança passos por evento (`advanceOn`).
 const observabilityPlugin: BpmnPlugin = {
   id: 'demo/observability',
   onEditorEvent: (event) => {
     console.debug('[editor-event]', event.type, event.meta ?? {});
+    publishEditorEvent({ type: event.type, meta: event.meta as Record<string, unknown> | undefined });
   },
 };
 

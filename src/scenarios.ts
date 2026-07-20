@@ -7,7 +7,13 @@
  */
 import type { DictKey } from './i18n/dict.js';
 
-export type ScenarioId = 'modelador' | 'aprovador' | 'auditor';
+/**
+ * Id de cenário. Aberto (`string`): os tours de papel usam ids fixos
+ * (`modelador|aprovador|auditor`); os cenários curados C1–C8 usam o slug
+ * (`model-in-60s`, …). O store abaixo é agnóstico ao registro — cada família
+ * registra o tamanho do seu fluxo via `registerScenarioFlow`.
+ */
+export type ScenarioId = string;
 
 export interface ScenarioStep {
   route: string;
@@ -23,7 +29,8 @@ export interface Scenario {
   id: ScenarioId;
   role: DictKey;
   minutes: number;
-  steps: [DictKey, DictKey, DictKey];
+  /** Rótulos do stepper (N passos; os tours de papel usam 3). */
+  steps: DictKey[];
   flow: ScenarioStep[];
 }
 
@@ -79,6 +86,25 @@ export function getScenario(id: ScenarioId): Scenario {
   return SCENARIOS.find((s) => s.id === id)!;
 }
 
+// ---- Registro de tamanhos de fluxo (agnóstico ao registro) ------------------
+// Os tours de papel e os cenários curados (C1–C8) registram aqui o nº de passos,
+// para o store clampar/avançar sem conhecer o registro concreto de cada família.
+const FLOW_LEN = new Map<ScenarioId, number>();
+let storeReady = false;
+export function registerScenarioFlow(id: ScenarioId, length: number): void {
+  FLOW_LEN.set(id, length);
+  // Reconcilia resume-on-reload: se um cenário estava ativo no localStorage mas
+  // seu fluxo só foi registrado agora (módulo carregado tardiamente), recarrega.
+  if (storeReady && state.id === null && read(ACTIVE_KEY) === id) {
+    state = load();
+    emit();
+  }
+}
+function flowLen(id: ScenarioId): number {
+  return FLOW_LEN.get(id) ?? 0;
+}
+SCENARIOS.forEach((s) => registerScenarioFlow(s.id, s.flow.length));
+
 // ---- Store (module singleton + subscribe) ----------------------------------
 
 const ACTIVE_KEY = 'pg:cenario:active';
@@ -111,11 +137,14 @@ function remove(k: string) {
   }
 }
 
+function clampStep(id: ScenarioId, raw: number): number {
+  return Math.max(0, Math.min(raw || 0, Math.max(0, flowLen(id) - 1)));
+}
+
 function load(): ScenarioState {
   const id = read(ACTIVE_KEY) as ScenarioId | null;
-  if (!id || !SCENARIOS.some((s) => s.id === id)) return { id: null, step: 0 };
-  const step = Math.max(0, Math.min(Number(read(stepKey(id)) ?? 0) || 0, getScenario(id).flow.length - 1));
-  return { id, step };
+  if (!id || flowLen(id) === 0) return { id: null, step: 0 };
+  return { id, step: clampStep(id, Number(read(stepKey(id)) ?? 0)) };
 }
 
 let state: ScenarioState = load();
@@ -123,6 +152,7 @@ const subs = new Set<() => void>();
 function emit() {
   subs.forEach((f) => f());
 }
+storeReady = true;
 
 export function subscribeScenario(fn: () => void): () => void {
   subs.add(fn);
@@ -135,7 +165,7 @@ export function getScenarioState(): ScenarioState {
 }
 
 export function startScenario(id: ScenarioId): void {
-  const step = Math.max(0, Math.min(Number(read(stepKey(id)) ?? 0) || 0, getScenario(id).flow.length - 1));
+  const step = clampStep(id, Number(read(stepKey(id)) ?? 0));
   state = { id, step };
   write(ACTIVE_KEY, id);
   write(stepKey(id), String(step));
@@ -144,7 +174,7 @@ export function startScenario(id: ScenarioId): void {
 export function advanceScenario(): void {
   const sid = state.id;
   if (!sid) return;
-  const total = getScenario(sid).flow.length;
+  const total = flowLen(sid);
   if (state.step + 1 >= total) {
     // concluído
     remove(stepKey(sid));
@@ -167,5 +197,26 @@ export function exitScenario(): void {
   if (state.id) write(stepKey(state.id), String(state.step)); // salva o ponto
   remove(ACTIVE_KEY);
   state = { id: null, step: 0 };
+  emit();
+}
+/**
+ * ↺ Reset de UM cenário — isolado por `pg:cenario:<id>` (nunca vaza para outros).
+ * Zera o passo salvo; se for o ativo, sai dele. O re-seed do diagrama (quando há)
+ * é responsabilidade de quem chama (ex.: o runner limpa o `pg:draft`).
+ */
+export function resetScenario(id: ScenarioId): void {
+  remove(stepKey(id));
+  if (state.id === id) {
+    remove(ACTIVE_KEY);
+    state = { id: null, step: 0 };
+  }
+  emit();
+}
+/** Vai direto para um passo (clampado). Usado pelo rail (clicar num passo). */
+export function goToStep(step: number): void {
+  const sid = state.id;
+  if (!sid) return;
+  state = { id: sid, step: clampStep(sid, step) };
+  write(stepKey(sid), String(state.step));
   emit();
 }
