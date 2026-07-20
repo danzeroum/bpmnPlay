@@ -5,20 +5,38 @@
  * título + verbos do roteiro (+ chip «chega na P-n» quando ainda não interativo).
  * Sem emoji, thumb placeholder neutro (o chip mono é a marca — regra nº 3).
  *
- * Afford. «Canvas livre →» abre o editor. O drop de `.bpmn` (staging P-1b) importa
- * e abre no editor reusando a transferência do hero (`writeDraft` → `/editor?draft=1`);
- * `certifyXml` + badge de classe chegam na P-5 — por isso a microcopy NÃO promete
- * certificação.
+ * Afford. «Canvas livre →» abre o editor. O drop de `.bpmn` (P-5) importa, roda
+ * `certifyXml` e abre no editor reusando a transferência do hero (`writeDraft` →
+ * `/editor?draft=1`) com o badge de classe. Falha de certificação = fronteira
+ * declarada (classe `none` + motivo), NUNCA bloqueia o drop.
  */
 import { useCallback, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BpmnXmlConverter } from '@buildtovalue/core';
 import { resolveEditorConfig } from '@buildtovalue/react';
+import { certifyXml } from '@buildtovalue/conformance';
 import { useLang } from './i18n/index.js';
 import { SCENARIO_CARDS } from './scenarioCards.js';
 import { PLUGINS } from './plugins.js';
-import { writeDraft } from './heroDraft.js';
+import { writeDraft, type DraftCertify } from './heroDraft.js';
 import { ArrowRight } from './icons.js';
+
+/** Resume o relatório do certifyXml no badge do rascunho (classe + motivo curto). */
+function certifyToDraft(xml: string): DraftCertify {
+  try {
+    const r = certifyXml(xml);
+    if (r.achievedClass !== 'none') return { class: r.achievedClass };
+    // `none` → fronteira declarada: CÓDIGO de motivo (o editor localiza no toggle).
+    let reason: DraftCertify['reason'] = 'unsupported';
+    if (!r.wellFormed || r.parseError) reason = 'malformed';
+    else if (r.structuralIssues.length > 0) reason = 'structure';
+    else if (r.unsupportedElements.length > 0) reason = 'unsupported';
+    else if (!r.roundTripLossless) reason = 'lossy';
+    return { class: 'none', reason };
+  } catch {
+    return { class: 'none', reason: 'malformed' };
+  }
+}
 
 export function ScenariosSection() {
   const { t } = useLang();
@@ -38,8 +56,9 @@ export function ScenariosSection() {
           preferredTypes: config.preferredTypes,
         });
         const { diagram } = converter.fromXml(text);
-        // Reusa a transferência do hero: grava o rascunho e abre o editor por ?draft=1.
-        writeDraft(diagram);
+        // Certifica no Home (P-5): o badge de classe viaja no rascunho até o editor.
+        // A certificação NUNCA bloqueia o drop — falha vira classe `none` + motivo.
+        writeDraft(diagram, certifyToDraft(text));
         navigate('/editor?draft=1');
       } catch {
         setError(t('scn.drop.error'));

@@ -16,9 +16,21 @@ import type { BpmnDiagram } from '@buildtovalue/core';
 
 export const DRAFT_KEY = 'pg:draft';
 
+/**
+ * Certificação (P-5) anexada ao rascunho quando o drop de `.bpmn` na Home roda
+ * `certifyXml`: `class` é a classe OMG atingida (descriptive/analytic) ou `none`
+ * (fronteira declarada) com um `reason` curto. O editor abre com esse badge.
+ */
+export interface DraftCertify {
+  class: 'descriptive' | 'analytic' | 'none';
+  /** Código do motivo quando `none` (o editor localiza) — nunca texto cru. */
+  reason?: 'malformed' | 'structure' | 'unsupported' | 'lossy';
+}
+
 interface DraftPayload {
   savedAt: string;
   diagram: BpmnDiagram;
+  certify?: DraftCertify;
 }
 
 function store(): Storage | null {
@@ -30,14 +42,28 @@ function store(): Storage | null {
 }
 
 /** Grava o diagrama atual do hero (best-effort; falha de quota nunca quebra a edição). */
-export function writeDraft(diagram: BpmnDiagram): void {
+export function writeDraft(diagram: BpmnDiagram, certify?: DraftCertify): void {
   const s = store();
   if (!s) return;
   try {
-    const payload: DraftPayload = { savedAt: new Date().toISOString(), diagram };
+    const payload: DraftPayload = { savedAt: new Date().toISOString(), diagram, ...(certify ? { certify } : {}) };
     s.setItem(DRAFT_KEY, JSON.stringify(payload));
   } catch {
     // best effort
+  }
+}
+
+/** Lê a certificação anexada ao rascunho (drop com certifyXml), se houver. */
+export function readDraftCertify(): DraftCertify | null {
+  const s = store();
+  if (!s) return null;
+  try {
+    const raw = s.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<DraftPayload>;
+    return parsed?.certify ?? null;
+  } catch {
+    return null;
   }
 }
 
