@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Fixture do playground BTV — cenário C8 «omg-interop». Representa um export estilo
+  bpmn.io (padrão de bpmn-io/bpmn-js-examples, MIT — ver EXTERNAL_CORPUS_SOURCES). NÃO
+  é o arquivo proprietário: estrutura autoral, namespace OMG puro, sem extensões de
+  fornecedor. Plano com gateway → certifyXml deve atingir classe descriptive/analytic
+  com round-trip lossless (significado pleno na matriz CONFORMANCE).
+-->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="Definitions_order" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_order" name="Pedido" isExecutable="true">
+    <bpmn:startEvent id="Start_1" name="Pedido recebido" />
+    <bpmn:userTask id="Task_review" name="Revisar pedido" />
+    <bpmn:exclusiveGateway id="Gw_ok" name="Aprovado?" />
+    <bpmn:task id="Task_ship" name="Despachar" />
+    <bpmn:endEvent id="End_ok" name="Enviado" />
+    <bpmn:endEvent id="End_no" name="Recusado" />
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="Start_1" targetRef="Task_review" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_review" targetRef="Gw_ok" />
+    <bpmn:sequenceFlow id="Flow_ok" name="sim" sourceRef="Gw_ok" targetRef="Task_ship" />
+    <bpmn:sequenceFlow id="Flow_no" name="não" sourceRef="Gw_ok" targetRef="End_no" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_ship" targetRef="End_ok" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diag_order">
+    <bpmndi:BPMNPlane id="Plane_order" bpmnElement="Process_order">
+      <bpmndi:BPMNShape id="Start_1_di" bpmnElement="Start_1">
+        <dc:Bounds x="160" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_review_di" bpmnElement="Task_review">
+        <dc:Bounds x="250" y="130" width="120" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gw_ok_di" bpmnElement="Gw_ok" isMarkerVisible="true">
+        <dc:Bounds x="425" y="145" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ship_di" bpmnElement="Task_ship">
+        <dc:Bounds x="540" y="130" width="120" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_ok_di" bpmnElement="End_ok">
+        <dc:Bounds x="722" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_no_di" bpmnElement="End_no">
+        <dc:Bounds x="432" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="196" y="170" />
+        <di:waypoint x="250" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="370" y="170" />
+        <di:waypoint x="425" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ok_di" bpmnElement="Flow_ok">
+        <di:waypoint x="475" y="170" />
+        <di:waypoint x="540" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_no_di" bpmnElement="Flow_no">
+        <di:waypoint x="450" y="195" />
+        <di:waypoint x="450" y="272" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="660" y="170" />
+        <di:waypoint x="722" y="170" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

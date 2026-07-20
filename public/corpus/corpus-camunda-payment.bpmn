@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Fixture do playground BTV — cenário C8 «omg-interop». Representa um export estilo
+  Camunda 8 / Zeebe (padrão de camunda/camunda-get-started-quickstart, Apache-2.0 —
+  ver EXTERNAL_CORPUS_SOURCES). NÃO é o arquivo proprietário: estrutura autoral,
+  namespace OMG + extensões zeebe:*/camunda:* para provar o passthrough lossless com
+  Δ nomeado. Plano (sem subProcess aninhado) → certifyXml deve atingir classe analytic;
+  o conteúdo de <extensionElements> não conta contra a matriz (format-spec §passthrough).
+-->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+  xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+  id="Definitions_payment" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_payment" name="Cobrança" isExecutable="true">
+    <bpmn:startEvent id="Start_1" name="Pedido pago" />
+    <bpmn:serviceTask id="Task_charge" name="Cobrar cartão" zeebe:modelerTemplate="tmpl-payment" camunda:asyncBefore="true">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payment-service" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=valor" target="amount" />
+          <zeebe:output source="=resultado" target="status" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_1" name="Cobrado" />
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="Start_1" targetRef="Task_charge" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_charge" targetRef="End_1">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take" class="com.acme.Listener" />
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diag_payment">
+    <bpmndi:BPMNPlane id="Plane_payment" bpmnElement="Process_payment">
+      <bpmndi:BPMNShape id="Start_1_di" bpmnElement="Start_1">
+        <dc:Bounds x="160" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_charge_di" bpmnElement="Task_charge">
+        <dc:Bounds x="260" y="80" width="120" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_1_di" bpmnElement="End_1">
+        <dc:Bounds x="440" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="196" y="120" />
+        <di:waypoint x="260" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="380" y="120" />
+        <di:waypoint x="440" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

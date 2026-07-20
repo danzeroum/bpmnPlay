@@ -141,6 +141,7 @@ function loadInitialDiagram(mode: EditorMode, params: URLSearchParams): { diagra
     params.get('draft') === null &&
     params.get('example') === null &&
     params.get('load') === null &&
+    params.get('corpus') === null &&
     !(params.get('dev') !== null && hasQaFlag(params));
   const link = plain && typeof window !== 'undefined' ? readPermalink(window.location.hash) : null;
   if (link) {
@@ -212,6 +213,48 @@ export function EditorScreen({ mode }: { mode: EditorMode }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadParam]);
+
+  // Deep-link ?corpus=<nome>: importa /corpus/<nome>.bpmn pelo MESMO converter do
+  // playground (registry + preferredTypes). Reproduz a perda N-1 — os filhos do
+  // sub-process são descartados no IMPORT — e emite import.warning. É o permalink de
+  // repro do Micro-handoff N-1 (o transporte #d= é JSON lossless e NÃO reproduziria).
+  const corpusParam = params.get('corpus');
+  useEffect(() => {
+    if (!corpusParam) return;
+    if (!/^[a-z0-9-]+$/.test(corpusParam)) {
+      setToast(t('corpus.error'));
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch(`/corpus/${corpusParam}.bpmn`);
+        if (!res.ok) throw new Error(String(res.status));
+        const text = await res.text();
+        if (cancelled) return;
+        const config = resolveEditorConfig(PLUGINS);
+        const converter = new BpmnXmlConverter({ registry: config.registry, preferredTypes: config.preferredTypes });
+        const { diagram: imported, warnings } = converter.fromXml(text);
+        const lostChildren = detectImportLoss(text, imported);
+        const lines: string[] = [];
+        if (lostChildren > 0) lines.push(t('import.loss.note'));
+        if (warnings.length > 0) lines.push(...warnings);
+        // Observabilidade (§2): surfaça no bus (para e2e/rail) e num toast não-bloqueante
+        // — o alert() do import manual atrapalharia o boot por permalink.
+        if (lines.length > 0) config.emitEditorEvent('import.warning', { message: lines.join(' · ') });
+        if (cancelled) return;
+        replaceFromOutside(imported);
+        if (lines.length > 0) setToast(lines.join(' · '));
+      } catch {
+        if (!cancelled) setToast(t('corpus.error'));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [corpusParam]);
+
   useEffect(() => {
     if (!toast) return;
     const id = setTimeout(() => setToast(null), 6000);
