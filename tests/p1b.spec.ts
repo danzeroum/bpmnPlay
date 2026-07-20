@@ -55,14 +55,16 @@ test('galeria de 8 cenários sob o hero navega para /scenario/<slug>', async ({ 
     'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8',
   ]);
 
-  // C1 (interativo hoje) não tem chip de fase; C2 tem «chega na …».
+  // C1/C2 (interativos) não têm chip de fase; C4 (ainda scaffold) tem «chega na …».
   const c1 = cards.filter({ has: page.getByText('C1', { exact: true }) });
   await expect(c1.locator('.pg-scenario-phase')).toHaveCount(0);
+  const c4chip = cards.filter({ has: page.getByText('C4', { exact: true }) });
+  await expect(c4chip.locator('.pg-scenario-phase')).toHaveCount(1);
 
-  // Abrir um cenário leva à página /scenario/<slug> com o roteiro.
-  await page.locator('.pg-scenario-card', { hasText: 'C2' }).click();
-  await expect(page).toHaveURL(/\/scenario\/travel-pack$/);
-  await expect(page.locator('.pg-scenario-page-code')).toHaveText('C2');
+  // Abrir um cenário AINDA scaffold (C4) leva à página /scenario/<slug> com o roteiro.
+  await page.locator('.pg-scenario-card', { hasText: 'C4' }).click();
+  await expect(page).toHaveURL(/\/scenario\/governance-cycle$/);
+  await expect(page.locator('.pg-scenario-page-code')).toHaveText('C4');
   await expect(page.locator('.pg-scenario-page-roteiro')).toBeVisible();
 });
 

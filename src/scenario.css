@@ -182,6 +182,38 @@
   font-size: 13px;
   color: var(--pg-muted);
 }
+.pg-run-comp {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--pg-border);
+  background: var(--pg-sub);
+  border-radius: var(--pg-r-card);
+  font-size: 12px;
+}
+.pg-run-comp-label {
+  font-family: var(--pg-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pg-muted);
+}
+.pg-run-comp ul {
+  margin: 4px 0 0;
+  padding-left: 16px;
+  line-height: 1.5;
+}
+.pg-run-comp-handler {
+  color: var(--pg-success);
+  font-weight: 600;
+}
+.pg-run-comp-risk .pg-run-comp-label {
+  color: var(--pg-warn, #7a6116);
+}
+.pg-run-comp-reason {
+  color: var(--pg-muted);
+}
 .pg-run-actions {
   display: flex;
   flex-wrap: wrap;

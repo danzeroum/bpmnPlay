@@ -11,10 +11,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BpmnXmlConverter, type BpmnDiagram } from '@buildtovalue/core';
-import { BpmnEditor, LintPanel, Cheatsheet, resolveEditorConfig } from '@buildtovalue/react';
+import { BpmnEditor, BpmnSimulator, I18nProvider, LintPanel, Cheatsheet, resolveEditorConfig } from '@buildtovalue/react';
+import { compensationTriggeredEntry } from '@buildtovalue/adapters-bpmn';
 import { useLang } from './i18n/index.js';
 import { useLibMessages } from './i18n/libMessages.js';
-import { PLUGINS } from './plugins.js';
+import { PLUGINS, compensationDemoLedger } from './plugins.js';
 import { writeDraft } from './heroDraft.js';
 import { encodeDiagram, permalinkHash, PERMALINK_LIMIT } from './permalink.js';
 import {
@@ -26,10 +27,15 @@ import {
   startScenario,
   subscribeScenario,
 } from './scenarios.js';
-import { subscribeEditorEvents } from './scenarioEvents.js';
+import { publishEditorEvent, subscribeEditorEvents } from './scenarioEvents.js';
 import type { RunScenario } from './scenarioSteps.js';
 import { Check, LinkChain, ArrowRight } from './icons.js';
 import './scenario.css';
+
+interface CompResult {
+  compensated: Array<{ activity: string; handler: string }>;
+  uncompensated: Array<{ activity: string; reason: string }>;
+}
 
 function download(text: string, filename: string) {
   const url = URL.createObjectURL(new Blob([text], { type: 'application/xml' }));
@@ -49,7 +55,9 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
   const [editorKey, setEditorKey] = useState(0);
   const [diagram, setDiagram] = useState<BpmnDiagram>(() => run.seed());
   const [toast, setToast] = useState<string | null>(null);
+  const [comp, setComp] = useState<CompResult | null>(null);
   const latest = useRef<BpmnDiagram>(diagram);
+  const isSim = run.tool === 'simulator';
 
   const active = store.id === run.slug;
   const step = active ? store.step : 0;
@@ -84,11 +92,33 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
     return new BpmnXmlConverter({ registry: cfg.registry, preferredTypes: cfg.preferredTypes });
   }, []);
 
+  // C2: ponte da compensação do simulador para o bus do rail (avança o passo) +
+  // ledger + espelho para o painel do rail e para o e2e (datasets do body).
+  const onCompensation = useCallback((info: CompResult & { scope: string }) => {
+    publishEditorEvent({ type: 'sim.compensation.triggered', meta: info as unknown as Record<string, unknown> });
+    setComp({ compensated: info.compensated, uncompensated: info.uncompensated });
+    void compensationDemoLedger.append(
+      compensationTriggeredEntry({
+        diagramId: 'demo-compensation-pkg',
+        versionId: 'v1',
+        scope: info.scope,
+        actor: { id: 'playground' },
+        compensated: info.compensated,
+        uncompensated: info.uncompensated,
+      }),
+    );
+    if (typeof document !== 'undefined') {
+      document.body.dataset.compensationCompensated = info.compensated.map((c) => `${c.activity}→${c.handler}`).join(' | ');
+      document.body.dataset.compensationUncompensated = info.uncompensated.map((u) => `${u.activity} (${u.reason})`).join(' | ');
+    }
+  }, []);
+
   const onReset = useCallback(() => {
     resetScenario(run.slug);
     const seed = run.seed();
     latest.current = seed;
     setDiagram(seed);
+    setComp(null);
     setEditorKey((k) => k + 1);
     startScenario(run.slug);
   }, [run]);
@@ -172,6 +202,33 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
           </div>
         )}
 
+        {comp && (
+          <div className="pg-run-comp" role="status">
+            <div className="pg-run-comp-block">
+              <span className="pg-run-comp-label">{t('run.c2.reverse')}</span>
+              <ul>
+                {comp.compensated.map((c, i) => (
+                  <li key={i}>
+                    {c.activity} → <span className="pg-run-comp-handler">{c.handler}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {comp.uncompensated.length > 0 && (
+              <div className="pg-run-comp-block pg-run-comp-risk">
+                <span className="pg-run-comp-label">{t('run.c2.risk')}</span>
+                <ul>
+                  {comp.uncompensated.map((u, i) => (
+                    <li key={i}>
+                      {u.activity} <span className="pg-run-comp-reason">({u.reason})</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="pg-run-actions">
           {!finished && (
             <button type="button" className="pg-btn pg-btn-accent pg-run-next" onClick={() => advanceScenario()}>
@@ -213,10 +270,26 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
           {toast && <span className="pg-run-toast">{toast}</span>}
         </div>
         <div className="pg-run-canvas">
-          <BpmnEditor key={editorKey} diagram={diagram} plugins={PLUGINS} messages={messages} onChange={onChange}>
-            <LintPanel />
-            <Cheatsheet />
-          </BpmnEditor>
+          {isSim ? (
+            <I18nProvider messages={messages}>
+              <BpmnSimulator
+                key={editorKey}
+                diagram={diagram}
+                plugins={PLUGINS}
+                author="playground"
+                onCompensationTriggered={onCompensation}
+                onExit={() => {
+                  exitScenario();
+                  navigate('/');
+                }}
+              />
+            </I18nProvider>
+          ) : (
+            <BpmnEditor key={editorKey} diagram={diagram} plugins={PLUGINS} messages={messages} onChange={onChange}>
+              <LintPanel />
+              <Cheatsheet />
+            </BpmnEditor>
+          )}
         </div>
       </section>
     </div>
