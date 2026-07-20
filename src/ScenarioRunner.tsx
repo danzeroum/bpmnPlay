@@ -30,6 +30,7 @@ import {
 } from './scenarios.js';
 import { publishEditorEvent, subscribeEditorEvents } from './scenarioEvents.js';
 import { ScenarioReplay } from './replay/ScenarioReplay.js';
+import { ScenarioGovernance } from './governance/ScenarioGovernance.js';
 import type { RunScenario } from './scenarioSteps.js';
 import { Check, LinkChain, ArrowRight } from './icons.js';
 import './scenario.css';
@@ -68,6 +69,7 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
   const latest = useRef<BpmnDiagram>(diagram);
   const isSim = run.tool === 'simulator';
   const isReplay = run.tool === 'replay';
+  const isGov = run.tool === 'governance';
 
   const active = store.id === run.slug;
   const step = active ? store.step : 0;
@@ -320,21 +322,27 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
 
       {/* ferramenta real no centro + barra compartilhar/exportar */}
       <section className="pg-run-stage">
-        <div className="pg-run-bar">
-          <button type="button" className="pg-btn pg-btn-share" onClick={onShare}>
-            <LinkChain size={13} />
-            {t('run.share')}
-          </button>
-          <button type="button" className="pg-btn" onClick={onExport}>
-            {t('run.export')}
-          </button>
-          <button type="button" className="pg-btn pg-run-openfull" onClick={onOpenFull}>
-            {t('run.openfull')}
-          </button>
-          {toast && <span className="pg-run-toast">{toast}</span>}
-        </div>
+        {/* A barra .bpmn (compartilhar/exportar/abrir) pressupõe um diagrama
+            editável — a governança (C4) tem export próprio (XES/garantia). */}
+        {!isGov && (
+          <div className="pg-run-bar">
+            <button type="button" className="pg-btn pg-btn-share" onClick={onShare}>
+              <LinkChain size={13} />
+              {t('run.share')}
+            </button>
+            <button type="button" className="pg-btn" onClick={onExport}>
+              {t('run.export')}
+            </button>
+            <button type="button" className="pg-btn pg-run-openfull" onClick={onOpenFull}>
+              {t('run.openfull')}
+            </button>
+            {toast && <span className="pg-run-toast">{toast}</span>}
+          </div>
+        )}
         <div className="pg-run-canvas">
-          {isReplay ? (
+          {isGov ? (
+            <ScenarioGovernance key={editorKey} />
+          ) : isReplay ? (
             <I18nProvider messages={messages}>
               <ScenarioReplay key={editorKey} diagram={diagram} />
             </I18nProvider>

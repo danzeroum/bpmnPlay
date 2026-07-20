@@ -18,6 +18,8 @@ import {
   buildSimulationDiagram,
 } from './sampleDiagram.js';
 
+const noopSeed = () => createDiagram({ id: 'scn-c4', name: 'Ciclo de governança', createdBy: 'playground' });
+
 export interface RunStep {
   title: DictKey;
   /** «repare em…» — um por passo. */
@@ -38,9 +40,9 @@ export interface RunScenario {
   steps: RunStep[];
   /** Semente do diagrama. */
   seed: () => BpmnDiagram;
-  /** Ferramenta no centro: editor (modelagem), simulador (execução) ou replay
-   *  (análise de log). Default editor. */
-  tool?: 'editor' | 'simulator' | 'replay';
+  /** Ferramenta no centro: editor (modelagem), simulador (execução), replay
+   *  (análise de log) ou governança (revisão + ledger, C4). Default editor. */
+  tool?: 'editor' | 'simulator' | 'replay' | 'governance';
 }
 
 // C1 — Modelar em 60s (§2 H20): context pad (criar conectado), Tab encadeia, ⌘K,
@@ -105,6 +107,28 @@ const C3: RunScenario = {
   ],
 };
 
+// C4 — Ciclo de governança (§2 H20 / H8 · H15): centro de GOVERNANÇA (revisão do
+// aprovador + Ledger Explorer), semeado com a v1.0.0 VIGENTE e a v1.1.0 CANDIDATA.
+// Compõe os primitivos da lib (diff no canvas, thread ancorada, 4 verificações,
+// assinatura ed25519, selo de âncora, cadeia + verify + XES). A thread ABERTA trava
+// a aprovação — resolvê-la (ou «pedir mudanças» assinado) libera o portão; ambos
+// avançam por `gov.thread.released`. Aprovar assinado publica `gov.approved`.
+const C4: RunScenario = {
+  slug: 'governance-cycle',
+  code: 'C4',
+  title: 'scn.c4.title',
+  intro: 'run.c4.intro',
+  tool: 'governance',
+  seed: noopSeed,
+  steps: [
+    { title: 'run.c4.s1.t', look: 'run.c4.s1.l' },
+    { title: 'run.c4.s2.t', look: 'run.c4.s2.l' },
+    { title: 'run.c4.s3.t', look: 'run.c4.s3.l', advanceOn: (e) => e.type === 'gov.thread.released' },
+    { title: 'run.c4.s4.t', look: 'run.c4.s4.l', advanceOn: (e) => e.type === 'gov.approved' },
+    { title: 'run.c4.s5.t', look: 'run.c4.s5.l' },
+  ],
+};
+
 // C7 — Simular & replay (§2 H20 / H7): centro de REPLAY (heatmap de fitness via
 // `aggregate`, views Gargalos/Frequência/Desvios) semeado com o mesmo diagrama do
 // `/simulate`. O roteiro «importe o XES» avança pelo evento `replay.log.loaded`;
@@ -126,7 +150,7 @@ const C7: RunScenario = {
   ],
 };
 
-export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3, C7];
+export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3, C4, C7];
 export const RUN_BY_SLUG: Record<string, RunScenario> = Object.fromEntries(
   RUN_SCENARIOS.map((s) => [s.slug, s]),
 );

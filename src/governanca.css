@@ -300,3 +300,54 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- C4 «Ciclo de governança» — centro chrome-free do runner (P-3) ---- */
+.pg-gov-scenario {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--pg-bg, #faf8f4);
+}
+.pg-gov-loading {
+  padding: 32px;
+  color: var(--pg-muted, #6e675c);
+  font-size: 14px;
+}
+.pg-gov-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--pg-line, #e7e2d8);
+  background: var(--pg-surface, #fff);
+  flex: 0 0 auto;
+}
+.pg-gov-tamper {
+  color: #b4462f;
+}
+.pg-gov-tamper-hint {
+  font-size: 12px;
+  color: var(--pg-muted, #6e675c);
+}
+.pg-gov-unsigned {
+  font-size: 12px;
+  color: #b4462f;
+  margin-left: auto;
+}
+.pg-gov-review {
+  flex: 1 1 auto;
+  min-height: 520px;
+  /* Contém o canvas do diff (SVG height:100%) — sem isso ele sangra sobre o
+     ledger abaixo e intercepta cliques. */
+  overflow: hidden;
+  display: flex;
+}
+.pg-gov-review > * {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.pg-gov-ledger {
+  border-top: 1px solid var(--pg-line, #e7e2d8);
+}
