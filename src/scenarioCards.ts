@@ -34,7 +34,7 @@ export const SCENARIO_CARDS: ScenarioCard[] = [
   { code: 'C4', slug: 'governance-cycle', title: 'scn.c4.title', verbs: 'scn.c4.verbs', phase: 'P-3' },
   { code: 'C5', slug: 'agent-to-human', title: 'scn.c5.title', verbs: 'scn.c5.verbs', phase: 'P-4' },
   { code: 'C6', slug: 'governed-copilot', title: 'scn.c6.title', verbs: 'scn.c6.verbs', phase: 'P-4' },
-  { code: 'C7', slug: 'simulate-replay', title: 'scn.c7.title', verbs: 'scn.c7.verbs', phase: 'P-2' },
+  { code: 'C7', slug: 'simulate-replay', title: 'scn.c7.title', verbs: 'scn.c7.verbs' },
   { code: 'C8', slug: 'omg-interop', title: 'scn.c8.title', verbs: 'scn.c8.verbs', phase: 'P-3' },
 ];
 

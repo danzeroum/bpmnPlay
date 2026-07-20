@@ -12,7 +12,11 @@ import { createDiagram, type BpmnDiagram } from '@buildtovalue/core';
 import type { DictKey } from './i18n/dict.js';
 import type { EditorEventLike } from './scenarioEvents.js';
 import { registerScenarioFlow } from './scenarios.js';
-import { buildCompensationPackageDiagram, buildEscalationSimDiagram } from './sampleDiagram.js';
+import {
+  buildCompensationPackageDiagram,
+  buildEscalationSimDiagram,
+  buildSimulationDiagram,
+} from './sampleDiagram.js';
 
 export interface RunStep {
   title: DictKey;
@@ -34,8 +38,9 @@ export interface RunScenario {
   steps: RunStep[];
   /** Semente do diagrama. */
   seed: () => BpmnDiagram;
-  /** Ferramenta no centro: editor (modelagem) ou simulador (execução). Default editor. */
-  tool?: 'editor' | 'simulator';
+  /** Ferramenta no centro: editor (modelagem), simulador (execução) ou replay
+   *  (análise de log). Default editor. */
+  tool?: 'editor' | 'simulator' | 'replay';
 }
 
 // C1 — Modelar em 60s (§2 H20): context pad (criar conectado), Tab encadeia, ⌘K,
@@ -100,7 +105,28 @@ const C3: RunScenario = {
   ],
 };
 
-export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3];
+// C7 — Simular & replay (§2 H20 / H7): centro de REPLAY (heatmap de fitness via
+// `aggregate`, views Gargalos/Frequência/Desvios) semeado com o mesmo diagrama do
+// `/simulate`. O roteiro «importe o XES» avança pelo evento `replay.log.loaded`;
+// a metade de SIMULAÇÃO (tokens, gateway, roteiros salvos) fica a um clique no rail
+// («Abrir no simulador» → /simulate, mesmo seed).
+const C7: RunScenario = {
+  slug: 'simulate-replay',
+  code: 'C7',
+  title: 'scn.c7.title',
+  intro: 'run.c7.intro',
+  tool: 'replay',
+  seed: () => buildSimulationDiagram(),
+  steps: [
+    { title: 'run.c7.s1.t', look: 'run.c7.s1.l', advanceOn: (e) => e.type === 'replay.log.loaded' },
+    { title: 'run.c7.s2.t', look: 'run.c7.s2.l' },
+    { title: 'run.c7.s3.t', look: 'run.c7.s3.l' },
+    { title: 'run.c7.s4.t', look: 'run.c7.s4.l' },
+    { title: 'run.c7.s5.t', look: 'run.c7.s5.l' },
+  ],
+};
+
+export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3, C7];
 export const RUN_BY_SLUG: Record<string, RunScenario> = Object.fromEntries(
   RUN_SCENARIOS.map((s) => [s.slug, s]),
 );

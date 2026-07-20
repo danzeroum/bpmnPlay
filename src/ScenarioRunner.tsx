@@ -9,7 +9,7 @@
  * e re-semeia o canvas. Progresso sobrevive a reload.
  */
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BpmnXmlConverter, type BpmnDiagram } from '@buildtovalue/core';
 import { BpmnEditor, BpmnSimulator, I18nProvider, LintPanel, Cheatsheet, resolveEditorConfig } from '@buildtovalue/react';
 import { compensationTriggeredEntry, escalationRaisedEntry } from '@buildtovalue/adapters-bpmn';
@@ -29,6 +29,7 @@ import {
   subscribeScenario,
 } from './scenarios.js';
 import { publishEditorEvent, subscribeEditorEvents } from './scenarioEvents.js';
+import { ScenarioReplay } from './replay/ScenarioReplay.js';
 import type { RunScenario } from './scenarioSteps.js';
 import { Check, LinkChain, ArrowRight } from './icons.js';
 import './scenario.css';
@@ -66,6 +67,7 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
   const [esc, setEsc] = useState<EscResult | null>(null);
   const latest = useRef<BpmnDiagram>(diagram);
   const isSim = run.tool === 'simulator';
+  const isReplay = run.tool === 'replay';
 
   const active = store.id === run.slug;
   const step = active ? store.step : 0;
@@ -307,6 +309,12 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
           </button>
         </div>
 
+        {isReplay && (
+          <Link to="/simulate" className="pg-scenarios-free pg-run-simlink">
+            {t('run.c7.openSim')}
+          </Link>
+        )}
+
         <p className="pg-run-free">{t('run.free')}</p>
       </aside>
 
@@ -326,7 +334,11 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
           {toast && <span className="pg-run-toast">{toast}</span>}
         </div>
         <div className="pg-run-canvas">
-          {isSim ? (
+          {isReplay ? (
+            <I18nProvider messages={messages}>
+              <ScenarioReplay key={editorKey} diagram={diagram} />
+            </I18nProvider>
+          ) : isSim ? (
             <I18nProvider messages={messages}>
               <BpmnSimulator
                 key={editorKey}
