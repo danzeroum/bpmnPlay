@@ -104,6 +104,9 @@ export const simulationDemoLedger = new AuditLedger();
 /** Ledger do C2: compensações disparadas (compensated/uncompensated) na simulação. */
 export const compensationDemoLedger = new AuditLedger();
 
+/** Ledger do C3: escalações lançadas (destino/dissolve) na simulação. */
+export const escalationDemoLedger = new AuditLedger();
+
 /** Duas versões com runs vinculados para o cabeçalho do modo replay. */
 export const REPLAY_VERSIONS = [
   { versionId: 'v20', semanticVersion: '2.0.0', runCount: 100, traces: buildReplayTraces() },

@@ -12,10 +12,11 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { useNavigate } from 'react-router-dom';
 import { BpmnXmlConverter, type BpmnDiagram } from '@buildtovalue/core';
 import { BpmnEditor, BpmnSimulator, I18nProvider, LintPanel, Cheatsheet, resolveEditorConfig } from '@buildtovalue/react';
-import { compensationTriggeredEntry } from '@buildtovalue/adapters-bpmn';
+import { compensationTriggeredEntry, escalationRaisedEntry } from '@buildtovalue/adapters-bpmn';
+import type { EscalationDestination } from '@buildtovalue/simulation';
 import { useLang } from './i18n/index.js';
 import { useLibMessages } from './i18n/libMessages.js';
-import { PLUGINS, compensationDemoLedger } from './plugins.js';
+import { PLUGINS, compensationDemoLedger, escalationDemoLedger } from './plugins.js';
 import { writeDraft } from './heroDraft.js';
 import { encodeDiagram, permalinkHash, PERMALINK_LIMIT } from './permalink.js';
 import {
@@ -37,6 +38,12 @@ interface CompResult {
   uncompensated: Array<{ activity: string; reason: string }>;
 }
 
+interface EscResult {
+  host: string;
+  escalationRef?: string;
+  destination: EscalationDestination;
+}
+
 function download(text: string, filename: string) {
   const url = URL.createObjectURL(new Blob([text], { type: 'application/xml' }));
   const a = document.createElement('a');
@@ -56,6 +63,7 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
   const [diagram, setDiagram] = useState<BpmnDiagram>(() => run.seed());
   const [toast, setToast] = useState<string | null>(null);
   const [comp, setComp] = useState<CompResult | null>(null);
+  const [esc, setEsc] = useState<EscResult | null>(null);
   const latest = useRef<BpmnDiagram>(diagram);
   const isSim = run.tool === 'simulator';
 
@@ -113,12 +121,36 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
     }
   }, []);
 
+  // C3: ponte da escalação do simulador para o bus do rail (avança o passo) +
+  // ledger + painel do rail (destino previsto vs dissolve declarado) + datasets e2e.
+  const onEscalation = useCallback((info: EscResult) => {
+    publishEditorEvent({ type: 'sim.escalation.thrown', meta: info as unknown as Record<string, unknown> });
+    setEsc(info);
+    const d = info.destination;
+    const target = d.kind === 'boundary' || d.kind === 'esubStart' ? d.label : d.kind;
+    void escalationDemoLedger.append(
+      escalationRaisedEntry({
+        diagramId: 'demo-escalation-sim',
+        versionId: 'v1',
+        nodeId: info.host,
+        actor: { id: 'playground' },
+        ...(info.escalationRef !== undefined ? { code: info.escalationRef } : {}),
+        target,
+      }),
+    );
+    if (typeof document !== 'undefined') {
+      document.body.dataset.escalationKind = d.kind;
+      document.body.dataset.escalationTarget = target;
+    }
+  }, []);
+
   const onReset = useCallback(() => {
     resetScenario(run.slug);
     const seed = run.seed();
     latest.current = seed;
     setDiagram(seed);
     setComp(null);
+    setEsc(null);
     setEditorKey((k) => k + 1);
     startScenario(run.slug);
   }, [run]);
@@ -229,6 +261,30 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
           </div>
         )}
 
+        {esc && (
+          <div className="pg-run-comp" role="status">
+            <div
+              className={`pg-run-comp-block${esc.destination.kind === 'dissolve' ? ' pg-run-comp-risk' : ''}`}
+            >
+              <span className="pg-run-comp-label">
+                {esc.destination.kind === 'dissolve' ? t('run.c3.dissolve') : t('run.c3.dest')}
+              </span>
+              <ul>
+                {esc.destination.kind === 'boundary' || esc.destination.kind === 'esubStart' ? (
+                  <li>
+                    <span className="pg-run-comp-handler">{esc.destination.label}</span>
+                    {!esc.destination.interrupting && ' ↟'}
+                  </li>
+                ) : esc.destination.kind === 'ambiguous' ? (
+                  <li>{esc.destination.candidates.join(', ')}</li>
+                ) : (
+                  <li title={t('run.c3.dissolve.omg')}>{t('run.c3.dissolve.body')}</li>
+                )}
+              </ul>
+            </div>
+          </div>
+        )}
+
         <div className="pg-run-actions">
           {!finished && (
             <button type="button" className="pg-btn pg-btn-accent pg-run-next" onClick={() => advanceScenario()}>
@@ -278,6 +334,7 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
                 plugins={PLUGINS}
                 author="playground"
                 onCompensationTriggered={onCompensation}
+                onEscalationThrown={onEscalation}
                 onExit={() => {
                   exitScenario();
                   navigate('/');

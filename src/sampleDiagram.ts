@@ -731,3 +731,54 @@ export function buildCompensationPackageDiagram(): BpmnDiagram {
   };
   return diagram;
 }
+
+/**
+ * Semente do C3 «Acima da alçada» (escalação, H18 §5e) — o mesmo diagrama do demo
+ * `?simulate=1&escalation=1` da lib. Um userTask com boundary de escalação
+ * NÃO-INTERRUPTIVO (`esc-alcada`, catalogada → catch «Rever alçada»); a «Escalar»
+ * do simulador oferece também uma escalação NÃO-CATALOGADA → sem catch = DISSOLVE
+ * (no-op declarado). O boundary carrega `escalationAuthority` → o chip de
+ * autoridade renderiza automático no canvas da lib.
+ *
+ * ORIGEM: portado de `bpmn/packages/example/src/sampleDiagram.ts`
+ * (`buildEscalationSimDiagram`), fixture só do example — mesmo caso da issue
+ * danzeroum/bpmn#152 (pedimos export público; trocar quando existir). Composto com
+ * factories PÚBLICOS (createNode/createEdge) — sem lógica de negócio. A única
+ * emenda ao original é `escalationAuthority` no boundary (o chip do roteiro §2).
+ */
+export function buildEscalationSimDiagram(): BpmnDiagram {
+  const registry = createDefaultRegistry();
+  const diagram = createDiagram({ id: 'demo-escalation-sim', name: 'Escalação governada', createdBy: 'demo' });
+  const v = diagram.version.id;
+  const make = (type: string, id: string, label: string, x: number, y: number, properties: Record<string, unknown> = {}) =>
+    createNode({ type, id, label, x, y, properties, versionId: v }, registry);
+  diagram.nodes = {
+    start: make('startEvent', 'start', 'Início', 60, 150),
+    aprovar: make('userTask', 'aprovar', 'Aprovar despesa', 220, 128),
+    bnd: make('boundaryEvent', 'bnd', 'Acima da alçada', 262, 170, {
+      attachedToRef: 'aprovar',
+      cancelActivity: false,
+      eventDefinition: 'escalation',
+      eventDefinitionRef: 'esc-alcada',
+      escalationAuthority: 'ana.ruiz (Gate G2)',
+      boundarySide: 'bottom',
+      boundaryT: 0.5,
+    }),
+    rever: make('userTask', 'rever', 'Rever alçada', 240, 300),
+    end: make('endEvent', 'end', 'Fim', 460, 150),
+    fimRev: make('endEvent', 'fimRev', 'Fim (revisão)', 240, 420),
+  };
+  diagram.edges = {
+    f1: createEdge({ id: 'f1', sourceId: 'start', targetId: 'aprovar', versionId: v }),
+    f2: createEdge({ id: 'f2', sourceId: 'aprovar', targetId: 'end', versionId: v }),
+    f3: createEdge({ id: 'f3', sourceId: 'bnd', targetId: 'rever', versionId: v }),
+    f4: createEdge({ id: 'f4', sourceId: 'rever', targetId: 'fimRev', versionId: v }),
+  };
+  diagram.definitions = {
+    messages: [],
+    signals: [],
+    errors: [],
+    escalations: [{ id: 'esc-alcada', name: 'Acima da alçada', escalationCode: 'OVER_BUDGET' }],
+  };
+  return diagram;
+}
