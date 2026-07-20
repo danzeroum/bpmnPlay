@@ -12,12 +12,17 @@ import { createDiagram, type BpmnDiagram } from '@buildtovalue/core';
 import type { DictKey } from './i18n/dict.js';
 import type { EditorEventLike } from './scenarioEvents.js';
 import { registerScenarioFlow } from './scenarios.js';
+import { buildCompensationPackageDiagram } from './sampleDiagram.js';
 
 export interface RunStep {
   title: DictKey;
   /** «repare em…» — um por passo. */
   look: DictKey;
-  /** Avança quando o evento do editor casa. Ausente → só «feito, próximo». */
+  /**
+   * Avança quando o evento casa. Cobre eventos do editor (C1) E eventos
+   * sintéticos da simulação publicados no mesmo bus (C2: `sim.compensation.triggered`).
+   * Ausente → só «feito, próximo».
+   */
   advanceOn?: (e: EditorEventLike) => boolean;
 }
 
@@ -27,8 +32,10 @@ export interface RunScenario {
   title: DictKey;
   intro: DictKey;
   steps: RunStep[];
-  /** Semente do editor. */
+  /** Semente do diagrama. */
   seed: () => BpmnDiagram;
+  /** Ferramenta no centro: editor (modelagem) ou simulador (execução). Default editor. */
+  tool?: 'editor' | 'simulator';
 }
 
 // C1 — Modelar em 60s (§2 H20): context pad (criar conectado), Tab encadeia, ⌘K,
@@ -49,7 +56,29 @@ const C1: RunScenario = {
   ],
 };
 
-export const RUN_SCENARIOS: RunScenario[] = [C1];
+// C2 — Pacote de viagem (compensação, §2 H20 / H19): a semente do demo
+// `?compensation=1` no SIMULADOR. Simular falha do cartão → esub de erro →
+// «⟲ Compensar» → trilha REVERSA nomeada → risco declarado (cartão sem handler) →
+// entrada no ledger. O simulador é read-only (não emite evento de editor): o passo
+// da compensação avança pelo evento sintético `sim.compensation.triggered` (ponte do
+// onCompensationTriggered); os demais pelo «feito, próximo».
+const C2: RunScenario = {
+  slug: 'travel-pack',
+  code: 'C2',
+  title: 'scn.c2.title',
+  intro: 'run.c2.intro',
+  tool: 'simulator',
+  seed: () => buildCompensationPackageDiagram(),
+  steps: [
+    { title: 'run.c2.s1.t', look: 'run.c2.s1.l' },
+    { title: 'run.c2.s2.t', look: 'run.c2.s2.l' },
+    { title: 'run.c2.s3.t', look: 'run.c2.s3.l', advanceOn: (e) => e.type === 'sim.compensation.triggered' },
+    { title: 'run.c2.s4.t', look: 'run.c2.s4.l' },
+    { title: 'run.c2.s5.t', look: 'run.c2.s5.l' },
+  ],
+};
+
+export const RUN_SCENARIOS: RunScenario[] = [C1, C2];
 export const RUN_BY_SLUG: Record<string, RunScenario> = Object.fromEntries(
   RUN_SCENARIOS.map((s) => [s.slug, s]),
 );

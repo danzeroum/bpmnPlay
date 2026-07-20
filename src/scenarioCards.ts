@@ -27,8 +27,9 @@ export interface ScenarioCard {
 }
 
 export const SCENARIO_CARDS: ScenarioCard[] = [
+  // C1 e C2 já são interativos (P-2) — sem chip «chega na …».
   { code: 'C1', slug: 'model-in-60s', title: 'scn.c1.title', verbs: 'scn.c1.verbs' },
-  { code: 'C2', slug: 'travel-pack', title: 'scn.c2.title', verbs: 'scn.c2.verbs', phase: 'P-2' },
+  { code: 'C2', slug: 'travel-pack', title: 'scn.c2.title', verbs: 'scn.c2.verbs' },
   { code: 'C3', slug: 'above-authority', title: 'scn.c3.title', verbs: 'scn.c3.verbs', phase: 'P-2' },
   { code: 'C4', slug: 'governance-cycle', title: 'scn.c4.title', verbs: 'scn.c4.verbs', phase: 'P-3' },
   { code: 'C5', slug: 'agent-to-human', title: 'scn.c5.title', verbs: 'scn.c5.verbs', phase: 'P-4' },
