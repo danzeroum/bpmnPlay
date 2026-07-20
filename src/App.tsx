@@ -7,28 +7,35 @@
  * são redirecionadas por compatibilidade (LegacyGate). QA fica atrás de ?dev=1.
  *
  * O `#` fica reservado ao permalink (`#d=…`) — por isso BrowserRouter, não Hash.
+ *
+ * Code-splitting (P-5): só a Home + a casca (nav, cenário, cmdk) entram no bundle
+ * inicial; cada superfície pesada (editor, simulador, replay, studio, cenários…)
+ * vira um chunk `React.lazy` sob `Suspense` — a Home não paga por elas (lighthouse ≥ 90).
  */
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { type ReactNode } from 'react';
-import { BpmnSimulator, I18nProvider } from '@buildtovalue/react';
-import { simulationSessionEntry } from '@buildtovalue/adapters-bpmn';
-import { buildSimulationDiagram } from './sampleDiagram.js';
-import { PLUGINS, simulationDemoLedger } from './plugins.js';
-import { EditorScreen, type EditorMode } from './EditorScreen.js';
-import { CommandPalette } from './CommandPalette.js';
+import { Suspense, lazy, type ReactNode } from 'react';
 import { Home } from './Home.js';
-import { ReplaySurface } from './replay/ReplaySurface.js';
-import { LibrarySurface } from './LibrarySurface.js';
-import { StudioSurface } from './StudioSurface.js';
-import { GovernancaSurface } from './GovernancaSurface.js';
-import { AgentesSurface } from './AgentesSurface.js';
-import { AprendaSurface } from './AprendaSurface.js';
-import { ScenarioPage } from './ScenarioPage.js';
+import { CommandPalette } from './CommandPalette.js';
 import { ScenarioController } from './ScenarioController.js';
 import { PlaygroundNav } from './PlaygroundNav.js';
-import { useLibMessages } from './i18n/libMessages.js';
+import type { EditorMode } from './EditorScreen.js';
 import './demo.css';
 import './chrome.css';
+
+// Superfícies pesadas — carregadas sob demanda (fora do caminho da Home).
+const EditorScreen = lazy(() => import('./EditorScreen.js').then((m) => ({ default: m.EditorScreen })));
+const SimulateScreen = lazy(() => import('./SimulateScreen.js').then((m) => ({ default: m.SimulateScreen })));
+const ReplaySurface = lazy(() => import('./replay/ReplaySurface.js').then((m) => ({ default: m.ReplaySurface })));
+const LibrarySurface = lazy(() => import('./LibrarySurface.js').then((m) => ({ default: m.LibrarySurface })));
+const StudioSurface = lazy(() => import('./StudioSurface.js').then((m) => ({ default: m.StudioSurface })));
+const GovernancaSurface = lazy(() => import('./GovernancaSurface.js').then((m) => ({ default: m.GovernancaSurface })));
+const AgentesSurface = lazy(() => import('./AgentesSurface.js').then((m) => ({ default: m.AgentesSurface })));
+const AprendaSurface = lazy(() => import('./AprendaSurface.js').then((m) => ({ default: m.AprendaSurface })));
+const ScenarioPage = lazy(() => import('./ScenarioPage.js').then((m) => ({ default: m.ScenarioPage })));
+
+function RouteFallback() {
+  return <div className="pg-route-loading" role="status" aria-live="polite" aria-label="Carregando" />;
+}
 
 export function App() {
   return (
@@ -38,23 +45,25 @@ export function App() {
       <ScenarioController />
       <div className="pg-app-body">
         <LegacyGate>
-          <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/editor" element={<EditorRoute mode="editor" />} />
-          <Route path="/dmn" element={<EditorRoute mode="dmn" />} />
-          <Route path="/simulate" element={<SimulateScreen />} />
-          <Route path="/replay" element={<ReplaySurface />} />
-          <Route path="/library" element={<SurfaceScreen>{<LibrarySurface />}</SurfaceScreen>} />
-          <Route path="/studio" element={<SurfaceScreen>{<StudioSurface />}</SurfaceScreen>} />
-          {/* Rotas novas da Fase 3 — nascem no PR8 com placeholder "em breve"
-              (4b/4c/4d); superfície real chega nos PRs 9/10/11. */}
-          <Route path="/governanca" element={<SurfaceScreen>{<GovernancaSurface />}</SurfaceScreen>} />
-          <Route path="/agentes" element={<SurfaceScreen>{<AgentesSurface />}</SurfaceScreen>} />
-          <Route path="/aprenda" element={<SurfaceScreen>{<AprendaSurface />}</SurfaceScreen>} />
-          {/* Cenário curado (galeria de 8, P-1b) — página scaffold por slug */}
-          <Route path="/scenario/:slug" element={<SurfaceScreen>{<ScenarioPage />}</SurfaceScreen>} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <Suspense fallback={<RouteFallback />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/editor" element={<EditorRoute mode="editor" />} />
+              <Route path="/dmn" element={<EditorRoute mode="dmn" />} />
+              <Route path="/simulate" element={<SimulateScreen />} />
+              <Route path="/replay" element={<ReplaySurface />} />
+              <Route path="/library" element={<SurfaceScreen>{<LibrarySurface />}</SurfaceScreen>} />
+              <Route path="/studio" element={<SurfaceScreen>{<StudioSurface />}</SurfaceScreen>} />
+              {/* Rotas novas da Fase 3 — nascem no PR8 com placeholder "em breve"
+                  (4b/4c/4d); superfície real chega nos PRs 9/10/11. */}
+              <Route path="/governanca" element={<SurfaceScreen>{<GovernancaSurface />}</SurfaceScreen>} />
+              <Route path="/agentes" element={<SurfaceScreen>{<AgentesSurface />}</SurfaceScreen>} />
+              <Route path="/aprenda" element={<SurfaceScreen>{<AprendaSurface />}</SurfaceScreen>} />
+              {/* Cenário curado (galeria de 8, P-1b) — página scaffold por slug */}
+              <Route path="/scenario/:slug" element={<SurfaceScreen>{<ScenarioPage />}</SurfaceScreen>} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
         </LegacyGate>
       </div>
       <CommandPalette />
@@ -77,30 +86,6 @@ function SurfaceScreen({ children }: { children: ReactNode }) {
     <div className="pg-shell">
       <PlaygroundNav />
       <div className="pg-content">{children}</div>
-    </div>
-  );
-}
-
-function SimulateScreen() {
-  const navigate = useNavigate();
-  // BpmnSimulator não expõe prop `messages` — localiza-se pelo I18nProvider ao redor.
-  const messages = useLibMessages();
-  return (
-    <div className="pg-shell">
-      <PlaygroundNav />
-      <div className="pg-content">
-        <I18nProvider messages={messages}>
-          <BpmnSimulator
-            diagram={buildSimulationDiagram()}
-            plugins={PLUGINS}
-            author="demo"
-            onRecord={(session) => {
-              void simulationDemoLedger.append(simulationSessionEntry(session, { id: 'demo' }));
-            }}
-            onExit={() => navigate('/editor')}
-          />
-        </I18nProvider>
-      </div>
     </div>
   );
 }
