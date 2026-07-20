@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Fixture do playground BTV — Micro-handoff N-1 (repro do bug de import) + cenário C8.
+  Representa um export estilo Camunda Modeler: subProcess expandido «Tratar exceção»
+  com 3 filhos (userTask + serviceTask com zeebe:taskDefinition + boundary timer) e
+  fluxos internos. NÃO é material proprietário — estrutura autoral, namespace OMG.
+
+  Uso: /editor?corpus=corpus-interop-subprocess reproduz a perda N-1 — o converter do
+  playground (registry + preferredTypes) DESCARTA os filhos do sub-process no IMPORT
+  (esperado 3 · atual 0), emitindo import.warning. O export é lossless (a perda migrou
+  para o import, condicionada a preferredTypes). O serviceTask carrega zeebe:* → também
+  prova o passthrough de extensão estrangeira com Δ nomeado. Ver docs/known-issues.md nº 1.
+-->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+  id="Definitions_interop_sub" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_interop_sub" isExecutable="true">
+    <bpmn:startEvent id="Start_1" name="Exceção recebida" />
+    <bpmn:subProcess id="Sub_excecao" name="Tratar exceção">
+      <bpmn:startEvent id="Sub_start" />
+      <bpmn:userTask id="Sub_triagem" name="Triagem manual" />
+      <bpmn:serviceTask id="Sub_notificar" name="Notificar sistema">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="notify-service" retries="3" />
+        </bpmn:extensionElements>
+      </bpmn:serviceTask>
+      <bpmn:boundaryEvent id="Sub_prazo" name="48h" attachedToRef="Sub_triagem">
+        <bpmn:timerEventDefinition id="Timer_1">
+          <bpmn:timeDuration>PT48H</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:boundaryEvent>
+      <bpmn:endEvent id="Sub_end" />
+      <bpmn:sequenceFlow id="Sub_f1" sourceRef="Sub_start" targetRef="Sub_triagem" />
+      <bpmn:sequenceFlow id="Sub_f2" sourceRef="Sub_triagem" targetRef="Sub_notificar" />
+      <bpmn:sequenceFlow id="Sub_f3" sourceRef="Sub_notificar" targetRef="Sub_end" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="End_1" name="Resolvido" />
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="Start_1" targetRef="Sub_excecao" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Sub_excecao" targetRef="End_1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diag_interop_sub">
+    <bpmndi:BPMNPlane id="Plane_interop_sub" bpmnElement="Process_interop_sub">
+      <bpmndi:BPMNShape id="Start_1_di" bpmnElement="Start_1">
+        <dc:Bounds x="160" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Sub_excecao_di" bpmnElement="Sub_excecao" isExpanded="true">
+        <dc:Bounds x="260" y="110" width="480" height="240" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Sub_start_di" bpmnElement="Sub_start">
+        <dc:Bounds x="290" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Sub_triagem_di" bpmnElement="Sub_triagem">
+        <dc:Bounds x="380" y="190" width="120" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Sub_notificar_di" bpmnElement="Sub_notificar">
+        <dc:Bounds x="560" y="190" width="120" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Sub_prazo_di" bpmnElement="Sub_prazo">
+        <dc:Bounds x="422" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Sub_end_di" bpmnElement="Sub_end">
+        <dc:Bounds x="702" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_1_di" bpmnElement="End_1">
+        <dc:Bounds x="800" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Sub_f1_di" bpmnElement="Sub_f1">
+        <di:waypoint x="326" y="220" />
+        <di:waypoint x="380" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Sub_f2_di" bpmnElement="Sub_f2">
+        <di:waypoint x="500" y="220" />
+        <di:waypoint x="560" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Sub_f3_di" bpmnElement="Sub_f3">
+        <di:waypoint x="680" y="220" />
+        <di:waypoint x="702" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="196" y="230" />
+        <di:waypoint x="260" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="740" y="230" />
+        <di:waypoint x="800" y="230" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

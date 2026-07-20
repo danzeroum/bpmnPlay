@@ -42,7 +42,7 @@ export interface RunScenario {
   seed: () => BpmnDiagram;
   /** Ferramenta no centro: editor (modelagem), simulador (execução), replay
    *  (análise de log) ou governança (revisão + ledger, C4). Default editor. */
-  tool?: 'editor' | 'simulator' | 'replay' | 'governance';
+  tool?: 'editor' | 'simulator' | 'replay' | 'governance' | 'interop';
 }
 
 // C1 — Modelar em 60s (§2 H20): context pad (criar conectado), Tab encadeia, ⌘K,
@@ -150,7 +150,27 @@ const C7: RunScenario = {
   ],
 };
 
-export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3, C4, C7];
+// C8 — Interop OMG (§2 H20 / H15): centro de INTEROP (certifyXml + matriz CONFORMANCE
+// viva + passthrough zeebe com Δ nomeado + copy do CLI). Importar 2 arquivos reais
+// (Camunda/bpmn.io) avança pelo evento `interop.certified`; provar o passthrough avança
+// por `interop.passthrough`. Sem diagrama editável no centro (semente é placeholder).
+const C8: RunScenario = {
+  slug: 'omg-interop',
+  code: 'C8',
+  title: 'scn.c8.title',
+  intro: 'run.c8.intro',
+  tool: 'interop',
+  seed: () => createDiagram({ id: 'scn-c8', name: 'Interop OMG', createdBy: 'playground' }),
+  steps: [
+    { title: 'run.c8.s1.t', look: 'run.c8.s1.l', advanceOn: (e) => e.type === 'interop.certified' },
+    { title: 'run.c8.s2.t', look: 'run.c8.s2.l', advanceOn: (e) => e.type === 'interop.certified' },
+    { title: 'run.c8.s3.t', look: 'run.c8.s3.l' },
+    { title: 'run.c8.s4.t', look: 'run.c8.s4.l', advanceOn: (e) => e.type === 'interop.passthrough' },
+    { title: 'run.c8.s5.t', look: 'run.c8.s5.l' },
+  ],
+};
+
+export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3, C4, C7, C8];
 export const RUN_BY_SLUG: Record<string, RunScenario> = Object.fromEntries(
   RUN_SCENARIOS.map((s) => [s.slug, s]),
 );
