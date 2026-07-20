@@ -42,7 +42,7 @@ export interface RunScenario {
   seed: () => BpmnDiagram;
   /** Ferramenta no centro: editor (modelagem), simulador (execução), replay
    *  (análise de log) ou governança (revisão + ledger, C4). Default editor. */
-  tool?: 'editor' | 'simulator' | 'replay' | 'governance' | 'interop';
+  tool?: 'editor' | 'simulator' | 'replay' | 'governance' | 'interop' | 'agent-to-human';
 }
 
 // C1 — Modelar em 60s (§2 H20): context pad (criar conectado), Tab encadeia, ⌘K,
@@ -170,7 +170,30 @@ const C8: RunScenario = {
   ],
 };
 
-export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3, C4, C7, C8];
+// C5 — Agente → humano (P-4): centro que compõe o agentflow (src/agents.ts) + o
+// AgentStudio da lib. O agentTask governado + AgentStudio ao lado (revisão assinada);
+// `simulate` como dry-run (trilha determinística + parada honesta); a escalação
+// agente→humano é 1 comando undoable; `exportLangGraph` com aviso de subconjunto.
+// Cada prova avança por evento (agent.simulated / agent.escalation / agent.studio /
+// agent.exported). Sem diagrama editável na barra (o centro tem ações próprias).
+const C5: RunScenario = {
+  slug: 'agent-to-human',
+  code: 'C5',
+  title: 'scn.c5.title',
+  intro: 'run.c5.intro',
+  tool: 'agent-to-human',
+  seed: () => createDiagram({ id: 'scn-c5', name: 'Agente → humano', createdBy: 'playground' }),
+  // Rail: as provas primeiro (o AgentStudio é um modal — abri-lo por último não
+  // bloqueia os botões de prova). O último passo abre o Studio p/ a revisão assinada.
+  steps: [
+    { title: 'run.c5.s1.t', look: 'run.c5.s1.l', advanceOn: (e) => e.type === 'agent.simulated' },
+    { title: 'run.c5.s2.t', look: 'run.c5.s2.l', advanceOn: (e) => e.type === 'agent.escalation' },
+    { title: 'run.c5.s3.t', look: 'run.c5.s3.l', advanceOn: (e) => e.type === 'agent.exported' },
+    { title: 'run.c5.s4.t', look: 'run.c5.s4.l', advanceOn: (e) => e.type === 'agent.studio' },
+  ],
+};
+
+export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3, C4, C5, C7, C8];
 export const RUN_BY_SLUG: Record<string, RunScenario> = Object.fromEntries(
   RUN_SCENARIOS.map((s) => [s.slug, s]),
 );
