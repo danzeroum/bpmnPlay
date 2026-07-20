@@ -33,6 +33,7 @@ import { ScenarioReplay } from './replay/ScenarioReplay.js';
 import { ScenarioGovernance } from './governance/ScenarioGovernance.js';
 import { ScenarioInterop } from './interop/ScenarioInterop.js';
 import { ScenarioAgentToHuman } from './agent-to-human/ScenarioAgentToHuman.js';
+import { ScenarioGovernedCopilot } from './governed-copilot/ScenarioGovernedCopilot.js';
 import type { RunScenario } from './scenarioSteps.js';
 import { Check, LinkChain, ArrowRight } from './icons.js';
 import './scenario.css';
@@ -74,6 +75,7 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
   const isGov = run.tool === 'governance';
   const isInterop = run.tool === 'interop';
   const isAgent = run.tool === 'agent-to-human';
+  const isCopilot = run.tool === 'copilot';
 
   const active = store.id === run.slug;
   const step = active ? store.step : 0;
@@ -328,7 +330,7 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
       <section className="pg-run-stage">
         {/* A barra .bpmn (compartilhar/exportar/abrir) pressupõe um diagrama
             editável — governança (C4) e interop (C8) têm ações próprias. */}
-        {!isGov && !isInterop && !isAgent && (
+        {!isGov && !isInterop && !isAgent && !isCopilot && (
           <div className="pg-run-bar">
             <button type="button" className="pg-btn pg-btn-share" onClick={onShare}>
               <LinkChain size={13} />
@@ -353,6 +355,10 @@ export function ScenarioRunner({ run }: { run: RunScenario }) {
           ) : isAgent ? (
             <I18nProvider messages={messages}>
               <ScenarioAgentToHuman key={editorKey} />
+            </I18nProvider>
+          ) : isCopilot ? (
+            <I18nProvider messages={messages}>
+              <ScenarioGovernedCopilot key={editorKey} />
             </I18nProvider>
           ) : isReplay ? (
             <I18nProvider messages={messages}>

@@ -1,0 +1,92 @@
+/* C6 «governed-copilot» — centro chrome-free do runner (P-4). Duas faixas:
+   (1) palco = canvas do editor + painel do copiloto; (2) governança = tira de
+   controles (badge + copy do BYO + desfazer tudo) + LedgerExplorer com o selo ✦. */
+.pg-cop {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--pg-bg, #faf8f4);
+  min-height: 0;
+}
+.pg-cop-stage {
+  flex: 1.35;
+  display: flex;
+  min-height: 0;
+  border-bottom: 1px solid var(--pg-line, #e7e2d8);
+}
+.pg-cop-canvas {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+/* O painel do copiloto (.pg-copilot) já tem largura própria (copilot.css). */
+
+.pg-cop-gov {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.pg-cop-gov-strip {
+  width: 320px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--pg-line, #e7e2d8);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+.pg-cop-gov-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.pg-cop-gov-h {
+  font-size: 13.5px;
+  font-weight: 650;
+  margin: 0;
+  color: var(--pg-ink, #2b2721);
+}
+.pg-cop-badge {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 9px;
+  border-radius: 5px;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.pg-cop-badge.is-demo {
+  background: var(--pg-bg, #efe9df);
+  color: var(--pg-muted, #6e675c);
+  border: 1px solid var(--pg-line, #e7e2d8);
+}
+.pg-cop-badge.is-live {
+  background: #d8ecdd;
+  color: #276b46;
+  border: 1px solid #a9d3b6;
+}
+.pg-cop-tabonly {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--pg-muted, #6e675c);
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--pg-surface, #fff);
+  border: 1px dashed var(--pg-line, #d9c98a);
+  border-radius: 8px;
+}
+.pg-cop-undoall {
+  align-self: flex-start;
+}
+.pg-cop-undoall:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.pg-cop-ledger {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: 8px 10px;
+}
