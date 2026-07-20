@@ -127,3 +127,12 @@ no import (`detectImportLoss` → `import.loss.note`) e transportamos JSON no pe
 **Mitigação (host):** o alvo real — **Lighthouse ≥ 90** — foi atingido **sem** o worker, via **code-splitting por rota** (`React.lazy`/`Suspense` em `src/App.tsx`; a Home deixa de baixar o app inteiro) + fontes **não-bloqueantes** (`index.html`) + `meta description`. Medido: Home perf 81→95 · SEO 82→91; `/scenario/omg-interop` perf 80→90 · SEO 82→91 (a11y 98 / best-practices 96 constantes). Números por página no PR da frente perf.
 
 **Ação (nota upstream):** pedir à lib um **slot de `executor`** (prop no `BpmnEditor`/`BpmnDesigner` ou config em `resolveEditorConfig`) que roteie o `routeJob` pelo `ComputeExecutor` injetado — aí o host passa `createWorkerExecutor(new Worker(new URL('@buildtovalue/react/worker', import.meta.url), { type: 'module' }))` e o A* sai da main thread. Enquanto não houver o slot, o off-thread do A* fica bloqueado upstream; o alvo de perf não depende dele.
+
+## 4. Permalink `#s=` do C7 sem o hash do roteiro salvo (fronteira declarada)
+
+**Severidade:** baixa (integridade; o core «reabre no passo» funciona nos 8 cenários).
+**Onde (host):** o permalink de cenário `#s=<slug>.<passo>[.<hash>]` (`src/permalink.ts`, P-5) **reserva** o 3º segmento para o hash do roteiro salvo, mas hoje **não o popula nem valida** — o «roteiro salvo (#hash)» do C7 (`scn.c7`/`simulate-replay`) ainda **não está fiado em `src/`**: `hashScenario`/`canonicalizeScenario` existem em `@buildtovalue/simulation` (`index.ts:21`) mas são **não-usados** no host, e o centro do C7 (replay) não guarda um roteiro-script para hashear.
+
+**Dono:** o cenário **C7** do playground (host) — não é bug de lib. O `hashScenario` da lib está pronto; falta o C7 **expor o roteiro-script salvo** (o «#hash» que o `scn.c7.s5.l` já promete) para o host poder hasheá-lo.
+
+**Gatilho (nomeado):** **quando o saved-script do C7 expuser o hash**, o `#s=` passa a **carregá-lo e validá-lo** no boot — se o hash do link divergir do roteiro salvo atual, o runner mostra o aviso **declarado «roteiro divergente»** (nunca falha silenciosa). O slot no formato já existe; é só popular + comparar. Não fica órfão: rastreado aqui até o saved-script do C7 aterrissar.
