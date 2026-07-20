@@ -136,3 +136,14 @@ no import (`detectImportLoss` → `import.loss.note`) e transportamos JSON no pe
 **Dono:** o cenário **C7** do playground (host) — não é bug de lib. O `hashScenario` da lib está pronto; falta o C7 **expor o roteiro-script salvo** (o «#hash» que o `scn.c7.s5.l` já promete) para o host poder hasheá-lo.
 
 **Gatilho (nomeado):** **quando o saved-script do C7 expuser o hash**, o `#s=` passa a **carregá-lo e validá-lo** no boot — se o hash do link divergir do roteiro salvo atual, o runner mostra o aviso **declarado «roteiro divergente»** (nunca falha silenciosa). O slot no formato já existe; é só popular + comparar. Não fica órfão: rastreado aqui até o saved-script do C7 aterrissar.
+
+## 5. Lanes não auto-refluem ao corpo do pool (N-6, evolução de UX upstream)
+
+**Severidade:** baixa (UX/geometria; a semântica do acoplamento está correta — `flowNodeRef` amarra o nó à lane).
+**Onde:** limitação **declarada** em `bpmn/docs/limitations.md:40` (*"lanes do not auto-reflow"*). Ao adicionar/redimensionar uma lane, o editor **não a snapa ao corpo do pool** nem faz tiling vertical — uma lane única fica com bounds menores que o corpo do pool, deixando um **vão visual**. O acoplamento (`participant→process`, `laneSet→process`, `flowNodeRef→nó`) está intacto; é só o `dc:Bounds` da lane que não particiona o corpo.
+
+**Por que virou nota:** o custo cai no **momento errado** — o usuário só percebe o vão no **rendido/interop** (reproduz idêntico em Camunda/bpmn.io, pois é geometria de DI padrão OMG), não no design-time.
+
+**Rastreado upstream:** **[`danzeroum/bpmn#154`](https://github.com/danzeroum/bpmn/issues/154)** (N-6). Pedido: (a) snap ao corpo do pool + tiling vertical sem sobras ao **criar/editar** lane; e/ou (b) regra de lint estática **`LANE_*`** apontando lane que não particiona o corpo (design-time, quick-fix possível). **Não** pedimos re-assentamento de DI existente nem mudança de import — a geometria é soberana do usuário.
+
+**Host (interim):** **nada a construir** — um workaround visual (reassentar a lane) violaria a regra nº 4 (sem divergência silenciosa). Se a lint `LANE_*` sair, o **C1 a herda de graça** pelo `LintPanel` (já montado no runner).
