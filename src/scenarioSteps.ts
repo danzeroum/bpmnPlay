@@ -12,7 +12,7 @@ import { createDiagram, type BpmnDiagram } from '@buildtovalue/core';
 import type { DictKey } from './i18n/dict.js';
 import type { EditorEventLike } from './scenarioEvents.js';
 import { registerScenarioFlow } from './scenarios.js';
-import { buildCompensationPackageDiagram } from './sampleDiagram.js';
+import { buildCompensationPackageDiagram, buildEscalationSimDiagram } from './sampleDiagram.js';
 
 export interface RunStep {
   title: DictKey;
@@ -78,7 +78,29 @@ const C2: RunScenario = {
   ],
 };
 
-export const RUN_SCENARIOS: RunScenario[] = [C1, C2];
+// C3 — Acima da alçada (escalação, §2 H20 / H18): a semente do demo
+// `?simulate=1&escalation=1` no SIMULADOR. Boundary NÃO-INTERRUPTIVO + chip de
+// autoridade; a «Escalar» oferece a escalação catalogada (→ destino previsto:
+// «Rever alçada») e a não-catalogada (→ sem catch = dissolve declarado). O passo
+// da escalação avança pelo evento sintético `sim.escalation.thrown` (ponte do
+// onEscalationThrown); os demais pelo «feito, próximo».
+const C3: RunScenario = {
+  slug: 'above-authority',
+  code: 'C3',
+  title: 'scn.c3.title',
+  intro: 'run.c3.intro',
+  tool: 'simulator',
+  seed: () => buildEscalationSimDiagram(),
+  steps: [
+    { title: 'run.c3.s1.t', look: 'run.c3.s1.l' },
+    { title: 'run.c3.s2.t', look: 'run.c3.s2.l' },
+    { title: 'run.c3.s3.t', look: 'run.c3.s3.l', advanceOn: (e) => e.type === 'sim.escalation.thrown' },
+    { title: 'run.c3.s4.t', look: 'run.c3.s4.l', advanceOn: (e) => e.type === 'sim.escalation.thrown' },
+    { title: 'run.c3.s5.t', look: 'run.c3.s5.l' },
+  ],
+};
+
+export const RUN_SCENARIOS: RunScenario[] = [C1, C2, C3];
 export const RUN_BY_SLUG: Record<string, RunScenario> = Object.fromEntries(
   RUN_SCENARIOS.map((s) => [s.slug, s]),
 );
