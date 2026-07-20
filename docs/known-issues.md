@@ -6,11 +6,29 @@ devem ser corrigidos upstream.
 
 ## 1. `fromXml` descarta filhos de sub-process no IMPORT quando `preferredTypes` está setado
 
-**Severidade:** alta (perda silenciosa de dados na importação).
-**Verificado em:** `bpmn@bdf2ac18` (main, inclui os PRs #99/#100/#101).
-**Status:** aberto. O que mudou desde a versão anterior deste documento (bump
-`6cacc153` → `bdf2ac18`): o **export ficou lossless**; a perda **migrou para o
-import** e ficou condicionada a `preferredTypes`.
+**Severidade:** alta (perda de dados na importação — hoje **declarada** com `import.warning`, não mais silenciosa).
+**Verificado em:** `bpmn@bdf2ac18`; **reconfirmado no bump atual** (submódulo pós-18/07)
+via `tests/p3-n1.spec.ts` (o permalink de repro abre a casca do sub-process vazia:
+3 filhos → 0 + `import.warning`).
+**Status:** aberto — rastreado upstream em
+[`danzeroum/bpmn#149`](https://github.com/danzeroum/bpmn/issues/149), com o
+**permalink de repro + roteiro + frase de aceite (vocabulário da matriz)** anexados
+([comentário](https://github.com/danzeroum/bpmn/issues/149#issuecomment-5022662837)).
+O que mudou desde a versão anterior deste documento (bump `6cacc153` → `bdf2ac18`):
+o **export ficou lossless**; a perda **migrou para o import** e ficou condicionada a
+`preferredTypes`.
+
+### Permalink de repro cunhado (Micro-handoff N-1)
+
+```
+/editor?corpus=corpus-interop-subprocess
+```
+
+Boota o editor importando `public/corpus/corpus-interop-subprocess.bpmn` (subProcess
+«Tratar exceção» com 3 filhos: `userTask` + `serviceTask` com `zeebe:taskDefinition`
++ boundary timer) **como XML pelo mesmo converter do app** (`registry + preferredTypes`)
+— o `#d=` transporta JSON lossless e **não** reproduziria. Ver a rota `?corpus=` em
+`src/EditorScreen.tsx` e o e2e `tests/p3-n1.spec.ts`.
 
 ### Onde a perda acontece (isolada)
 
@@ -79,7 +97,11 @@ contract-lock fica verde upstream e o sintoma persiste aqui.
   upstream — passará a rodar verde quando corrigido). `tests/filemenu.spec.ts`
   cobre export direto (sem modal) + aviso no import.
 
-**Ação:** abrir issue em `danzeroum/bpmn` com este repro. Título sugerido:
-*"fromXml drops nested sub-process children when preferredTypes is set (export is
-lossless)"*. Correção é upstream; aqui apenas avisamos no import e transportamos
-JSON no permalink.
+**Ação:** ✅ feito — repro anexado em
+[`danzeroum/bpmn#149`](https://github.com/danzeroum/bpmn/issues/149) (permalink +
+roteiro de 4 passos + repro mínimo a nível de lib + frase de aceite mapeada na
+matriz de contrato). A correção é **upstream** e será medida contra a matriz
+(`packages/core/tests/preferredTypesContract.test.ts`) e contra o permalink de repro;
+quando corrigida, o `test.fixme` de `tests/subprocess-roundtrip.spec.ts` passa a rodar
+verde e o `tests/p3-n1.spec.ts` deixa de reproduzir o bug (3 → 3). Aqui apenas avisamos
+no import (`detectImportLoss` → `import.loss.note`) e transportamos JSON no permalink.
