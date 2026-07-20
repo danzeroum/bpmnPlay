@@ -69,14 +69,52 @@ test('diagrama grande demais → modal (sem alterar a URL)', async ({ page }) =>
 test('payload corrompido (versão válida) → toast + diagrama padrão', async ({ page }) => {
   await disableTour(page);
   // Versão 1, mas payload não é um stream deflate válido → erro no decode.
-  await page.goto('/editor#d=1.zzzzINVALIDzzzz');
+  // `waitUntil: 'commit'` resolve o goto cedo (antes do 'load') para começar a
+  // observar o toast ANTES do seu auto-dismiss (6s) — o editor (lazy) pode levar
+  // mais que isso para terminar de renderizar num ambiente lento.
+  await page.goto('/editor#d=1.zzzzINVALIDzzzz', { waitUntil: 'commit' });
   await expect(page.locator('.pg-toast')).toBeVisible();
   await expect(page.locator('.pg-status-metrics')).toContainText('14 nós');
 });
 
 test('versão de permalink desconhecida → toast + diagrama padrão', async ({ page }) => {
   await disableTour(page);
-  await page.goto('/editor#d=9.qwerty');
+  await page.goto('/editor#d=9.qwerty', { waitUntil: 'commit' });
   await expect(page.locator('.pg-toast')).toBeVisible();
   await expect(page.locator('.pg-status-metrics')).toContainText('14 nós');
+});
+
+/**
+ * P-5 — permalink de cenário `#s=<slug>.<passo>` (ao lado do `#d=` retrocompatível).
+ * Critério vinculante: «abre o estado exato em máquina limpa».
+ */
+test('P-5: compartilhar de um cenário grava #d=…&s=<slug>.<passo> e reabre no passo em máquina limpa', async ({
+  page,
+}) => {
+  await disableTour(page);
+  await page.goto('/scenario/model-in-60s');
+  await expect(page.locator('.pg-run-rail')).toBeVisible();
+
+  // Pula para o passo 3 (índice 2) clicando no rail (exploração livre).
+  await page.locator('.pg-run-step-btn').nth(2).click();
+  await expect(page.locator('.pg-run-progress')).toHaveText(/3.*6/);
+
+  // Compartilhar grava diagrama + contexto no hash.
+  await page.locator('.pg-btn-share').click();
+  await page.waitForURL(/s=model-in-60s\.2/);
+  const shared = page.url();
+  expect(shared).toMatch(/#d=1\.[A-Za-z0-9_-]+&s=model-in-60s\.2$/);
+
+  // Máquina limpa: zera o localStorage e abre o link → reabre no MESMO passo.
+  await page.evaluate(() => localStorage.clear());
+  await page.goto(shared);
+  await expect(page.locator('.pg-run-rail')).toBeVisible();
+  await expect(page.locator('.pg-run-progress')).toHaveText(/3.*6/);
+});
+
+test('P-5: precedência — #s= sem #d= abre o cenário no passo (estado do seed)', async ({ page }) => {
+  await disableTour(page);
+  await page.goto('/scenario/model-in-60s#s=model-in-60s.1');
+  await expect(page.locator('.pg-run-rail')).toBeVisible();
+  await expect(page.locator('.pg-run-progress')).toHaveText(/2.*6/);
 });

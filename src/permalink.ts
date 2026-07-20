@@ -59,13 +59,63 @@ export function permalinkHash(payload: string): string {
   return `${HASH_PREFIX}${PERMALINK_VERSION}.${payload}`;
 }
 
-/** Extrai `{ version, payload }` de um hash `#d=<v>.<payload>` (ou null). */
+// ---- Contexto de cenário no permalink (P-5) ---------------------------------
+// Um param retrocompatível `s=<slug>.<passo>[.<hash>]` VIVE AO LADO do `d=` no
+// mesmo fragmento (`#d=1.<payload>&s=<slug>.<passo>`). PERMALINK_VERSION intocado
+// — links `#d=` antigos (inclusive o repro N-1) seguem abrindo. Precedência: `s=`
+// sem `d=` abre o cenário no passo (estado do seed); com ambos, `d=` é o diagrama e
+// `s=` o contexto. O `hash` (do roteiro salvo) só se aplica ao C7 (ver README P-5).
+const D_PARAM = 'd=';
+const S_PARAM = 's=';
+
+export interface ScenarioLink {
+  slug: string;
+  step: number;
+  /** Hash do roteiro salvo — só C7. Divergência → aviso declarado, nunca falha. */
+  roteiroHash?: string;
+}
+
+/** Fragmento `s=<slug>.<passo>[.<hash>]` (sem o `#`). */
+export function scenarioParam(link: ScenarioLink): string {
+  const parts = [link.slug, String(link.step)];
+  if (link.roteiroHash) parts.push(link.roteiroHash);
+  return `${S_PARAM}${parts.join('.')}`;
+}
+
+/** Monta o hash completo a partir do diagrama (opcional) + cenário (opcional). */
+export function buildShareHash(opts: { diagramPayload?: string; scenario?: ScenarioLink }): string {
+  const segs: string[] = [];
+  if (opts.diagramPayload) segs.push(`${D_PARAM}${PERMALINK_VERSION}.${opts.diagramPayload}`);
+  if (opts.scenario) segs.push(scenarioParam(opts.scenario));
+  return `#${segs.join('&')}`;
+}
+
+function fragmentParts(hash: string): string[] {
+  return hash.replace(/^#/, '').split('&');
+}
+
+/** Extrai `{ version, payload }` do diagrama de um hash (robusto a `&s=`), ou null. */
 export function readPermalink(hash: string): { version: string; payload: string } | null {
-  if (!hash.startsWith(HASH_PREFIX)) return null;
-  const rest = hash.slice(HASH_PREFIX.length);
-  const dot = rest.indexOf('.');
-  if (dot <= 0) return null;
-  const payload = rest.slice(dot + 1);
-  if (payload.length === 0) return null;
-  return { version: rest.slice(0, dot), payload };
+  for (const part of fragmentParts(hash)) {
+    if (!part.startsWith(D_PARAM)) continue;
+    const rest = part.slice(D_PARAM.length);
+    const dot = rest.indexOf('.');
+    if (dot <= 0) return null;
+    const payload = rest.slice(dot + 1);
+    if (payload.length === 0) return null;
+    return { version: rest.slice(0, dot), payload };
+  }
+  return null;
+}
+
+/** Extrai o contexto de cenário `s=<slug>.<passo>[.<hash>]` de um hash, ou null. */
+export function readScenarioLink(hash: string): ScenarioLink | null {
+  for (const part of fragmentParts(hash)) {
+    if (!part.startsWith(S_PARAM)) continue;
+    const [slug, stepStr, roteiroHash] = part.slice(S_PARAM.length).split('.');
+    const step = Number(stepStr);
+    if (!slug || !/^[a-z0-9-]+$/.test(slug) || !Number.isInteger(step) || step < 0) return null;
+    return { slug, step, ...(roteiroHash ? { roteiroHash } : {}) };
+  }
+  return null;
 }
