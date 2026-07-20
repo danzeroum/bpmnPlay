@@ -700,7 +700,7 @@ export const DICT = {
   'copilot.reject': { pt: 'Recusar', en: 'Reject' },
   // C6 «governed-copilot» — gates de IA (badge, copy do BYO-key, desfazer tudo)
   'copilot.badge.live': { pt: 'IA real ativa', en: 'Real AI active' },
-  'copilot.badge.demo': { pt: 'fake · offline', en: 'fake · offline' },
+  'copilot.badge.demo': { pt: 'demo · offline', en: 'demo · offline' },
   'copilot.key.tabonly': {
     pt: 'Sua chave vive só nesta aba: recarregou, sumiu. Chamadas reais têm custo.',
     en: 'Your key lives only in this tab: reload and it’s gone. Real calls cost money.',
