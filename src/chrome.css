@@ -1106,3 +1106,9 @@
     min-height: 52px;
   }
 }
+
+/* Fallback de rota lazy (P-5 code-splitting) — placeholder discreto enquanto o
+   chunk da superfície carrega. Não trava a Home (que é eager). */
+.pg-route-loading {
+  min-height: 60vh;
+}

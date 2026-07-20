@@ -116,3 +116,14 @@ no import (`detectImportLoss` → `import.loss.note`) e transportamos JSON no pe
 **Mitigação (host):** `src/agent-to-human/ScenarioAgentToHuman.tsx` (`localizeBlockedReason`) **mapeia o caso estável** «retry esgotado» para o dict (`run.c5.dry.retry`, PT/EN) — é o único motivo que este cenário determinístico produz. Motivos **arbitrários** (não mapeáveis) viram **fronteira declarada**: o texto do engine é exibido **rotulado como técnico** (`run.c5.dry.enginereason` + `.pg-agent2h-enginetag`), nunca passado como se fosse copy do host.
 
 **Ação (nota upstream):** pedir à lib **códigos de motivo estáveis** para `BlockedDecision` (um enum/kind + parâmetros, ex.: `{ kind: 'retryExhausted', attempts: 3 }`), para que o host possa localizar **todo** motivo em vez de só o caso mapeado. Enquanto não houver, a fronteira declarada acima é a leitura honesta.
+
+## 3. `createWorkerExecutor` existe, mas o editor não consome um `ComputeExecutor`
+
+**Severidade:** baixa (oportunidade de perf; o alvo Lighthouse já foi atingido sem ela).
+**Onde:** `@buildtovalue/react` **expõe** `createWorkerExecutor(worker)` + `routeJob` (o passo A* caro, `deriveAstarRoutes`) + o entry de worker (`@buildtovalue/react/worker`) — `bpmn/packages/react/src/workers/{executor,worker,jobs}.ts`. Mas **nenhum caminho de render do editor chama um `ComputeExecutor`**: `deriveAstarRoutes` só é *definido* (`canvas/routeEdge.ts:200`), o roteamento roda **síncrono** dentro do editor, e **não há prop/slot `executor`** em `BpmnEditor`/`BpmnDesigner` (a única referência a `executor` no pacote é o re-export em `index.ts:111`).
+
+**Impacto no bpmnPlay (P-5):** o mandato «A*/jobs pesados via `createWorkerExecutor` (off-thread)» pressupõe que a lib consuma o executor no render — não consome. O host não tem como fazer o A* interno do editor rodar no worker sem uma mudança na lib.
+
+**Mitigação (host):** o alvo real — **Lighthouse ≥ 90** — foi atingido **sem** o worker, via **code-splitting por rota** (`React.lazy`/`Suspense` em `src/App.tsx`; a Home deixa de baixar o app inteiro) + fontes **não-bloqueantes** (`index.html`) + `meta description`. Medido: Home perf 81→95 · SEO 82→91; `/scenario/omg-interop` perf 80→90 · SEO 82→91 (a11y 98 / best-practices 96 constantes). Números por página no PR da frente perf.
+
+**Ação (nota upstream):** pedir à lib um **slot de `executor`** (prop no `BpmnEditor`/`BpmnDesigner` ou config em `resolveEditorConfig`) que roteie o `routeJob` pelo `ComputeExecutor` injetado — aí o host passa `createWorkerExecutor(new Worker(new URL('@buildtovalue/react/worker', import.meta.url), { type: 'module' }))` e o A* sai da main thread. Enquanto não houver o slot, o off-thread do A* fica bloqueado upstream; o alvo de perf não depende dele.
